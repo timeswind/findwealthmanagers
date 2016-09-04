@@ -13,12 +13,20 @@ const titleStyle = {
 }
 
 class Navbar extends Component {
+  routerPush (path) {
+    this.context.router.push(path)
+  }
+
   render() {
 
     return (
       <div className="navbar-wrapper">
         <div className="navbar flex-row flex-center">
-          <a style={titleStyle}>FIND WEALTH MANAGERS</a>
+          <a style={titleStyle}
+            onClick={() => {
+              this.routerPush('/')
+            }}>
+            FIND WEALTH MANAGERS</a>
           <FlatButton
             label="Sign In"
             hoverColor="transparent"
@@ -30,11 +38,18 @@ class Navbar extends Component {
             rippleColor="#B2DFDB"
             label="GET LISTED TODAY"
             style={startListButtonStyle}
+            onClick={() => {
+              this.routerPush('/getlisted')
+            }}
             />
         </div>
       </div>
     );
   }
 }
+
+Navbar.contextTypes = {
+  router: React.PropTypes.object.isRequired
+};
 
 export default Navbar;

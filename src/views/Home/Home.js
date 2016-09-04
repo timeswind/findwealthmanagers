@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Navbar from '../../components/Navbar/Navbar';
 import SearchCard from '../../components/SearchCard/SearchCard';
 import MainFooter from '../../components/MainFooter/MainFooter';
 import FontIcon from 'material-ui/FontIcon';
@@ -33,7 +32,6 @@ class Home extends Component {
   render() {
     return (
       <div className="home">
-        <Navbar></Navbar>
         <div className="App-header">
           <div style={headerWrapperStyle}>
             <h2 className="header-promot">Easily Find Wealth Managers Near You.</h2>
