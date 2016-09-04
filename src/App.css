@@ -122,3 +122,21 @@
   position: absolute;
   width: 80px;
 }
+
+.fade-enter, .fade-leave {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.fade-enter.fade-enter-active {
+  opacity: 1;
+}
+
+.g-background {
+  background-color: #f6f6f6
+}
+
+.vertical-form-wrapper {
+  max-width: 600px;
+  margin: 0 auto;
+}

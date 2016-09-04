@@ -18,20 +18,16 @@ import 'flexboxgrid/css/flexboxgrid.min.css'
 const MUI = () => (
   <MuiThemeProvider>
     <Router history={browserHistory}>
-      <Route path="/" component={withRouter(App)}>
-        {/* add it here, as a child of `/` */}
-        <IndexRoute component={withRouter(Home)}/>
-        <Route path="/getlisted" getComponent={(nextState, cb) => {
-            // do asynchronous stuff to find the components
-            cb(null, GetListed)
-          }}/>
-        </Route>
-      </Router>
-    </MuiThemeProvider>
-  );
+      <Route path="/" component={App}>
+        <IndexRoute component={Home}/>
+        <Route path="getlisted" component={GetListed} />
+      </Route>
+    </Router>
+  </MuiThemeProvider>
+);
 
-  injectTapEventPlugin();
-  ReactDOM.render(
-    <MUI />,
-    document.getElementById('root')
-  );
+injectTapEventPlugin();
+ReactDOM.render(
+  <MUI />,
+  document.getElementById('root')
+);

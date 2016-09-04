@@ -39,7 +39,7 @@ class Home extends Component {
           </div>
         </div>
         <div className="App-body">
-          <div style={{backgroundColor: "#f6f6f6"}}>
+          <div className="g-background">
 
             <div className="main-wrapper flex-column">
 
