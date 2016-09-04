@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Router from 'react-router/lib/Router'
 import Route from 'react-router/lib/Route'
+import withRouter from 'react-router/lib/withRouter'
 import browserHistory from 'react-router/lib/browserHistory'
 import IndexRoute from 'react-router/lib/IndexRoute'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
@@ -17,17 +18,20 @@ import 'flexboxgrid/css/flexboxgrid.min.css'
 const MUI = () => (
   <MuiThemeProvider>
     <Router history={browserHistory}>
-      <Route path="/" component={App}>
+      <Route path="/" component={withRouter(App)}>
         {/* add it here, as a child of `/` */}
-        <IndexRoute component={Home}/>
-        <Route path="/getlisted" component={GetListed}/>
-      </Route>
-    </Router>
-  </MuiThemeProvider>
-);
+        <IndexRoute component={withRouter(Home)}/>
+        <Route path="/getlisted" getComponent={(nextState, cb) => {
+            // do asynchronous stuff to find the components
+            cb(null, GetListed)
+          }}/>
+        </Route>
+      </Router>
+    </MuiThemeProvider>
+  );
 
-injectTapEventPlugin();
-ReactDOM.render(
-  <MUI />,
-  document.getElementById('root')
-);
+  injectTapEventPlugin();
+  ReactDOM.render(
+    <MUI />,
+    document.getElementById('root')
+  );

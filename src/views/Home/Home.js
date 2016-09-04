@@ -94,7 +94,8 @@ class Home extends Component {
               rippleColor="#B2DFDB"
               backgroundColor="#00BFA5"
               hoverColor="#26A69A"
-              style={{margin: "0 16px"}}/>
+              style={{margin: "0 16px"}}
+              onClick={()=>{ this.props.router.push('/getlisted')}}/>
           </div>
         </div>
         <MainFooter></MainFooter>

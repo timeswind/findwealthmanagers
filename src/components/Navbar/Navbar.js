@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import FlatButton from 'material-ui/FlatButton';
+import withRouter from 'react-router/lib/withRouter'
 
 const startListButtonStyle = {
   color: "#FFFFFF"
@@ -14,7 +15,7 @@ const titleStyle = {
 
 class Navbar extends Component {
   routerPush (path) {
-    this.context.router.push(path)
+    this.props.router.push(path)
   }
 
   render() {
@@ -48,8 +49,4 @@ class Navbar extends Component {
   }
 }
 
-Navbar.contextTypes = {
-  router: React.PropTypes.object.isRequired
-};
-
-export default Navbar;
+export default withRouter(Navbar);
