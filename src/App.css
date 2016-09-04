@@ -1,0 +1,116 @@
+.App {
+  font-family: 'Roboto', sans-serif;
+}
+
+.navbar-wrapper {
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 0px 5px 0px;
+  position: fixed;
+  left: 0;
+  right: 0;
+  background-color: #fff;
+  z-index: 3;
+}
+
+.navbar {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: 20px 16px;
+}
+
+.App-body {
+  margin-top: 77px;
+  height: 400px;
+}
+
+.main-wrapper {
+  padding: 16px;
+  max-width: 1024px;
+  margin: 0 auto
+}
+
+.xl-wrapper {
+  padding: 16px;
+  max-width: 1200px;
+  margin: 0 auto
+}
+
+.App-header {
+  background-color: #00b0ff;
+  background-image: url("./assets/header-pic.jpg");
+  background-repeat: no-repeat;
+  background-position: 50%;
+  background-size:cover;
+  height: 400px;
+  padding: 32px 16px;
+  color: white;
+  position: relative;
+  top: 77px;
+  z-index: 1;
+}
+
+.header-promot {
+  font-size: 32px;
+  text-shadow: 1px 2px 3px #666;
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.flex-center {
+  align-items: center;
+}
+
+.flex-baseline {
+  align-items: baseline;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+
+@media screen and (min-width: 681px) {
+  .flex-33, .flex-33-d {
+    flex: 33;
+  }
+}
+
+@media screen and (max-width: 680px) {
+  .flex-33-d {
+    width: 100%
+  }
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.default-padding {
+  padding: 16px
+}
+
+.raleway {
+  font-family: "Raleway" !important
+}
+
+.home-headline {
+  font-size: 32px;
+  margin-left: 16px;
+  position: relative;
+}
+
+.overline::before {
+  background-color: rgb(68, 138, 255);
+  bottom: -16px;
+  content: '';
+  height: 4px;
+  left: 0;
+  position: absolute;
+  width: 80px;
+}
