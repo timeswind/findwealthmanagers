@@ -5,8 +5,8 @@ class TopWealthManagerCard extends Component {
   render() {
     return (
       <Card>
-        <div className="flex-row">
-          <img src={this.props.image}></img>
+        <div className="flex-row" style={{height: "200px"}}>
+          <img src={this.props.image} style={{width: "150px"}}></img>
           <div>
             <CardTitle title={this.props.managerName} />
             <CardText>

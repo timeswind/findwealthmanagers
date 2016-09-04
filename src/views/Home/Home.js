@@ -19,7 +19,7 @@ const TopWealthManagerCardStyle = {
 
 mockManagersData.forEach((mockManagerData) => {
   mockTopManagers.push(
-    <div className="flex-column flex-33-d" style={TopWealthManagerCardStyle} key={mockManagerData.name}>
+    <div className="flex-column flex-home-card-d" style={TopWealthManagerCardStyle} key={mockManagerData.name}>
       <TopWealthManagerCard
         managerName={mockManagerData.name}
         description={mockManagerData.description}
@@ -45,7 +45,7 @@ class Home extends Component {
             <div className="main-wrapper flex-column">
 
               <div className="flex-row flex-wrap raleway" style={{padding: "16px 0"}}>
-                <div className="flex-column flex-33-d flex-center">
+                <div className="flex-column flex-33-d flex-center home-feature-card">
                   <FontIcon
                     className="material-icons"
                     style={{fontSize: "50px"}}>
@@ -54,7 +54,7 @@ class Home extends Component {
                   <span style={{fontWeight: 600, fontSize: "26px"}}>Search</span>
                   <p>Find Wealth Managers</p>
                 </div>
-                <div className="flex-column flex-33-d flex-center">
+                <div className="flex-column flex-33-d flex-center home-feature-card">
                   <FontIcon
                     className="material-icons"
                     style={{fontSize: "50px"}}>
@@ -63,7 +63,7 @@ class Home extends Component {
                   <span style={{fontWeight: 600, fontSize: "26px"}}>Review</span>
                   <p>Compare Wealth Managers</p>
                 </div>
-                <div className="flex-column flex-33-d flex-center">
+                <div className="flex-column flex-33-d flex-center home-feature-card">
                   <FontIcon
                     className="material-icons"
                     style={{fontSize: "50px"}}>

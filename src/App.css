@@ -79,11 +79,20 @@
   .flex-33, .flex-33-d {
     flex: 33;
   }
+  .flex-home-card-d {
+    flex: 33;
+  }
 }
 
 @media screen and (max-width: 680px) {
-  .flex-33-d {
+  .flex-33-d, .flex-home-card-d {
     width: 100%
+  }
+  .home-feature-card {
+    margin-bottom: 32px
+  }
+  .home-feature-card:last-child {
+    margin-bottom: 0
   }
 }
 
