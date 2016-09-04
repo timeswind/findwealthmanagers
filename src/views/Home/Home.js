@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Navbar from '../../components/Navbar/Navbar';
 import SearchCard from '../../components/SearchCard/SearchCard';
+import MainFooter from '../../components/MainFooter/MainFooter';
 import FontIcon from 'material-ui/FontIcon';
 import FlatButton from 'material-ui/FlatButton';
 import TopWealthManagerCard from '../../components/TopWealthManagerCard/TopWealthManagerCard';
@@ -98,6 +99,8 @@ class Home extends Component {
               style={{margin: "0 16px"}}/>
           </div>
         </div>
+        <MainFooter></MainFooter>
+
       </div>
     );
   }

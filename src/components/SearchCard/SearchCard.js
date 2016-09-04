@@ -63,13 +63,13 @@ class SearchCard extends Component {
   render() {
     return (
       <Card className="search-card">
-        <div className="flex-column" style={{padding: "4px 16px 32px 16px"}}>
+        <div className="flex-column" style={{padding: "4px 32px 32px 32px"}}>
           <div className="flex-row" style={{marginBottom: "0"}}>
             <SelectField
               floatingLabelText="State"
               value={this.state.usState}
               onChange={this.selectUsState}
-              style={{marginLeft: "16px", flex: "30"}}>
+              style={{flex: "30", marginRight: "16px"}}>
               {usStates}
             </SelectField>
             <AutoComplete
@@ -80,21 +80,14 @@ class SearchCard extends Component {
               filter={AutoComplete.noFilter}
               dataSource={this.state.addressPredictions}
               onUpdateInput={this.handleAddressUpdateInput}
-              style={{marginLeft: "16px", marginRight: "16px", flex: "70"}}
+              style={{flex: "70"}}
               />
           </div>
           <div className="flex-row flex-center" style={{marginBottom: "16px"}}>
-            <span style={{
-                fontFamily: "Raleway",
-                fontWeight: 600,
-                color: "#304966",
-                flex: "7",
-                position: "relative",
-                top: "14px",
-                left: "16px"}}>OR</span>
+            <span style={{fontFamily: "Raleway", fontWeight: 600, color: "#304966", position: "relative", top: "14px", flex: "10 1 2%",}}>OR</span>
               <TextField
                 floatingLabelText="Company Name"
-                style={{marginLeft: "16px", marginRight: "16px", flex: "80"}}>
+                style={{flex: 90}}>
               </TextField>
             </div>
             <FlatButton
@@ -103,8 +96,7 @@ class SearchCard extends Component {
               primary
               rippleColor="#B2DFDB"
               backgroundColor="#00BFA5"
-              hoverColor="#26A69A"
-              style={{margin: "0 16px"}}/>
+              hoverColor="#26A69A"/>
           </div>
         </Card>
       );
