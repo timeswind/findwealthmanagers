@@ -19,7 +19,7 @@ const MUI = () => (
   <MuiThemeProvider>
     <Router history={browserHistory}>
       <Route path="/" component={App}>
-        <IndexRoute component={Home}/>
+        <IndexRoute component={withRouter(Home)}/>
         <Route path="getlisted" component={GetListed} />
       </Route>
     </Router>
