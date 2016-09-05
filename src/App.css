@@ -68,6 +68,10 @@
   align-items: baseline;
 }
 
+.flex-end {
+  align-items: flex-end;
+}
+
 .flex-column {
   display: flex;
   flex-direction: column;
@@ -75,6 +79,14 @@
 
 
 @media screen and (min-width: 681px) {
+  .nav-brand-text {
+    font-size: 26px;
+    font-family: "Raleway";
+    font-weight: 600;
+    color: rgb(48, 73, 102);
+    cursor: pointer;
+  }
+
   .flex-33, .flex-33-d {
     flex: 33;
   }
@@ -84,6 +96,15 @@
 }
 
 @media screen and (max-width: 680px) {
+  .nav-brand-text {
+    font-size: 26px;
+    font-family: "Raleway";
+    font-weight: 600;
+    color: rgb(48, 73, 102);
+    cursor: pointer;
+    width: 50%
+  }
+
   .flex-33-d, .flex-home-card-d {
     width: 100%
   }

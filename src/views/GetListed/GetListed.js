@@ -6,12 +6,21 @@ import {
 } from 'material-ui/Stepper';
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 import SelectField from 'material-ui/SelectField';
+import Checkbox from 'material-ui/Checkbox';
 import MenuItem from 'material-ui/MenuItem';
 import { Card, CardTitle } from 'material-ui/Card';
+import Chip from 'material-ui/Chip';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import MainFooter from '../../components/MainFooter/MainFooter'
+import categories from '../../assets/categories.js'
+
+const categoryMenuItems = []
+
+categories.forEach((category) => {
+  categoryMenuItems.push(<MenuItem value={category.code} label={category.name} key={category.code} primaryText={category.name}/>)
+})
 
 const styles = {
   radioButton: {
@@ -23,7 +32,22 @@ class GetListed extends Component {
   state = {
     finished: false,
     stepIndex: 0,
+    categories: []
   };
+
+  selectCategory = (event, index, value) => {
+    const newCategory = categories[index]
+    this.setState({
+      categories: this.state.categories.concat([newCategory])
+    })
+  }
+
+  handleCategoryChipDelete = (key) => {
+    this.chipData = this.state.categories;
+    const categoryChipToDelete = this.chipData.map((chip) => chip.key).indexOf(key);
+    this.chipData.splice(categoryChipToDelete, 1);
+    this.setState({categories: this.chipData});
+  }
 
   handleNext = () => {
     const {stepIndex} = this.state;
@@ -39,6 +63,28 @@ class GetListed extends Component {
       this.setState({stepIndex: stepIndex - 1});
     }
   };
+
+  getSelectedCategoryChips() {
+
+    const chips = []
+    this.state.categories.forEach((category) => {
+      chips.push(
+        <Chip key={ category.name } style={{marginRight: "16px"}}
+          onRequestDelete={() => this.handleCategoryChipDelete(category.code)}>
+          { category.name }
+        </Chip>
+      )
+    })
+    return (
+      <div>
+        <p style={{fontSize: "12px", color: "rgba(0, 0, 0, 0.498039)", marginBottom: "8px"}}>Selected categories</p>
+        <div className="flex-row flex-wrap">
+          {chips}
+        </div>
+      </div>
+    );
+
+  }
 
   getStepContent(stepIndex) {
     switch (stepIndex) {
@@ -67,9 +113,11 @@ class GetListed extends Component {
               hintText="Year"
               floatingLabelText="Establish Year"
               />
+            <div>{this.getSelectedCategoryChips()}</div>
             <SelectField
-              floatingLabelText="Category">
-
+              onChange={this.selectCategory}
+              floatingLabelText="Choose category (multiple)">
+              {categoryMenuItems}
             </SelectField>
             <TextField
               hintText="***-***-****"
@@ -109,8 +157,15 @@ class GetListed extends Component {
         <Card>
           <CardTitle title="Terms and conditions"></CardTitle>
           <div className="flex-column" style={{padding: "0 32px 32px 32px"}}>
-
+            terms and conditions shows here
           </div>
+          <div className="flex-column flex-end default-padding">
+            <Checkbox
+              label="I accept the terms and conditions"
+              style={{width: "300px"}}
+              />
+          </div>
+
         </Card>
       );
       default:
@@ -139,17 +194,9 @@ class GetListed extends Component {
             </Stepper>
             <div style={contentStyle}>
               {finished ? (
-                <div>
-                  <a
-                    href="#"
-                    onClick={(event) => {
-                      event.preventDefault();
-                      this.setState({stepIndex: 0, finished: false});
-                    }}
-                    >
-                    Click here
-                  </a> to reset the example.
-                </div>
+                <Card>
+                  <CardTitle title="Congradualation!"/>
+                </Card>
               ) : (
                 <div>
                   <div>{this.getStepContent(stepIndex)}</div>

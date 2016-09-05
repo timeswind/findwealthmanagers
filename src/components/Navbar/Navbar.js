@@ -6,14 +6,12 @@ const startListButtonStyle = {
   color: "#FFFFFF"
 };
 
-const titleStyle = {
-  fontSize: "26px",
-  fontFamily: "Raleway",
-  fontWeight: 600,
-  color: "rgb(48, 73, 102)"
-}
-
 class Navbar extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { windowWidth: window.innerWidth };
+  }
+
   routerPush (path) {
     this.props.router.push(path)
   }
@@ -23,26 +21,39 @@ class Navbar extends Component {
     return (
       <div className="navbar-wrapper">
         <div className="navbar flex-row flex-center">
-          <a style={titleStyle}
+          <a className="nav-brand-text"
             onClick={() => {
               this.routerPush('/')
             }}>
             FIND WEALTH MANAGERS</a>
-          <FlatButton
-            label="Sign In"
-            hoverColor="transparent"
-            style={{color: "#448aff", marginLeft:"auto"}}
-            />
-          <FlatButton
-            backgroundColor="#00c853"
-            hoverColor="#43a047"
-            rippleColor="#B2DFDB"
-            label="GET LISTED TODAY"
-            style={startListButtonStyle}
-            onClick={() => {
-              this.routerPush('/getlisted')
-            }}
-            />
+          <div className="flex-row" style={{marginLeft: "auto"}}>
+            { this.state.windowWidth < 1000 ? null : (
+              <div className="flex-row flex-center" style={{marginRight: "16px"}}>
+
+                <FlatButton
+                  label="Log In"
+                  hoverColor="transparent"
+                  style={{color: "#448aff"}}
+                  />
+                <FlatButton
+                  label="Sign up"
+                  hoverColor="transparent"
+                  style={{color: "#448aff"}}
+                  />
+              </div>
+
+            )}
+            <FlatButton
+              backgroundColor="#00c853"
+              hoverColor="#43a047"
+              rippleColor="#B2DFDB"
+              label="GET LISTED TODAY"
+              style={startListButtonStyle}
+              onClick={() => {
+                this.routerPush('/getlisted')
+              }}
+              />
+          </div>
         </div>
       </div>
     );
