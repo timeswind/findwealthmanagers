@@ -3,6 +3,7 @@ import {
   Step,
   Stepper,
   StepLabel,
+  StepContent
 } from 'material-ui/Stepper';
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 import SelectField from 'material-ui/SelectField';
@@ -30,6 +31,7 @@ const styles = {
 
 class GetListed extends Component {
   state = {
+    windowWidth: window.innerWidth,
     finished: false,
     stepIndex: 0,
     categories: []
@@ -180,6 +182,32 @@ class GetListed extends Component {
     }
   }
 
+  renderStepActions(step) {
+    const {stepIndex} = this.state;
+
+    return (
+      <div style={{margin: '12px 0'}}>
+        <RaisedButton
+          label={stepIndex === 2 ? 'Finish' : 'Next'}
+          disableTouchRipple={true}
+          disableFocusRipple={true}
+          primary={true}
+          onTouchTap={this.handleNext}
+          style={{marginRight: 12}}
+          />
+        {step > 0 && (
+          <FlatButton
+            label="Back"
+            disabled={stepIndex === 0}
+            disableTouchRipple={true}
+            disableFocusRipple={true}
+            onTouchTap={this.handlePrev}
+            />
+        )}
+      </div>
+    );
+  }
+
   render() {
     const {finished, stepIndex} = this.state;
     const contentStyle = {margin: '0 16px'};
@@ -188,41 +216,143 @@ class GetListed extends Component {
       <div>
         <div className="g-background" style={{padding:"107px 8px 64px 8px"}}>
           <div style={{width: '100%', maxWidth: 700, margin: 'auto'}}>
-            <Stepper activeStep={stepIndex}>
-              <Step>
-                <StepLabel>Tell us about your company</StepLabel>
-              </Step>
-              <Step>
-                <StepLabel>Create account</StepLabel>
-              </Step>
-              <Step>
-                <StepLabel>Accep terms</StepLabel>
-              </Step>
-            </Stepper>
-            <div style={contentStyle}>
-              {finished ? (
-                <Card>
-                  <CardTitle title="Congradualation!"/>
-                </Card>
+            <Stepper activeStep={stepIndex} orientation={ this.state.windowWidth < 1024 ? 'vertical' : 'horizontal'}>
+              { this.state.windowWidth > 1024 ? (
+                <Step>
+                  <StepLabel>Tell us about your company</StepLabel>
+                </Step>
               ) : (
-                <div>
-                  <div>{this.getStepContent(stepIndex)}</div>
-                  <div style={{marginTop: 12}}>
-                    <FlatButton
-                      label="Back"
-                      disabled={stepIndex === 0}
-                      onTouchTap={this.handlePrev}
-                      style={{marginRight: 12}}
-                      />
-                    <RaisedButton
-                      label={stepIndex === 2 ? 'Finish' : 'Next'}
-                      primary={true}
-                      onTouchTap={this.handleNext}
-                      />
-                  </div>
-                </div>
+                <Step>
+                  <StepLabel>Tell us about your company</StepLabel>
+                  <StepContent>
+                    <Card>
+                      <div className="flex-column" style={{padding: "32px"}}>
+                        <span style={{fontSize: "12px", color: "rgba(0, 0, 0, 0.498039)"}}>Listing Represents</span>
+                        <RadioButtonGroup name="listing_represents" className="flex-row" defaultSelected="individual" style={{marginTop: "8px"}}>
+                          <RadioButton
+                            value="company"
+                            label="Company"
+                            style={styles.radioButton}
+                            />
+                          <RadioButton
+                            value="individual"
+                            label="Individual"
+                            style={{marginLeft: 16, width: "auto"}}
+                            />
+                        </RadioButtonGroup>
+                        <TextField
+                          hintText="Company Name"
+                          floatingLabelText="Company Name"
+                          />
+                        <TextField
+                          hintText="Year"
+                          floatingLabelText="Establish Year"
+                          />
+                        <div>{this.getSelectedCategoryChips()}</div>
+                        <SelectField
+                          onChange={this.selectCategory}
+                          floatingLabelText="Choose category (multiple)">
+                          {categoryMenuItems}
+                        </SelectField>
+                        <TextField
+                          hintText="***-***-****"
+                          floatingLabelText="Phone Number"
+                          />
+                        <TextField
+                          floatingLabelText="Brief"
+                          multiLine={true}
+                          rows={2}
+                          rowsMax={4}
+                          /><br />
+                      </div>
+                    </Card>
+                    {this.renderStepActions(0)}
+                  </StepContent>
+                </Step>
+
               )}
-            </div>
+              { this.state.windowWidth > 1024 ? (
+                <Step>
+                  <StepLabel>Create account</StepLabel>
+
+                </Step>
+              ) : (
+                <Step>
+                  <StepLabel>Create account</StepLabel>
+                  <StepContent>
+                    <Card>
+                      <CardTitle title="Create Account"></CardTitle>
+                      <div className="flex-column" style={{padding: "0 32px 32px 32px"}}>
+                        <TextField
+                          hintText="Email"
+                          floatingLabelText="Email"
+                          />
+                        <TextField
+                          hintText="Password"
+                          floatingLabelText="Password"
+                          />
+                        <TextField
+                          hintText="Confirm password"
+                          floatingLabelText="Confirm password"
+                          />
+                      </div>
+                    </Card>
+                    {this.renderStepActions(1)}
+                  </StepContent>
+                </Step>
+              )}
+              { this.state.windowWidth > 1024 ? (
+                <Step>
+                  <StepLabel>Accep terms</StepLabel>
+                </Step>
+              ) : (
+
+                <Step>
+                  <StepContent>
+                    <Card>
+                      <CardTitle title="Terms and conditions"></CardTitle>
+                      <div className="flex-column" style={{padding: "0 32px 32px 32px"}}>
+                        terms and conditions shows here
+                      </div>
+                      <div className="flex-column flex-end default-padding">
+                        <Checkbox
+                          label="I accept the terms and conditions"
+                          style={{width: "300px"}}
+                          />
+                      </div>
+
+                    </Card>
+                    {this.renderStepActions(2)}
+                  </StepContent>
+                </Step>
+              )}
+            </Stepper>
+            { this.state.windowWidth > 1024 ? (
+              <div style={contentStyle}>
+                {finished ? (
+                  <Card>
+                    <CardTitle title="Congradualation!"/>
+                  </Card>
+                ) : (
+                  <div>
+                    <div>{this.getStepContent(stepIndex)}</div>
+                    <div style={{marginTop: 12}}>
+                      <FlatButton
+                        label="Back"
+                        disabled={stepIndex === 0}
+                        onTouchTap={this.handlePrev}
+                        style={{marginRight: 12}}
+                        />
+                      <RaisedButton
+                        label={stepIndex === 2 ? 'Finish' : 'Next'}
+                        primary={true}
+                        onTouchTap={this.handleNext}
+                        />
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : null}
           </div>
         </div>
         <MainFooter></MainFooter>
