@@ -7,8 +7,9 @@ import browserHistory from 'react-router/lib/browserHistory'
 import IndexRoute from 'react-router/lib/IndexRoute'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import App from './App';
-import Home from './views/Home/Home'
-import GetListed from './views/GetListed/GetListed'
+import Home from './views/Home/Home';
+import GetListed from './views/GetListed/GetListed';
+import LoginView from './views/LoginView/LoginView';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import 'whatwg-fetch';
 
@@ -21,6 +22,7 @@ const MUI = () => (
       <Route path="/" component={App}>
         <IndexRoute component={withRouter(Home)}/>
         <Route path="getlisted" component={GetListed} />
+        <Route path="login" component={LoginView} />
       </Route>
     </Router>
   </MuiThemeProvider>

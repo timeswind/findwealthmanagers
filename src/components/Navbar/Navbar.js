@@ -34,7 +34,9 @@ class Navbar extends Component {
                   label="Log In"
                   hoverColor="transparent"
                   style={{color: "#448aff"}}
-                  />
+                  onClick={() => {
+                    this.routerPush('/login')
+                  }}/>
                 <FlatButton
                   label="Sign up"
                   hoverColor="transparent"

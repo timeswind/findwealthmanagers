@@ -34,7 +34,12 @@ class GetListed extends Component {
     windowWidth: window.innerWidth,
     finished: false,
     stepIndex: 0,
-    categories: []
+    listingRepresents: "",
+    name: "",
+    establishYear: "",
+    categories: [],
+    phone: "",
+    brief: ""
   };
 
   selectCategory = (event, index, value) => {
@@ -89,7 +94,13 @@ class GetListed extends Component {
         <div className="flex-row flex-wrap">
           {chips}
         </div>
-        { this.state.categories.length === 3 ? <span style={{fontSize: "12px", color: "rgb(68, 138, 255)"}}>Reached max number of categories</span> : null}
+        { this.state.categories.length === 3 ? <span style={{fontSize: "12px", color: "rgb(68, 138, 255)"}}>Reached max number of categories</span> : (
+          <SelectField
+            onChange={this.selectCategory}
+            floatingLabelText="Choose category (multiple)">
+            {categoryMenuItems}
+          </SelectField>
+        )}
       </div>
     );
 
@@ -123,11 +134,6 @@ class GetListed extends Component {
               floatingLabelText="Establish Year"
               />
             <div>{this.getSelectedCategoryChips()}</div>
-            <SelectField
-              onChange={this.selectCategory}
-              floatingLabelText="Choose category (multiple)">
-              {categoryMenuItems}
-            </SelectField>
             <TextField
               hintText="***-***-****"
               floatingLabelText="Phone Number"
@@ -249,11 +255,6 @@ class GetListed extends Component {
                           floatingLabelText="Establish Year"
                           />
                         <div>{this.getSelectedCategoryChips()}</div>
-                        <SelectField
-                          onChange={this.selectCategory}
-                          floatingLabelText="Choose category (multiple)">
-                          {categoryMenuItems}
-                        </SelectField>
                         <TextField
                           hintText="***-***-****"
                           floatingLabelText="Phone Number"
