@@ -6,11 +6,17 @@ import TextField from 'material-ui/TextField';
 import AutoComplete from 'material-ui/AutoComplete';
 import FlatButton from 'material-ui/FlatButton';
 import us_states from '../../assets/us_states.js';
+import categories from '../../assets/categories.js'
 
 const usStates = [];
+const managerCategories = []
 
 us_states.forEach((state) => {
   usStates.push(<MenuItem value={state.abbreviation} key={state.abbreviation} label={state.abbreviation} primaryText={state.name} />);
+})
+
+categories.forEach((category) => {
+  managerCategories.push(<MenuItem value={category.code} key={category.code} label={category.name} primaryText={category.name} />);
 })
 
 
@@ -20,6 +26,7 @@ class SearchCard extends Component {
     this.state = {
       usState: "",
       companyName: "",
+      category: 1,
       addressPredictions: []
     };
     this.AddressAutoCompleteService = null
@@ -28,7 +35,7 @@ class SearchCard extends Component {
   }
 
   selectUsState = (event, index, value) => this.setState({ "usState": value });
-  selectAdvisingType = (event, index, value) => this.setState({ "advisingType": value });
+  selectCategory = (event, index, value) => this.setState({ "category": value });
 
   handleAddressUpdateInput = (address) => {
     if (address) {
@@ -84,23 +91,29 @@ class SearchCard extends Component {
               />
           </div>
           <div className="flex-row flex-center" style={{marginBottom: "16px"}}>
-            <span style={{fontFamily: "Raleway", fontWeight: 600, color: "#304966", position: "relative", top: "14px", flex: "10 1 2%",}}>OR</span>
-              <TextField
-                floatingLabelText="Company Name"
-                style={{flex: 90}}>
-              </TextField>
-            </div>
-            <FlatButton
-              label="Find Your Advisors"
-              labelStyle={{color: "#FFF"}}
-              primary
-              rippleColor="#B2DFDB"
-              backgroundColor="#00BFA5"
-              hoverColor="#26A69A"/>
+            <SelectField
+              floatingLabelText="Category"
+              value={this.state.category}
+              onChange={this.selectCategory}
+              style={{flex: 50, marginRight: "8px"}}>
+              {managerCategories}
+            </SelectField>
+            <TextField
+              floatingLabelText="Company Name(optional)"
+              style={{flex: 50, marginLeft: "8px"}}>
+            </TextField>
           </div>
-        </Card>
-      );
-    }
+          <FlatButton
+            label="Find Your Advisors"
+            labelStyle={{color: "#FFF"}}
+            primary
+            rippleColor="#B2DFDB"
+            backgroundColor="#00BFA5"
+            hoverColor="#26A69A"/>
+        </div>
+      </Card>
+    );
   }
+}
 
-  export default SearchCard;
+export default SearchCard;

@@ -87,7 +87,7 @@ class GetListed extends Component {
         <div className="flex-row flex-wrap">
           {chips}
         </div>
-        { this.state.categories.length === 3 ? <span style={{fontSize: "12px", color: "rgb(68, 138, 255)"}}>Reach max number of categories</span> : null}
+        { this.state.categories.length === 3 ? <span style={{fontSize: "12px", color: "rgb(68, 138, 255)"}}>Reached max number of categories</span> : null}
       </div>
     );
 
