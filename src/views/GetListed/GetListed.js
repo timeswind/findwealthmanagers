@@ -36,15 +36,21 @@ class GetListed extends Component {
   };
 
   selectCategory = (event, index, value) => {
-    const newCategory = categories[index]
-    this.setState({
-      categories: this.state.categories.concat([newCategory])
-    })
+    this.chipData = this.state.categories;
+    if (this.chipData.length !== 3) {
+      const chipExist = this.chipData.map((chip) => chip.code).indexOf(index + 1);
+      if (chipExist) {
+        const newCategory = categories[index]
+        this.setState({
+          categories: this.state.categories.concat([newCategory])
+        })
+      }
+    }
   }
 
-  handleCategoryChipDelete = (key) => {
+  handleCategoryChipDelete = (code) => {
     this.chipData = this.state.categories;
-    const categoryChipToDelete = this.chipData.map((chip) => chip.key).indexOf(key);
+    const categoryChipToDelete = this.chipData.map((chip) => chip.code).indexOf(code);
     this.chipData.splice(categoryChipToDelete, 1);
     this.setState({categories: this.chipData});
   }
@@ -69,7 +75,7 @@ class GetListed extends Component {
     const chips = []
     this.state.categories.forEach((category) => {
       chips.push(
-        <Chip key={ category.name } style={{marginRight: "16px"}}
+        <Chip key={ category.name } style={{margin: "0 8px 8px 0"}}
           onRequestDelete={() => this.handleCategoryChipDelete(category.code)}>
           { category.name }
         </Chip>
@@ -81,6 +87,7 @@ class GetListed extends Component {
         <div className="flex-row flex-wrap">
           {chips}
         </div>
+        { this.state.categories.length === 3 ? <span style={{fontSize: "12px", color: "rgb(68, 138, 255)"}}>Reach max number of categories</span> : null}
       </div>
     );
 
