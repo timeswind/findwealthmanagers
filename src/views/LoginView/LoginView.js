@@ -5,6 +5,10 @@ import { Card } from 'material-ui/Card';
 import MainFooter from '../../components/MainFooter/MainFooter'
 import fetch from '../../core/fetch/fetch';
 import localStore from 'store2';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import * as AuthActions from '../../redux/actions/auth.js';
+import { push } from 'react-router-redux'
 
 class LoginView extends Component {
   state = {
@@ -38,6 +42,7 @@ class LoginView extends Component {
   }
 
   login() {
+    const { actions, dispatch } = this.props;
     let self = this
     var newState = this.state
     let data = {
@@ -56,9 +61,19 @@ class LoginView extends Component {
     }).then(function(json) {
       console.log(json)
       if (json.success === true) {
+        newState.errorText.result = "";
+        actions.setToken(json.token);
+        actions.setId(json.id);
+        actions.setName(json.name);
+        actions.setEmail(json.email);
+        actions.setLoginState(true);
+
         localStore.session("token", json.token);
         localStore.session("id", json.id);
+        localStore.session("name", json.name);
         localStore.session("email", json.email);
+
+        dispatch(push('/'))
       } else {
         if (json.error) {
           newState.errorText.result = json.error;
@@ -118,4 +133,17 @@ class LoginView extends Component {
   }
 }
 
-export default LoginView;
+// function select(state) {
+//   return {
+//     path: state.routing.locationBeforeTransitions.pathname
+//   };
+// }
+//
+const mapDispatchToProps = (dispatch) => {
+  return {
+    dispatch,
+    actions: bindActionCreators(AuthActions, dispatch)
+  };
+}
+
+export default connect(null, mapDispatchToProps)(LoginView);

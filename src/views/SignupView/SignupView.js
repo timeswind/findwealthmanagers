@@ -5,19 +5,35 @@ import { Card } from 'material-ui/Card';
 import MainFooter from '../../components/MainFooter/MainFooter'
 import fetch from '../../core/fetch/fetch';
 import localStore from 'store2';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import * as AuthActions from '../../redux/actions/auth.js';
+import { push } from 'react-router-redux'
 
 class SignupView extends Component {
   state = {
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
     repassword: "",
     errorText: {
+      firstName: "",
+      lastName: "",
       email: "",
       password: "",
       repassword: "",
       result: ""
     }
   };
+
+  handleFirstNameInput = (event) => {
+    this.setState({firstName: event.target.value});
+  }
+
+  handleLastNameInput = (event) => {
+    this.setState({lastName: event.target.value});
+  }
 
   handleEmailEnter = (event) => {
     let input = event.target.value
@@ -51,14 +67,17 @@ class SignupView extends Component {
   }
 
   signUp() {
+    const { actions, dispatch } = this.props;
+
     let self = this
     var newState = this.state
     let data = {
+      firstName: this.state.firstName,
+      lastName: this.state.lastName,
       email: this.state.email,
       password: this.state.password,
       repassword: this.state.repassword
     }
-
 
     fetch('/api/public/signup', {
       method: 'POST',
@@ -71,18 +90,27 @@ class SignupView extends Component {
       return response.json()
     }).then(function(json) {
       if (json.success === true) {
+        newState.errorText.result = "";
+        actions.setToken(json.token);
+        actions.setId(json.id);
+        actions.setName(json.name);
+        actions.setEmail(json.email);
+        actions.setLoginState(true);
+        
         localStore.session("token", json.token);
         localStore.session("id", json.id);
+        localStore.session("name", json.name);
         localStore.session("email", json.email);
+
+        dispatch(push('/'))
       } else {
         if (json.error) {
           newState.errorText.result = json.error;
-          self.setState(newState)
         } else {
           newState.errorText.result = "ERROR";
-          self.setState(newState)
         }
       }
+      self.setState(newState)
     }).catch(function(ex) {
       console.log('failed', ex)
     })
@@ -96,11 +124,21 @@ class SignupView extends Component {
             <Card>
               <div className="flex-column flex-center" style={{padding: "32px 16px"}}>
                 <TextField
+                  hintText="First Name"
+                  floatingLabelText="First Name"
+                  onChange={this.handleFirstNameInput}
+                  type="email"
+                  />
+                <TextField
+                  hintText="Last Name"
+                  floatingLabelText="Last Name"
+                  onChange={this.handleLastNameInput}
+                  />
+                <TextField
                   hintText="Email"
                   floatingLabelText="Email"
                   onChange={this.handleEmailEnter}
                   errorText={this.state.errorText.email}
-                  type="email"
                   />
                 <TextField
                   hintText="********"
@@ -138,4 +176,11 @@ class SignupView extends Component {
   }
 }
 
-export default SignupView;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    dispatch,
+    actions: bindActionCreators(AuthActions, dispatch)
+  };
+}
+
+export default connect(null, mapDispatchToProps)(SignupView);
