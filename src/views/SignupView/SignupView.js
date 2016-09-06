@@ -6,12 +6,15 @@ import MainFooter from '../../components/MainFooter/MainFooter'
 import fetch from '../../core/fetch/fetch';
 import localStore from 'store2';
 
-class LoginView extends Component {
+class SignupView extends Component {
   state = {
     email: "",
     password: "",
+    repassword: "",
     errorText: {
       email: "",
+      password: "",
+      repassword: "",
       result: ""
     }
   };
@@ -27,9 +30,19 @@ class LoginView extends Component {
     newState.email = event.target.value
     this.setState(newState);
   }
-
   handlePasswordEnter = (event) => {
     this.setState({password: event.target.value});
+  }
+  handlePasswordReEnter = (event) => {
+    let input = event.target.value
+    var newState = this.state
+    newState.repassword = input
+    if (input !== this.state.password) {
+      newState.errorText.repassword = "passwords doesn't match"
+    } else {
+      newState.errorText.repassword = ""
+    }
+    this.setState({newState});
   }
 
   validateEmail(email) {
@@ -37,14 +50,17 @@ class LoginView extends Component {
     return re.test(email);
   }
 
-  login() {
+  signUp() {
     let self = this
     var newState = this.state
     let data = {
       email: this.state.email,
-      password: this.state.password
+      password: this.state.password,
+      repassword: this.state.repassword
     }
-    fetch('/api/public/login', {
+
+
+    fetch('/api/public/signup', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -54,7 +70,6 @@ class LoginView extends Component {
     }).then(function(response) {
       return response.json()
     }).then(function(json) {
-      console.log(json)
       if (json.success === true) {
         localStore.session("token", json.token);
         localStore.session("id", json.id);
@@ -73,13 +88,11 @@ class LoginView extends Component {
     })
   }
 
-
   render() {
     return (
       <div>
         <div className="g-background" style={{padding:"107px 8px 64px 8px"}}>
           <div style={{width: '100%', maxWidth: 500, margin: 'auto'}}>
-
             <Card>
               <div className="flex-column flex-center" style={{padding: "32px 16px"}}>
                 <TextField
@@ -95,14 +108,21 @@ class LoginView extends Component {
                   onChange={this.handlePasswordEnter}
                   type="password"
                   />
+                <TextField
+                  hintText="********"
+                  floatingLabelText="Re-enter password"
+                  onChange={this.handlePasswordReEnter}
+                  errorText={this.state.errorText.repassword}
+                  type="password"
+                  />
                 { <div><span style={{color: "#F44336"}}>{this.state.errorText.result}</span></div> }
                 <FlatButton
                   backgroundColor="#304966"
                   hoverColor="#495767"
                   rippleColor="#B2DFDB"
-                  label="login"
+                  label="Sign Up"
                   onClick={() => {
-                    this.login()
+                    this.signUp()
                   }}
                   style={{color: "#fff", width: "256px", marginTop: "36px"}}
                   />
@@ -118,4 +138,4 @@ class LoginView extends Component {
   }
 }
 
-export default LoginView;
+export default SignupView;

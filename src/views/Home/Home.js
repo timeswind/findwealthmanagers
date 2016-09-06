@@ -14,12 +14,13 @@ const headerWrapperStyle = {
 }
 
 const TopWealthManagerCardStyle = {
-  margin: "16px"
+  margin: "16px",
+  flex: "1 1 auto"
 }
 
 mockManagersData.forEach((mockManagerData) => {
   mockTopManagers.push(
-    <div className="flex-column flex-home-card-d" style={TopWealthManagerCardStyle} key={mockManagerData.name}>
+    <div className="flex-column" style={TopWealthManagerCardStyle} key={mockManagerData.name}>
       <TopWealthManagerCard
         managerName={mockManagerData.name}
         description={mockManagerData.description}

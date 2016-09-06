@@ -41,7 +41,9 @@ class Navbar extends Component {
                   label="Sign up"
                   hoverColor="transparent"
                   style={{color: "#448aff"}}
-                  />
+                  onClick={() => {
+                    this.routerPush('/signup')
+                  }}/>
               </div>
 
             )}

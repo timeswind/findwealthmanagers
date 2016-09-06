@@ -10,11 +10,10 @@ import App from './App';
 import Home from './views/Home/Home';
 import GetListed from './views/GetListed/GetListed';
 import LoginView from './views/LoginView/LoginView';
+import SignupView from './views/SignupView/SignupView';
 import injectTapEventPlugin from 'react-tap-event-plugin';
-import 'whatwg-fetch';
 
 import './index.css';
-import 'flexboxgrid/css/flexboxgrid.min.css'
 
 const MUI = () => (
   <MuiThemeProvider>
@@ -23,6 +22,7 @@ const MUI = () => (
         <IndexRoute component={withRouter(Home)}/>
         <Route path="getlisted" component={GetListed} />
         <Route path="login" component={LoginView} />
+        <Route path="signup" component={SignupView} />
       </Route>
     </Router>
   </MuiThemeProvider>
