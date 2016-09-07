@@ -19,6 +19,7 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 import localStore from 'store2';
 
 import authReducers from './redux/reducers/auth';
+import searchReducers from './redux/reducers/search';
 import './index.css';
 
 const reactRouterMiddleware = routerMiddleware(browserHistory)
@@ -26,6 +27,7 @@ const reactRouterMiddleware = routerMiddleware(browserHistory)
 const store = createStore(
   combineReducers({
     auth: authReducers,
+    search: searchReducers,
     routing: routerReducer
   }),
   window.devToolsExtension && window.devToolsExtension(),

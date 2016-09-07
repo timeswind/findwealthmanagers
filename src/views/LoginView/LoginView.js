@@ -93,7 +93,7 @@ class LoginView extends Component {
     return (
       <div>
         <div className="g-background" style={{padding:"107px 8px 64px 8px"}}>
-          <div style={{width: '100%', maxWidth: 500, margin: 'auto'}}>
+          <div style={{maxWidth: "500px", margin: 'auto'}}>
 
             <Card>
               <div className="flex-column flex-center" style={{padding: "32px 16px"}}>

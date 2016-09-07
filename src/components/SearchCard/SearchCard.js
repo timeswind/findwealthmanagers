@@ -7,6 +7,10 @@ import AutoComplete from 'material-ui/AutoComplete';
 import FlatButton from 'material-ui/FlatButton';
 import us_states from '../../assets/us_states.js';
 import categories from '../../assets/categories.js'
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import * as SearchActions from '../../redux/actions/search.js';
+import { push } from 'react-router-redux'
 
 const usStates = [];
 const managerCategories = []
@@ -24,9 +28,7 @@ class SearchCard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      usState: "",
       companyName: "",
-      category: 1,
       addressPredictions: []
     };
     this.AddressAutoCompleteService = null
@@ -34,8 +36,20 @@ class SearchCard extends Component {
     this.initGoolePlaceAutocomplete()
   }
 
-  selectUsState = (event, index, value) => this.setState({ "usState": value });
-  selectCategory = (event, index, value) => this.setState({ "category": value });
+  selectUsState = (event, index, usState) => {
+    const { actions } = this.props
+    actions.setSearchUSSTATE(usState)
+    // this.setState({ "usState": usState })
+  }
+  selectCategory = (event, index, category_code) => {
+    const { actions } = this.props
+    actions.setSearchCategories([category_code])
+    // this.setState({ "category": category_code });
+  }
+  selectAddress = (chosenAddress, index) => {
+    const { actions } = this.props
+    actions.setSearchAddress(chosenAddress)
+  }
 
   handleAddressUpdateInput = (address) => {
     if (address) {
@@ -67,6 +81,11 @@ class SearchCard extends Component {
     this.AddressAutoCompleteService = new window.google.maps.places.AutocompleteService();
   }
 
+  search() {
+    const { dispatch } = this.props;
+    dispatch(push('/search'))
+  }
+
   render() {
     return (
       <Card className="search-card">
@@ -74,7 +93,7 @@ class SearchCard extends Component {
           <div className="flex-row" style={{marginBottom: "0"}}>
             <SelectField
               floatingLabelText="State"
-              value={this.state.usState}
+              value={this.props.search.usState}
               onChange={this.selectUsState}
               style={{flex: "30", marginRight: "16px"}}>
               {usStates}
@@ -87,13 +106,15 @@ class SearchCard extends Component {
               filter={AutoComplete.noFilter}
               dataSource={this.state.addressPredictions}
               onUpdateInput={this.handleAddressUpdateInput}
+              searchText={this.props.search.address}
+              onNewRequest={this.selectAddress}
               style={{flex: "70"}}
               />
           </div>
           <div className="flex-row flex-center" style={{marginBottom: "16px"}}>
             <SelectField
               floatingLabelText="Category"
-              value={this.state.category}
+              value={this.props.search.categories[0]}
               onChange={this.selectCategory}
               style={{flex: 50, marginRight: "8px"}}>
               {managerCategories}
@@ -109,11 +130,27 @@ class SearchCard extends Component {
             primary
             rippleColor="#B2DFDB"
             backgroundColor="#00BFA5"
-            hoverColor="#26A69A"/>
+            hoverColor="#26A69A"
+            onClick={()=>{
+              this.search()
+            }}/>
         </div>
       </Card>
     );
   }
 }
 
-export default SearchCard;
+const mapStatesToProps = (states) => {
+  return {
+    search: states.search
+  };
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    dispatch,
+    actions: bindActionCreators(SearchActions, dispatch)
+  };
+}
+
+export default connect(mapStatesToProps, mapDispatchToProps)(SearchCard);
