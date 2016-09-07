@@ -6,7 +6,7 @@ import withRouter from 'react-router/lib/withRouter'
 import browserHistory from 'react-router/lib/browserHistory'
 import { createStore, combineReducers, applyMiddleware } from 'redux'
 import { Provider } from 'react-redux'
-import { syncHistoryWithStore, routerReducer, routerMiddleware, push } from 'react-router-redux'
+import { syncHistoryWithStore, routerReducer, routerMiddleware } from 'react-router-redux'
 import IndexRoute from 'react-router/lib/IndexRoute'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import App from './App';
@@ -63,7 +63,6 @@ if (localStore.session.get("token") && localStore.session.get("email") && localS
     isLogin: false
   })
 }
-
 
 const MUI = () => (
   <MuiThemeProvider>

@@ -5,7 +5,6 @@ import {
   StepLabel,
   StepContent
 } from 'material-ui/Stepper';
-import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 import SelectField from 'material-ui/SelectField';
 import Checkbox from 'material-ui/Checkbox';
 import MenuItem from 'material-ui/MenuItem';
@@ -23,12 +22,6 @@ categories.forEach((category) => {
   categoryMenuItems.push(<MenuItem value={category.code} label={category.name} key={category.code} primaryText={category.name}/>)
 })
 
-const styles = {
-  radioButton: {
-    width: "auto"
-  },
-};
-
 class GetListed extends Component {
   state = {
     windowWidth: window.innerWidth,
@@ -39,7 +32,17 @@ class GetListed extends Component {
     establishYear: "",
     categories: [],
     phone: "",
-    brief: ""
+    brief: "",
+    account: {
+      isManager: true,
+      isIndependent: false,
+      affiliation: "",
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      repassword: ""
+    }
   };
 
   selectCategory = (event, index, value) => {
@@ -77,6 +80,12 @@ class GetListed extends Component {
     }
   };
 
+  handleIsIndependentOnCheck() {
+    var account = this.state.account
+    account.isIndependent = !account.isIndependent
+    account.affiliation = ""
+    this.setState({account: account})
+  }
   getSelectedCategoryChips() {
 
     const chips = []
@@ -112,27 +121,25 @@ class GetListed extends Component {
       return (
         <Card>
           <div className="flex-column" style={{padding: "32px"}}>
-            <span style={{fontSize: "12px", color: "rgba(0, 0, 0, 0.498039)"}}>Listing Represents</span>
-            <RadioButtonGroup name="listing_represents" className="flex-row" defaultSelected="individual" style={{marginTop: "8px"}}>
-              <RadioButton
-                value="company"
-                label="Company"
-                style={styles.radioButton}
+            <div>
+              <Checkbox
+                label="I am an Independent Financial Professional"
+                labelStyle={{fontFamily: "Raleway"}}
+                defaultChecked={this.state.account.isIndependent}
+                onCheck={()=>{
+                  this.handleIsIndependentOnCheck()
+                }}
                 />
-              <RadioButton
-                value="individual"
-                label="Individual"
-                style={{marginLeft: 16, width: "auto"}}
-                />
-            </RadioButtonGroup>
-            <TextField
-              hintText="Company Name"
-              floatingLabelText="Company Name"
-              />
-            <TextField
-              hintText="Year"
-              floatingLabelText="Establish Year"
-              />
+              {this.state.account.isIndependent ? null : (
+                <div className="flex-column">
+                  <TextField
+                    hintText="Company Name"
+                    floatingLabelText="Affiliation"
+                    onChange={this.handleAffiliationInput}
+                    />
+                </div>
+              )}
+            </div>
             <div>{this.getSelectedCategoryChips()}</div>
             <TextField
               hintText="***-***-****"
@@ -150,8 +157,7 @@ class GetListed extends Component {
       case 1:
       return (
         <Card>
-          <CardTitle title="Create Account"></CardTitle>
-          <div className="flex-column" style={{padding: "0 32px 32px 32px"}}>
+          <div className="flex-column" style={{padding: "32px"}}>
             <TextField
               hintText="Email"
               floatingLabelText="Email"
@@ -233,27 +239,25 @@ class GetListed extends Component {
                   <StepContent>
                     <Card>
                       <div className="flex-column" style={{padding: "32px"}}>
-                        <span style={{fontSize: "12px", color: "rgba(0, 0, 0, 0.498039)"}}>Listing Represents</span>
-                        <RadioButtonGroup name="listing_represents" className="flex-row" defaultSelected="individual" style={{marginTop: "8px"}}>
-                          <RadioButton
-                            value="company"
-                            label="Company"
-                            style={styles.radioButton}
+                        <div>
+                          <Checkbox
+                            label="I am an Independent Financial Professional"
+                            labelStyle={{fontFamily: "Raleway"}}
+                            defaultChecked={this.state.account.isIndependent}
+                            onCheck={()=>{
+                              this.handleIsIndependentOnCheck()
+                            }}
                             />
-                          <RadioButton
-                            value="individual"
-                            label="Individual"
-                            style={{marginLeft: 16, width: "auto"}}
-                            />
-                        </RadioButtonGroup>
-                        <TextField
-                          hintText="Company Name"
-                          floatingLabelText="Company Name"
-                          />
-                        <TextField
-                          hintText="Year"
-                          floatingLabelText="Establish Year"
-                          />
+                          {this.state.account.isIndependent ? null : (
+                            <div className="flex-column">
+                              <TextField
+                                hintText="Company Name"
+                                floatingLabelText="Affiliation"
+                                onChange={this.handleAffiliationInput}
+                                />
+                            </div>
+                          )}
+                        </div>
                         <div>{this.getSelectedCategoryChips()}</div>
                         <TextField
                           hintText="***-***-****"
@@ -282,8 +286,7 @@ class GetListed extends Component {
                   <StepLabel>Create account</StepLabel>
                   <StepContent>
                     <Card>
-                      <CardTitle title="Create Account"></CardTitle>
-                      <div className="flex-column" style={{padding: "0 32px 32px 32px"}}>
+                      <div className="flex-column" style={{padding: "32px"}}>
                         <TextField
                           hintText="Email"
                           floatingLabelText="Email"

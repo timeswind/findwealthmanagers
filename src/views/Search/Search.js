@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import { Card } from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
 import MainFooter from '../../components/MainFooter/MainFooter'

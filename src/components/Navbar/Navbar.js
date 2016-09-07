@@ -47,7 +47,7 @@ class Navbar extends Component {
             </div>
           ) : (
           <div className="flex-row" style={{marginLeft: "auto"}}>
-            { this.state.windowWidth < 1000 ? null : (
+            { this.state.windowWidth < 680 ? null : (
               <div className="flex-row flex-center" style={{marginRight: "16px"}}>
 
                 <FlatButton

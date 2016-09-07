@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import TextField from 'material-ui/TextField';
-import Toggle from 'material-ui/Toggle';
+import Checkbox from 'material-ui/Checkbox';
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 import FlatButton from 'material-ui/FlatButton';
 import { Card } from 'material-ui/Card';
@@ -129,15 +129,10 @@ class SignupView extends Component {
   }
 
   handleIsManagerToggle = (event, value) => {
-    if (value === "true") {
-      value = true
-    } else {
-      value = false
-    }
     this.setState({isManager: value})
   }
 
-  handleIsIndependentToggle() {
+  handleIsIndependentOnCheck() {
     const isIndependent = this.state.isIndependent;
     this.setState({isIndependent: !isIndependent})
     this.setState({affiliation: ""});
@@ -160,25 +155,27 @@ class SignupView extends Component {
                     <RadioButton
                       value="false"
                       label="I am seeking a financial professional"
-                      style={{width: "100%", marginBottom: "16px"}}
-                    />
+                      style={{marginBottom: "16px", textAlign: "center"}}
+                      labelStyle={{fontFamily: "Raleway"}}
+                      />
                     <RadioButton
                       value="true"
                       label="I am a financial professional"
-                    />
+                      style={{textAlign: "center"}}
+                      labelStyle={{fontFamily: "Raleway"}}
+                      />
                   </RadioButtonGroup>
                 </div>
                 <div className="flex-column flex-center" style={{padding: "16px 16px 32px 16px"}}>
                   {this.state.isManager ? (
                     <div style={{textAlign: "center"}}>
-                      <Toggle
+                      <Checkbox
                         label="I am an Independent Financial Professional"
-                        labelPosition="right"
-                        toggled={this.state.isIndependent}
-                        onToggle={()=>{
-                          this.handleIsIndependentToggle()
+                        labelStyle={{fontFamily: "Raleway"}}
+                        defaultChecked={this.state.isIndependent}
+                        onCheck={()=>{
+                          this.handleIsIndependentOnCheck()
                         }}
-                        style={{width: "280px", marginTop: "16px"}}
                         />
                       {this.state.isIndependent ? null : (
                         <TextField
