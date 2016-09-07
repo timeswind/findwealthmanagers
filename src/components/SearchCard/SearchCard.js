@@ -63,6 +63,11 @@ class SearchCard extends Component {
     }
   };
 
+  handleCompanyNameInput = (event) => {
+    const { actions } = this.props
+    actions.setSearchCompanyName(event.target.value)
+  }
+
   searchAddress = (address) => {
     let self = this
     this.AddressAutoCompleteService.getQueryPredictions({input: address}, function (predictions) {
@@ -121,6 +126,8 @@ class SearchCard extends Component {
             </SelectField>
             <TextField
               floatingLabelText="Company Name(optional)"
+              value={this.props.search.companyName}
+              onChange={this.handleCompanyNameInput}
               style={{flex: 50, marginLeft: "8px"}}>
             </TextField>
           </div>
