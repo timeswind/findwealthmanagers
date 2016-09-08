@@ -1,4 +1,4 @@
-import { SET_TOKEN, SET_ID, SET_NAME, SET_EMAIL, SET_LOGIN_STATE, LOGOUT } from '../constants'
+import { SET_TOKEN, SET_ID, SET_NAME, SET_EMAIL, SET_ROLE, SET_LOGIN_STATE, LOGOUT } from '../constants'
 import localStore from 'store2'
 
 const initialState = {
@@ -6,7 +6,8 @@ const initialState = {
   token: "",
   id: "",
   name: "",
-  email: ""
+  email: "",
+  role: ""
 }
 
 export default function update(state = initialState, action) {
@@ -28,6 +29,11 @@ export default function update(state = initialState, action) {
   else if(action.type === SET_EMAIL) {
     return Object.assign({}, state, {
       email: action.email
+    })
+  }
+  else if(action.type === SET_ROLE) {
+    return Object.assign({}, state, {
+      role: action.role
     })
   }
   else if(action.type === SET_LOGIN_STATE) {

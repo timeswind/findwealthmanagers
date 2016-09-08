@@ -107,12 +107,14 @@ class SignupView extends Component {
         actions.setId(json.id);
         actions.setName(json.name);
         actions.setEmail(json.email);
+        actions.setRole(json.role);
         actions.setLoginState(true);
-
+        
         localStore.session("token", json.token);
         localStore.session("id", json.id);
         localStore.session("name", json.name);
         localStore.session("email", json.email);
+        localStore.session("role", json.role);
 
         dispatch(push('/'))
       } else {
@@ -129,6 +131,11 @@ class SignupView extends Component {
   }
 
   handleIsManagerToggle = (event, value) => {
+    if (value === "true") {
+      value = true
+    } else {
+      value = false
+    }
     this.setState({isManager: value})
   }
 
@@ -140,8 +147,8 @@ class SignupView extends Component {
 
   render() {
     return (
-      <div>
-        <div className="g-background" style={{padding:"107px 8px 64px 8px"}}>
+      <div className="view-body">
+        <div className="g-background" style={{padding:"36px 8px 64px 8px"}}>
           <div style={{maxWidth: 500, margin: 'auto'}}>
             <Card>
               <div className="flex-column flex-center">

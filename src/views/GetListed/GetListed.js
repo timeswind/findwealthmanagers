@@ -15,6 +15,10 @@ import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import MainFooter from '../../components/MainFooter/MainFooter'
 import categories from '../../assets/categories.js'
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import * as AuthActions from '../../redux/actions/auth.js';
+import { push } from 'react-router-redux'
 
 const categoryMenuItems = []
 
@@ -23,27 +27,40 @@ categories.forEach((category) => {
 })
 
 class GetListed extends Component {
-  state = {
-    windowWidth: window.innerWidth,
-    finished: false,
-    stepIndex: 0,
-    listingRepresents: "",
-    name: "",
-    establishYear: "",
-    categories: [],
-    phone: "",
-    brief: "",
-    account: {
-      isManager: true,
-      isIndependent: false,
-      affiliation: "",
-      firstName: "",
-      lastName: "",
-      email: "",
-      password: "",
-      repassword: ""
+  constructor(props) {
+    super(props)
+    this.state = {
+      windowWidth: window.innerWidth,
+      finished: false,
+      stepIndex: 0,
+      establishYear: "",
+      categories: [],
+      phone: "",
+      brief: "",
+      account: {
+        isManager: true,
+        isIndependent: false,
+        affiliation: "",
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+        repassword: ""
+      },
+      stepError: ""
+    };
+
+  }
+
+  componentWillMount(){
+    if (this.props.auth.isLogin === true) {
+      var newState = this.state
+      if (this.props.auth.role === 3) {
+        newState.account.isIndependent = true
+      }
+      this.setState({newState})
     }
-  };
+  }
 
   selectCategory = (event, index, value) => {
     this.chipData = this.state.categories;
@@ -58,6 +75,17 @@ class GetListed extends Component {
     }
   }
 
+  handleAffiliationInput = (event) => {
+    var newState = this.state
+    newState.account.affiliation = event.target.value
+    this.setState({newState})
+  }
+
+  handlePhoneInput = (event) => {
+    var phoneNumber = event.target.value
+    this.setState({phone: phoneNumber})
+  }
+
   handleCategoryChipDelete = (code) => {
     this.chipData = this.state.categories;
     const categoryChipToDelete = this.chipData.map((chip) => chip.code).indexOf(code);
@@ -67,11 +95,60 @@ class GetListed extends Component {
 
   handleNext = () => {
     const {stepIndex} = this.state;
+    if (stepIndex === 0) {
+      let isLogin = this.props.auth.isLogin
+      let isIndependent = this.state.account.isIndependent
+      let affiliation = this.state.account.affiliation
+      let categories = this.state.categories
+      let phone = this.state.phone
+      if (!isLogin && isIndependent === false && affiliation === "") {
+        this.setStepError('You need to fill the affiliation field')
+      }
+      else if (categories.length === 0 || categories.length > 3) {
+        if (categories.length === 0) {
+          this.setStepError('You need to select at lease 1 category')
+        } else {
+          this.setStepError('You can not select more than 3 category')
+        }
+      }
+      else if (phone === "") {
+        this.setStepError('Missing phone number')
+      }
+      else {
+        this.goNextStep(stepIndex)
+      }
+      // first step
+    } else if (stepIndex === 1) {
+      let isLogin = this.props.auth.isLogin
+      let role = this.props.auth.role
+      if (isLogin) {
+        if (role === 1) {
+          this.setStepError('Customer account can not list')
+        } else {
+          this.goNextStep(stepIndex)
+        }
+      } else {
+
+        // create account
+      }
+    } else if (stepIndex === 2) {
+      // final step
+    }
+  };
+
+  setStepError(error) {
+    this.setState({
+      stepError: error
+    });
+  }
+
+  goNextStep(stepIndex) {
     this.setState({
       stepIndex: stepIndex + 1,
       finished: stepIndex >= 2,
+      stepError: ""
     });
-  };
+  }
 
   handlePrev = () => {
     const {stepIndex} = this.state;
@@ -99,7 +176,7 @@ class GetListed extends Component {
     })
     return (
       <div>
-        <p style={{fontSize: "12px", color: "rgba(0, 0, 0, 0.498039)", marginBottom: "8px"}}>Selected categories</p>
+        <p style={{fontSize: "12px", color: "rgba(0, 0, 0, 0.49)", marginBottom: "8px"}}>Selected categories</p>
         <div className="flex-row flex-wrap">
           {chips}
         </div>
@@ -122,28 +199,43 @@ class GetListed extends Component {
         <Card>
           <div className="flex-column" style={{padding: "32px"}}>
             <div>
-              <Checkbox
-                label="I am an Independent Financial Professional"
-                labelStyle={{fontFamily: "Raleway"}}
-                defaultChecked={this.state.account.isIndependent}
-                onCheck={()=>{
-                  this.handleIsIndependentOnCheck()
-                }}
-                />
-              {this.state.account.isIndependent ? null : (
-                <div className="flex-column">
-                  <TextField
-                    hintText="Company Name"
-                    floatingLabelText="Affiliation"
-                    onChange={this.handleAffiliationInput}
-                    />
+              { this.props.auth.isLogin ? (
+                <div>
+                  <p style={{marginTop: "0"}}>Hello {this.props.auth.name},</p>
+                  <p>Looks like you are ready to list on our website!</p>
+
                 </div>
-              )}
+              ) : null}
+              { this.props.auth.role !== 2 ? (
+                <div className="flex-column">
+                  <Checkbox
+                    label="I am an Independent Financial Professional"
+                    labelStyle={{fontFamily: "Raleway"}}
+                    defaultChecked={this.state.account.isIndependent}
+                    onCheck={()=>{
+                      this.handleIsIndependentOnCheck()
+                    }}
+                    disabled={this.props.auth.isLogin}
+                    />
+                  {this.state.account.isIndependent ? null : (
+                    <div className="flex-column">
+                      <TextField
+                        hintText="Company Name"
+                        floatingLabelText="Affiliation"
+                        onChange={this.handleAffiliationInput}
+                        />
+                    </div>
+                  )}
+                </div>
+              ) : null }
+
             </div>
             <div>{this.getSelectedCategoryChips()}</div>
             <TextField
               hintText="***-***-****"
               floatingLabelText="Phone Number"
+              value={this.state.phone}
+              onChange={this.handlePhoneInput}
               />
             <TextField
               floatingLabelText="Brief"
@@ -157,20 +249,36 @@ class GetListed extends Component {
       case 1:
       return (
         <Card>
-          <div className="flex-column" style={{padding: "32px"}}>
-            <TextField
-              hintText="Email"
-              floatingLabelText="Email"
-              />
-            <TextField
-              hintText="Password"
-              floatingLabelText="Password"
-              />
-            <TextField
-              hintText="Confirm password"
-              floatingLabelText="Confirm password"
-              />
-          </div>
+          { this.props.auth.isLogin === true ? (
+            <div className="default-padding">
+              { this.props.auth.role === 1 ? (
+                <div>
+                  <p>You are currently using a customer account, if you need to continue listing, log out and create an advisor account</p>
+                </div>
+              ) : (
+                <div>
+                  <p>You already hold a valid account</p>
+                  <p>Follow the instruction to go to next step</p>
+                </div>
+              ) }
+            </div>
+          ) : (
+            <div className="flex-column" style={{padding: "0 32px 32px 32px"}}>
+              <TextField
+                hintText="Email"
+                floatingLabelText="Email"
+                />
+              <TextField
+                hintText="Password"
+                floatingLabelText="Password"
+                />
+              <TextField
+                hintText="Confirm password"
+                floatingLabelText="Confirm password"
+                value={this.state.account.repassword}
+                />
+            </div>
+          )}
         </Card>
       );
       case 2:
@@ -198,24 +306,27 @@ class GetListed extends Component {
     const {stepIndex} = this.state;
 
     return (
-      <div style={{margin: '12px 0'}}>
-        <RaisedButton
-          label={stepIndex === 2 ? 'Finish' : 'Next'}
-          disableTouchRipple={true}
-          disableFocusRipple={true}
-          primary={true}
-          onTouchTap={this.handleNext}
-          style={{marginRight: 12}}
-          />
-        {step > 0 && (
-          <FlatButton
-            label="Back"
-            disabled={stepIndex === 0}
+      <div className="flex-column">
+        <div style={{color: "#F44336", marginTop: "16px"}}>{this.state.stepError}</div>
+        <div style={{margin: '12px 0'}}>
+          <RaisedButton
+            label={stepIndex === 2 ? 'Finish' : 'Next'}
             disableTouchRipple={true}
             disableFocusRipple={true}
-            onTouchTap={this.handlePrev}
+            primary={true}
+            onTouchTap={this.handleNext}
+            style={{marginRight: 12}}
             />
-        )}
+          {step > 0 && (
+            <FlatButton
+              label="Back"
+              disabled={stepIndex === 0}
+              disableTouchRipple={true}
+              disableFocusRipple={true}
+              onTouchTap={this.handlePrev}
+              />
+          )}
+        </div>
       </div>
     );
   }
@@ -225,138 +336,61 @@ class GetListed extends Component {
     const contentStyle = {margin: '0 16px'};
 
     return (
-      <div>
-        <div className="g-background" style={{padding:"107px 8px 64px 8px"}}>
+      <div className="view-body">
+        <div className="g-background" style={{padding:"36px 8px 64px 8px"}}>
           <div style={{width: '100%', maxWidth: 700, margin: 'auto'}}>
-            <Stepper activeStep={stepIndex} orientation={ this.state.windowWidth < 1024 ? 'vertical' : 'horizontal'}>
-              { this.state.windowWidth > 1024 ? (
-                <Step>
-                  <StepLabel>Tell us about your company</StepLabel>
-                </Step>
-              ) : (
-                <Step>
-                  <StepLabel>Tell us about your company</StepLabel>
-                  <StepContent>
+            { this.state.windowWidth > 1024 ? (
+              <div>
+                <Stepper activeStep={stepIndex}>
+                  <Step>
+                    <StepLabel>Collect Information</StepLabel>
+                  </Step>
+                  <Step>
+                    <StepLabel>Create account</StepLabel>
+                  </Step>
+                  <Step>
+                    <StepLabel>Accep terms</StepLabel>
+                  </Step>
+                </Stepper>
+                <div style={contentStyle}>
+                  {finished ? (
                     <Card>
-                      <div className="flex-column" style={{padding: "32px"}}>
-                        <div>
-                          <Checkbox
-                            label="I am an Independent Financial Professional"
-                            labelStyle={{fontFamily: "Raleway"}}
-                            defaultChecked={this.state.account.isIndependent}
-                            onCheck={()=>{
-                              this.handleIsIndependentOnCheck()
-                            }}
-                            />
-                          {this.state.account.isIndependent ? null : (
-                            <div className="flex-column">
-                              <TextField
-                                hintText="Company Name"
-                                floatingLabelText="Affiliation"
-                                onChange={this.handleAffiliationInput}
-                                />
-                            </div>
-                          )}
-                        </div>
-                        <div>{this.getSelectedCategoryChips()}</div>
-                        <TextField
-                          hintText="***-***-****"
-                          floatingLabelText="Phone Number"
-                          />
-                        <TextField
-                          floatingLabelText="Brief"
-                          multiLine={true}
-                          rows={2}
-                          rowsMax={4}
-                          /><br />
-                      </div>
+                      <CardTitle title="Congradualation!"/>
                     </Card>
+                  ) : (
+                    <div>
+                      <div>{this.getStepContent(stepIndex)}</div>
+                      {this.renderStepActions(stepIndex)}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+            ) : (
+              <Stepper activeStep={stepIndex} orientation="vertical">
+                <Step>
+                  <StepLabel>Collect Information</StepLabel>
+                  <StepContent>
+                    {this.getStepContent(0)}
                     {this.renderStepActions(0)}
                   </StepContent>
                 </Step>
-
-              )}
-              { this.state.windowWidth > 1024 ? (
-                <Step>
-                  <StepLabel>Create account</StepLabel>
-
-                </Step>
-              ) : (
                 <Step>
                   <StepLabel>Create account</StepLabel>
                   <StepContent>
-                    <Card>
-                      <div className="flex-column" style={{padding: "32px"}}>
-                        <TextField
-                          hintText="Email"
-                          floatingLabelText="Email"
-                          />
-                        <TextField
-                          hintText="Password"
-                          floatingLabelText="Password"
-                          />
-                        <TextField
-                          hintText="Confirm password"
-                          floatingLabelText="Confirm password"
-                          />
-                      </div>
-                    </Card>
+                    {this.getStepContent(1)}
                     {this.renderStepActions(1)}
                   </StepContent>
                 </Step>
-              )}
-              { this.state.windowWidth > 1024 ? (
                 <Step>
                   <StepLabel>Accep terms</StepLabel>
-                </Step>
-              ) : (
-
-                <Step>
                   <StepContent>
-                    <Card>
-                      <CardTitle title="Terms and conditions"></CardTitle>
-                      <div className="flex-column" style={{padding: "0 32px 32px 32px"}}>
-                        terms and conditions shows here
-                      </div>
-                      <div className="flex-column flex-end default-padding">
-                        <Checkbox
-                          label="I accept the terms and conditions"
-                          style={{width: "300px"}}
-                          />
-                      </div>
-
-                    </Card>
+                    {this.getStepContent(2)}
                     {this.renderStepActions(2)}
                   </StepContent>
                 </Step>
-              )}
-            </Stepper>
-            { this.state.windowWidth > 1024 ? (
-              <div style={contentStyle}>
-                {finished ? (
-                  <Card>
-                    <CardTitle title="Congradualation!"/>
-                  </Card>
-                ) : (
-                  <div>
-                    <div>{this.getStepContent(stepIndex)}</div>
-                    <div style={{marginTop: 12}}>
-                      <FlatButton
-                        label="Back"
-                        disabled={stepIndex === 0}
-                        onTouchTap={this.handlePrev}
-                        style={{marginRight: 12}}
-                        />
-                      <RaisedButton
-                        label={stepIndex === 2 ? 'Finish' : 'Next'}
-                        primary={true}
-                        onTouchTap={this.handleNext}
-                        />
-                    </div>
-                  </div>
-                )}
-              </div>
-            ) : null}
+              </Stepper>
+            ) }
           </div>
         </div>
         <MainFooter></MainFooter>
@@ -365,4 +399,18 @@ class GetListed extends Component {
   }
 }
 
-export default GetListed;
+const mapStatesToProps = (states) => {
+  return {
+    auth: states.auth
+  };
+}
+
+// const mapDispatchToProps = (dispatch) => {
+//   return {
+//     dispatch,
+//     actions: bindActionCreators(SearchActions, dispatch)
+//   };
+// }
+
+
+export default connect(mapStatesToProps)(GetListed);

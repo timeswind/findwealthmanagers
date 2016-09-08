@@ -1,4 +1,4 @@
-import { SET_TOKEN, SET_ID, SET_NAME, SET_EMAIL, SET_LOGIN_STATE, LOGOUT } from '../constants'
+import { SET_TOKEN, SET_ID, SET_NAME, SET_EMAIL, SET_ROLE, SET_LOGIN_STATE, LOGOUT } from '../constants'
 
 export function setId(id) {
   return {
@@ -25,6 +25,13 @@ export function setEmail(email) {
   return {
     type: SET_EMAIL,
     email: email
+  }
+}
+
+export function setRole(role) {
+  return {
+    type: SET_ROLE,
+    role: role
   }
 }
 
