@@ -162,3 +162,21 @@
   max-width: 600px;
   margin: 0 auto;
 }
+
+.field-title {
+  font: 500 14px Roboto,RobotoDraft,Helvetica,Arial,sans-serif;
+  color: rgba(0,0,0,0.54);
+  overflow: hidden;
+  padding-bottom: 4px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.field-content {
+  font: 400 16px/24px Roboto,RobotoDraft,Helvetica,Arial,sans-serif;
+  color: rgba(0,0,0,0.87);
+  overflow: hidden;
+  padding-bottom: 4px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

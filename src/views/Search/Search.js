@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { Card } from 'material-ui/Card';
-import FlatButton from 'material-ui/FlatButton';
+// import { Card } from 'material-ui/Card';
+// import FlatButton from 'material-ui/FlatButton';
 import MainFooter from '../../components/MainFooter/MainFooter'
 import TopWealthManagerCard from '../../components/TopWealthManagerCard/TopWealthManagerCard';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as SearchActions from '../../redux/actions/search';
-import { push } from 'react-router-redux'
+// import { push } from 'react-router-redux'
 import SearchCard from '../../components/SearchCard/SearchCard'
 
 import mockManagersData from '../../mockdata/managers';

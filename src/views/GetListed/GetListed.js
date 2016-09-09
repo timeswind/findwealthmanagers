@@ -1,10 +1,5 @@
 import React, { Component } from 'react';
-import {
-  Step,
-  Stepper,
-  StepLabel,
-  StepContent
-} from 'material-ui/Stepper';
+import { Step, Stepper, StepLabel, StepContent } from 'material-ui/Stepper';
 import SelectField from 'material-ui/SelectField';
 import Checkbox from 'material-ui/Checkbox';
 import MenuItem from 'material-ui/MenuItem';
@@ -13,12 +8,12 @@ import Chip from 'material-ui/Chip';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
-import MainFooter from '../../components/MainFooter/MainFooter'
-import categories from '../../assets/categories.js'
+import MainFooter from '../../components/MainFooter/MainFooter';
+import categories from '../../assets/categories.js';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import * as AuthActions from '../../redux/actions/auth.js';
-import { push } from 'react-router-redux'
+import { push } from 'react-router-redux';
+import fetch from '../../core/fetch/fetch';
 
 const categoryMenuItems = []
 
@@ -33,10 +28,10 @@ class GetListed extends Component {
       windowWidth: window.innerWidth,
       finished: false,
       stepIndex: 0,
-      establishYear: "",
       categories: [],
       phone: "",
       brief: "",
+      acceptTerms: false,
       account: {
         isManager: true,
         isIndependent: false,
@@ -50,6 +45,48 @@ class GetListed extends Component {
       stepError: ""
     };
 
+  }
+
+  submitList() {
+    let self = this
+    let categories = this.state.categories
+    let data = {
+      'categories': [],
+      'phone': this.state.phone,
+      'brief': this.state.brief
+    }
+
+    if (this.props.auth.isLogin && this.props.auth.token !== "" && this.props.auth.role !== 1) {
+      if (categories.length > 0 && categories.length <= 3 ) {
+        this.setStepError('')
+        this.state.categories.forEach((categories) => {
+          data['categories'].push(categories.code)
+        })
+        fetch('/api/protect/list', {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + this.props.auth.token
+          },
+          body: JSON.stringify(data)
+        }).then(function(response) {
+          return response.json()
+        }).then(function(json) {
+          console.log(json)
+          if (json.success === true) {
+            self.goNextStep(3)
+          }
+
+        }).catch(function(ex) {
+          console.log('failed', ex)
+        })
+      } else {
+        // show error
+      }
+    } else {
+      // handle error
+    }
   }
 
   componentWillMount(){
@@ -82,8 +119,13 @@ class GetListed extends Component {
   }
 
   handlePhoneInput = (event) => {
-    var phoneNumber = event.target.value
+    let phoneNumber = event.target.value
     this.setState({phone: phoneNumber})
+  }
+
+  handleBriefInput = (event) => {
+    let brief = event.target.value
+    this.setState({brief: brief})
   }
 
   handleCategoryChipDelete = (code) => {
@@ -128,11 +170,17 @@ class GetListed extends Component {
           this.goNextStep(stepIndex)
         }
       } else {
-
+        this.goNextStep(stepIndex)
         // create account
       }
     } else if (stepIndex === 2) {
       // final step
+      let acceptTerms = this.state.acceptTerms
+      if (acceptTerms) {
+        this.submitList()
+      } else {
+        this.setStepError('You need to accept terms first')
+      }
     }
   };
 
@@ -176,10 +224,14 @@ class GetListed extends Component {
     })
     return (
       <div>
-        <p style={{fontSize: "12px", color: "rgba(0, 0, 0, 0.49)", marginBottom: "8px"}}>Selected categories</p>
-        <div className="flex-row flex-wrap">
-          {chips}
-        </div>
+        { this.state.categories.length !== 0 ? (
+          <div>
+            <div style={{fontSize: "12px", color: "rgba(0, 0, 0, 0.49)", margin: "16px 0 8px 0"}}>Selected categories</div>
+            <div className="flex-row flex-wrap">
+              {chips}
+            </div>
+          </div>
+        ) : null }
         { this.state.categories.length === 3 ? <span style={{fontSize: "12px", color: "rgb(68, 138, 255)"}}>Reached max number of categories</span> : (
           <SelectField
             onChange={this.selectCategory}
@@ -200,12 +252,21 @@ class GetListed extends Component {
           <div className="flex-column" style={{padding: "32px"}}>
             <div>
               { this.props.auth.isLogin ? (
-                <div>
+                <div className="raleway">
                   <p style={{marginTop: "0"}}>Hello {this.props.auth.name},</p>
                   <p>Looks like you are ready to list on our website!</p>
 
                 </div>
-              ) : null}
+              ) : (
+                <div className="raleway" style={{paddingBottom: "16px",marginBottom: "16px", borderBottom: "1px solid #ddd"}}>
+                  <span>Login </span>
+                  <a style={{color: "rgb(68, 138, 255)", textDecoration: "underline", cursor: "pointer"}}
+                    onClick={()=>{this.props.dispatch(push('/login'))}}
+                    >here
+                  </a>
+                  <span> if you already have a account</span>
+                </div>
+              ) }
               { this.props.auth.role !== 2 ? (
                 <div className="flex-column">
                   <Checkbox
@@ -239,6 +300,7 @@ class GetListed extends Component {
               />
             <TextField
               floatingLabelText="Brief"
+              onChange={this.handleBriefInput}
               multiLine={true}
               rows={2}
               rowsMax={4}
@@ -257,8 +319,25 @@ class GetListed extends Component {
                 </div>
               ) : (
                 <div>
-                  <p>You already hold a valid account</p>
-                  <p>Follow the instruction to go to next step</p>
+                  <CardTitle title="Confirm your account" style={{padding: 0}}></CardTitle>
+                  <div className="flex-column" style={{maxWidth: "300px",margin: "32px auto", border: "1px solid #ddd", padding: "16px"}}>
+                    <div className="flex-column">
+                      <span className="field-title">
+                        Name
+                      </span>
+                      <span className="field-content">
+                        {this.props.auth.name}
+                      </span>
+                    </div>
+                    <div className="flex-column" style={{marginTop: "16px"}}>
+                      <span className="field-title">
+                        Email
+                      </span>
+                      <span className="field-content">
+                        {this.props.auth.email}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               ) }
             </div>
@@ -292,6 +371,8 @@ class GetListed extends Component {
             <Checkbox
               label="I accept the terms and conditions"
               style={{width: "300px"}}
+              defaultChecked={this.state.acceptTerms}
+              onCheck={this.handleAcceptTermsCheck}
               />
           </div>
 
@@ -331,6 +412,8 @@ class GetListed extends Component {
     );
   }
 
+  handleAcceptTermsCheck = (event, value) => { this.setState({acceptTerms: value}) }
+
   render() {
     const {finished, stepIndex} = this.state;
     const contentStyle = {margin: '0 16px'};
@@ -343,10 +426,14 @@ class GetListed extends Component {
               <div>
                 <Stepper activeStep={stepIndex}>
                   <Step>
-                    <StepLabel>Collect Information</StepLabel>
+                    <StepLabel>Collect information</StepLabel>
                   </Step>
                   <Step>
-                    <StepLabel>Create account</StepLabel>
+                    { this.props.auth.isLogin ? (
+                      <StepLabel>Confirm account</StepLabel>
+                    ) : (
+                      <StepLabel>Create account</StepLabel>
+                    ) }
                   </Step>
                   <Step>
                     <StepLabel>Accep terms</StepLabel>
@@ -356,6 +443,12 @@ class GetListed extends Component {
                   {finished ? (
                     <Card>
                       <CardTitle title="Congradualation!"/>
+                      <div className="default-padding">
+                        <p>You have successfuly create a basic listing profile</p>
+                        <p>To reach more customer, you could:</p>
+                        <p>Add address to the listing profile</p>
+                        <p>...</p>
+                      </div>
                     </Card>
                   ) : (
                     <div>
@@ -369,14 +462,18 @@ class GetListed extends Component {
             ) : (
               <Stepper activeStep={stepIndex} orientation="vertical">
                 <Step>
-                  <StepLabel>Collect Information</StepLabel>
+                  <StepLabel>Collect information</StepLabel>
                   <StepContent>
                     {this.getStepContent(0)}
                     {this.renderStepActions(0)}
                   </StepContent>
                 </Step>
                 <Step>
-                  <StepLabel>Create account</StepLabel>
+                  { this.props.auth.isLogin ? (
+                    <StepLabel>Confirm account</StepLabel>
+                  ) : (
+                    <StepLabel>Create account</StepLabel>
+                  ) }
                   <StepContent>
                     {this.getStepContent(1)}
                     {this.renderStepActions(1)}
@@ -405,12 +502,11 @@ const mapStatesToProps = (states) => {
   };
 }
 
-// const mapDispatchToProps = (dispatch) => {
-//   return {
-//     dispatch,
-//     actions: bindActionCreators(SearchActions, dispatch)
-//   };
-// }
+const mapDispatchToProps = (dispatch) => {
+  return {
+    dispatch
+  };
+}
 
 
-export default connect(mapStatesToProps)(GetListed);
+export default connect(mapStatesToProps, mapDispatchToProps)(GetListed);
