@@ -180,3 +180,13 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+@media screen and (min-width: 681px) {
+  .home-search-field {
+    padding: 64px 0;
+  }
+}
+@media screen and (max-width: 680px) {
+  .home-search-field {
+    padding: 16px 0;
+  }
+}

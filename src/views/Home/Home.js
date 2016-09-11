@@ -5,6 +5,8 @@ import FontIcon from 'material-ui/FontIcon';
 import FlatButton from 'material-ui/FlatButton';
 import TopWealthManagerCard from '../../components/TopWealthManagerCard/TopWealthManagerCard';
 import mockManagersData from '../../mockdata/managers';
+import { connect } from 'react-redux';
+import { push } from 'react-router-redux';
 
 const mockTopManagers = [];
 
@@ -35,7 +37,7 @@ class Home extends Component {
     return (
       <div className="home">
         <div className="App-header">
-          <div style={headerWrapperStyle}>
+          <div style={headerWrapperStyle} className="home-search-field">
             <h2 className="header-promot">Easily Find Wealth Managers Near You.</h2>
             <SearchCard></SearchCard>
           </div>
@@ -76,7 +78,7 @@ class Home extends Component {
               </div>
             </div>
           </div>
-          <div>
+          <div style={{backgroundColor: "#fff"}}>
             <div className="xl-wrapper flex-column">
               <p className="home-headline raleway overline">Top Wealth Managers</p>
               <div className="flex-row flex-wrap raleway" style={{padding: "16px 0"}}>
@@ -97,7 +99,7 @@ class Home extends Component {
               backgroundColor="#00BFA5"
               hoverColor="#26A69A"
               style={{margin: "0 16px"}}
-              onClick={()=>{ this.props.router.push('/getlisted')}}/>
+              onClick={()=>{ this.props.dispatch(push('/getlisted'))}}/>
           </div>
         </div>
         <MainFooter></MainFooter>
@@ -107,4 +109,11 @@ class Home extends Component {
   }
 }
 
-export default Home;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    dispatch
+  };
+}
+
+
+export default connect(null, mapDispatchToProps)(Home);

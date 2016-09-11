@@ -10,7 +10,6 @@ import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import MainFooter from '../../components/MainFooter/MainFooter';
 import categories from '../../assets/categories.js';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 import fetch from '../../core/fetch/fetch';
@@ -421,7 +420,7 @@ class GetListed extends Component {
     return (
       <div className="view-body">
         <div className="g-background" style={{padding:"36px 8px 64px 8px"}}>
-          <div style={{width: '100%', maxWidth: 700, margin: 'auto'}}>
+          <div style={{width: '100%', maxWidth: "700px", margin: '0 auto'}}>
             { this.state.windowWidth > 1024 ? (
               <div>
                 <Stepper activeStep={stepIndex}>
@@ -447,6 +446,7 @@ class GetListed extends Component {
                         <p>You have successfuly create a basic listing profile</p>
                         <p>To reach more customer, you could:</p>
                         <p>Add address to the listing profile</p>
+                        <p>Add profile photos</p>
                         <p>...</p>
                       </div>
                     </Card>
