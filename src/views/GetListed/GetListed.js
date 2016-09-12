@@ -299,6 +299,7 @@ class GetListed extends Component {
               />
             <TextField
               floatingLabelText="Brief"
+              value={this.state.brief}
               onChange={this.handleBriefInput}
               multiLine={true}
               rows={2}

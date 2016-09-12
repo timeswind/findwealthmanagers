@@ -117,6 +117,18 @@
   }
 }
 
+.flex {
+  display: flex;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
 .flex-wrap {
   flex-wrap: wrap;
 }

@@ -1,0 +1,17 @@
+.profile-header {
+  width: 100%;
+  background: #fff;
+  padding: 32px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.p-h-wrapper {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: row
+}
+
+.profile-body {
+
+}

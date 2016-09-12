@@ -3,7 +3,6 @@ import FlatButton from 'material-ui/FlatButton';
 import fetch from '../../core/fetch/fetch';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
-import update from 'react-addons-update';
 
 import EditListInfoFrom from '../../forms/EditListInfoForm/EditListInfoForm';
 

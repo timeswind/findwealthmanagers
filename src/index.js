@@ -12,7 +12,9 @@ import IndexRoute from 'react-router/lib/IndexRoute';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import { IntlProvider } from 'react-intl';
-import { reducer as formReducer } from 'redux-form'
+import injectTapEventPlugin from 'react-tap-event-plugin';
+import localStore from 'store2';
+
 import App from './App';
 import Home from './views/Home/Home';
 import GetListedView from './views/GetListed/GetListed';
@@ -20,11 +22,12 @@ import LoginView from './views/LoginView/LoginView';
 import SignupView from './views/SignupView/SignupView';
 import SearchView from './views/Search/Search';
 import DashboardView from './views/Dashboard/Dashboard';
-import injectTapEventPlugin from 'react-tap-event-plugin';
-import localStore from 'store2';
+import ProfileView from './views/Profile/Profile';
 
+import { reducer as formReducer } from 'redux-form'
 import authReducers from './redux/reducers/auth';
 import searchReducers from './redux/reducers/search';
+
 import './index.css';
 
 const muiTheme = getMuiTheme({
@@ -103,6 +106,7 @@ const MUI = () => (
             <Route path="login" component={LoginView} />
             <Route path="signup" component={SignupView} />
             <Route path="dashboard" component={DashboardView} onEnter={requireAuth} />
+            <Route path="p/:id" component={ProfileView}/>
           </Route>
         </Router>
       </Provider>
