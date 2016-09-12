@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
-import TextField from 'material-ui/TextField';
 import Avatar from 'material-ui/Avatar';
 import FontIcon from 'material-ui/FontIcon';
 import FlatButton from 'material-ui/FlatButton';
 import {Tabs, Tab} from 'material-ui/Tabs';
-import MainFooter from '../../components/MainFooter/MainFooter';
 import { connect } from 'react-redux';
-import { push } from 'react-router-redux';
 import fetch from '../../core/fetch/fetch';
 import { gray400 } from 'material-ui/styles/colors';
 
@@ -30,6 +27,7 @@ class Profile extends Component {
     categories: []
   }
   componentWillMount() {
+    console.log('componentWillMount')
     let self = this
     fetch('/api/public/list?id=' + this.props.routeParams.id, {
       method: "GET",

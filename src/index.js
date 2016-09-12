@@ -11,8 +11,8 @@ import { syncHistoryWithStore, routerReducer, routerMiddleware } from 'react-rou
 import IndexRoute from 'react-router/lib/IndexRoute';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import { IntlProvider } from 'react-intl';
-global.Intl = require('intl');
+// import { IntlProvider } from 'react-intl';
+// global.Intl = require('intl');
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import localStore from 'store2';
 
@@ -96,23 +96,21 @@ function requireAuth(nextState, replace) {
 }
 
 const MUI = () => (
-  <IntlProvider locale="en">
-    <MuiThemeProvider muiTheme={muiTheme}>
-      <Provider store={store}>
-        <Router history={history} render={applyRouterMiddleware(useScroll())}>
-          <Route path="/" component={App}>
-            <IndexRoute component={Home}/>
-            <Route path="getlisted" component={GetListedView} />
-            <Route path="search" component={SearchView} />
-            <Route path="login" component={LoginView} />
-            <Route path="signup" component={SignupView} />
-            <Route path="dashboard" component={DashboardView} onEnter={requireAuth} />
-            <Route path="p/:id" component={ProfileView}/>
-          </Route>
-        </Router>
-      </Provider>
-    </MuiThemeProvider>
-  </IntlProvider>
+  <MuiThemeProvider muiTheme={muiTheme}>
+    <Provider store={store}>
+      <Router history={history} render={applyRouterMiddleware(useScroll())}>
+        <Route path="/" component={App}>
+          <IndexRoute component={Home}/>
+          <Route path="getlisted" component={GetListedView} />
+          <Route path="search" component={SearchView} />
+          <Route path="login" component={LoginView} />
+          <Route path="signup" component={SignupView} />
+          <Route path="dashboard" component={DashboardView} onEnter={requireAuth} />
+          <Route path="p/:id" component={ProfileView}/>
+        </Route>
+      </Router>
+    </Provider>
+  </MuiThemeProvider>
 );
 
 injectTapEventPlugin();
