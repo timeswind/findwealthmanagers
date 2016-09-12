@@ -33,8 +33,7 @@ class Profile extends Component {
       method: "GET",
       headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.props.auth.token
+        'Content-Type': 'application/json'
       },
     }).then(function(response) {
       return response.json()

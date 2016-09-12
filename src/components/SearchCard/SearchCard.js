@@ -32,6 +32,7 @@ class SearchCard extends Component {
       addressPredictions: []
     };
     this.AddressAutoCompleteService = null
+    this.geocoder = null
     this.searchAddressDebounceTimeout = null
     this.initGoolePlaceAutocomplete()
   }
@@ -48,6 +49,18 @@ class SearchCard extends Component {
   }
   selectAddress = (chosenAddress, index) => {
     const { actions } = this.props
+    this.geocoder.geocode( { 'address': chosenAddress}, function(results, status) {
+
+      if (status === window.google.maps.GeocoderStatus.OK) {
+        console.log(results)
+        let longitude = results[0].geometry.location.lng()
+        let latitude = results[0].geometry.location.lat()
+        let loc = [latitude, longitude]
+        actions.setSearchCoordinate(loc)
+      } else {
+        console.log("Geocode was not successful for the following reason: " + status);
+      }
+    });
     actions.setSearchAddress(chosenAddress)
   }
 
@@ -70,12 +83,17 @@ class SearchCard extends Component {
 
   searchAddress = (address) => {
     let self = this
-    this.AddressAutoCompleteService.getQueryPredictions({input: address}, function (predictions) {
+    this.AddressAutoCompleteService.getPlacePredictions({
+      input: address,
+      componentRestrictions: {country: 'us'}
+    }, function (predictions) {
       console.log(predictions)
       var results = [];
-      predictions.forEach((prediction) => {
-        results.push(prediction.description);
-      })
+      if (predictions) {
+        predictions.forEach((prediction) => {
+          results.push(prediction.description);
+        })
+      }
       self.setState({
         addressPredictions: results
       });
@@ -84,6 +102,7 @@ class SearchCard extends Component {
 
   initGoolePlaceAutocomplete() {
     this.AddressAutoCompleteService = new window.google.maps.places.AutocompleteService();
+    this.geocoder = new window.google.maps.Geocoder();
   }
 
   search() {
@@ -141,23 +160,23 @@ class SearchCard extends Component {
             onClick={()=>{
               this.search()
             }}/>
-        </div>
-      </Card>
-    );
+          </div>
+        </Card>
+      );
+    }
   }
-}
 
-const mapStatesToProps = (states) => {
-  return {
-    search: states.search
-  };
-}
+  const mapStatesToProps = (states) => {
+    return {
+      search: states.search
+    };
+  }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    dispatch,
-    actions: bindActionCreators(SearchActions, dispatch)
-  };
-}
+  const mapDispatchToProps = (dispatch) => {
+    return {
+      dispatch,
+      actions: bindActionCreators(SearchActions, dispatch)
+    };
+  }
 
-export default connect(mapStatesToProps, mapDispatchToProps)(SearchCard);
+  export default connect(mapStatesToProps, mapDispatchToProps)(SearchCard);
