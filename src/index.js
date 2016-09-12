@@ -12,6 +12,7 @@ import IndexRoute from 'react-router/lib/IndexRoute';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import { IntlProvider } from 'react-intl';
+global.Intl = require('intl');
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import localStore from 'store2';
 
