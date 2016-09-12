@@ -3,12 +3,14 @@ import TextField from 'material-ui/TextField';
 import Avatar from 'material-ui/Avatar';
 import FontIcon from 'material-ui/FontIcon';
 import FlatButton from 'material-ui/FlatButton';
+import {Tabs, Tab} from 'material-ui/Tabs';
 import MainFooter from '../../components/MainFooter/MainFooter';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 import fetch from '../../core/fetch/fetch';
 import { gray400 } from 'material-ui/styles/colors';
 
+import categories from '../../assets/categories'
 
 import './Profile.css'
 
@@ -19,10 +21,13 @@ const iconStyles = {
 
 class Profile extends Component {
   state = {
+    tab: "brief",
     name: "",
     location: "",
     email: "",
-    affiliation: ""
+    affiliation: "",
+    brief: "",
+    categories: []
   }
   componentWillMount() {
     let self = this
@@ -38,10 +43,17 @@ class Profile extends Component {
     }).then(function(json) {
       console.log(json)
       if (json.success === true) {
+        var formattedCategories = []
+        json.listInfo.categories.forEach((category_code) => {
+          formattedCategories.push(categories[category_code + 1]['name'])
+        })
+        console.log(formattedCategories)
         self.setState({
           name: json.advisorInfo.firstName + " " + json.advisorInfo.lastName,
           email: json.listInfo.email,
-          affiliation: json.listInfo.affiliation
+          affiliation: json.listInfo.affiliation,
+          categories: formattedCategories,
+          brief: json.listInfo.brief
         })
       } else {
         // self.props.dispatch(push('/'))
@@ -50,6 +62,12 @@ class Profile extends Component {
       console.log('failed', ex)
     })
   }
+
+  handleTabChange = (value) => {
+    this.setState({
+      tab: value,
+    });
+  };
 
   render() {
     return (
@@ -102,8 +120,44 @@ class Profile extends Component {
               </div>
             </div>
           </div>
+          <div className="flex-column p-categories flex-center">
+            <div className="flex-row flex-center raleway">
+              <div style={{marginRight: "16px"}}>Consulting area:</div>
+              { this.state.categories.map((category) => {
+                return (<div className="p-category-label" key={category}>{category}</div>)
+              }) }
+            </div>
+          </div>
           <div className="profile-body">
+            <div className="p-tabs-outter-wrapper">
+              <div className="p-tabs-inner-wrapper">
 
+                <Tabs
+                  value={this.state.tab}
+                  onChange={this.handleTabChange}
+                  >
+                  <Tab label="Brief" value="brief" style={{backgroundColor: "#fff", color: "#333"}}>
+
+                    <div className="p-tab-wrapper">
+                      <h2>Brief</h2>
+                      <p>
+                        {this.state.brief}
+                      </p>
+                    </div>
+
+                  </Tab>
+                  <Tab label="Experience" value="experience" style={{backgroundColor: "#fff", color: "#333"}}>
+
+                    <div className="p-tab-wrapper">
+                      <h2>Experience</h2>
+                      <p>
+                        {this.state.experience || ""}
+                      </p>
+                    </div>
+                  </Tab>
+                </Tabs>
+              </div>
+            </div>
           </div>
         </div>
       </div>
