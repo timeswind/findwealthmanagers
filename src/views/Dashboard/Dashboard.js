@@ -195,7 +195,17 @@ class DashboardView extends Component {
                                   onClick={()=>{
                                     this.setState({editListInfo: true})
                                   }}/>
+                                  <FlatButton
+                                    label="Preview"
+                                    labelStyle={{color: "#fff"}}
+                                    rippleColor="#B2DFDB"
+                                    backgroundColor="#00BFA5"
+                                    hoverColor="#26A69A"
+                                    onClick={()=>{
+                                      this.props.dispatch(push('/p/' + this.state.listInfo._id))
+                                    }}/>
                                 </div>
+
                               </div>
                               <div className="flex-column" style={{marginTop: "16px"}}>
                                 <span className="field-title">
