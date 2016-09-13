@@ -42,15 +42,17 @@ class Profile extends Component {
       if (json.success === true) {
         var formattedCategories = []
         json.listInfo.categories.forEach((category_code) => {
-          formattedCategories.push(categories[category_code + 1]['name'])
+          formattedCategories.push(categories[category_code - 1])
         })
         console.log(formattedCategories)
         self.setState({
           name: json.advisorInfo.firstName + " " + json.advisorInfo.lastName,
           email: json.listInfo.email,
+          location: json.listInfo.address,
           affiliation: json.listInfo.affiliation,
           categories: formattedCategories,
-          brief: json.listInfo.brief
+          brief: json.listInfo.brief,
+          experience: json.listInfo.experience
         })
       } else {
         // self.props.dispatch(push('/'))
@@ -85,7 +87,7 @@ class Profile extends Component {
                   <span style={{marginBottom: "8px", fontSize: "24px", fontWeight: 600}}>{this.state.name}</span>
                   <div className="flex-row flex-center" style={{marginBottom: "8px"}}>
                     <FontIcon className="material-icons" style={iconStyles}>location_on</FontIcon>
-                    <span>Location</span>
+                    <span>{this.state.location}</span>
                   </div>
                   <div className="flex-row flex-center" style={{marginBottom: "8px"}}>
                     <FontIcon className="material-icons" style={iconStyles} color={gray400}>email</FontIcon>
@@ -121,7 +123,7 @@ class Profile extends Component {
             <div className="flex-row flex-center raleway">
               <div style={{marginRight: "16px"}}>Consulting area:</div>
               { this.state.categories.map((category) => {
-                return (<div className="p-category-label" key={category}>{category}</div>)
+                return (<div className="p-category-label" key={category.code}>{category.name}</div>)
               }) }
             </div>
           </div>
@@ -141,14 +143,25 @@ class Profile extends Component {
                         {this.state.brief}
                       </p>
                     </div>
-
-                  </Tab>
-                  <Tab label="Experience" value="experience" style={{backgroundColor: "#fff", color: "#333"}}>
-
                     <div className="p-tab-wrapper">
                       <h2>Experience</h2>
+                      { this.state.experience ? this.state.experience.map((experience, index) => {
+                        return (
+                          <div key={index} style={{margin: "8px 0 0 0", border: "1px solid #ddd", padding: "16px"}}>
+                            <span style={{fontWeight: 600, fontSize: "20px"}}>{experience.title}</span>
+                            <p style={{margin: "8px 0 0 0", fontSize: "14px"}}>{experience.text}</p>
+                          </div>
+                        )
+                      }) : null}
+                    </div>
+
+                  </Tab>
+                  <Tab label="Calendar" value="calendar" style={{backgroundColor: "#fff", color: "#333"}}>
+
+                    <div className="p-tab-wrapper">
+                      <h2>Calendar</h2>
                       <p>
-                        {this.state.experience || ""}
+                        place to show advisor's appointment calendar
                       </p>
                     </div>
                   </Tab>

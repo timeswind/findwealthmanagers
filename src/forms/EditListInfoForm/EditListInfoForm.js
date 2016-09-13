@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Field, reduxForm, change } from 'redux-form';
+import { Field, FieldArray, reduxForm, change } from 'redux-form';
 import { TextField } from 'redux-form-material-ui';
 import AutoComplete from 'material-ui/AutoComplete';
 import { connect } from 'react-redux';
@@ -89,12 +89,55 @@ class EditListInfoForm extends Component {
   }
 
   render() {
+    const renderExperience = ({ fields }) => (
+      <div className="flex-column">
+        {fields.map((experience, index) =>
+          <div className="flex-column" key={index} style={{margin: "8px 0 0 0", border: "1px solid #ddd", padding: "0 16px 16px 16px"}}>
+            <Field
+              floatingLabelText="Title"
+              hintText="Title"
+              name={`${experience}.title`}
+              type="text"
+              component={TextField}
+              fullWidth={true}
+              label={`Title #${index + 1}`}/>
+            <Field
+              floatingLabelText="Content"
+              hintText="Content"
+              name={`${experience}.text`}
+              type="text"
+              component={TextField}
+              multiLine={true}
+              fullWidth={true}
+              rows={3}
+              label={`Text #${index + 1}`}/>
+            <FlatButton
+              label="Remove"
+              labelStyle={{color: "#FFF"}}
+              rippleColor="#B2DFDB"
+              backgroundColor="#F44336"
+              hoverColor="#E57373"
+              style={{marginTop: "16px"}}
+              onClick={() => fields.remove(index)}/>
+          </div>
+        )}
+        <FlatButton
+          label="Add experience"
+          labelStyle={{color: "#FFF"}}
+          rippleColor="#B2DFDB"
+          backgroundColor="#2196F3"
+          hoverColor="#64B5F6"
+          style={{marginTop: "16px"}}
+          onClick={() => fields.push()}/>
+      </div>
+    )
     const { handleSubmit } = this.props;
     return (
       <form onSubmit={handleSubmit} className="flex-column">
         <Field name="phone" component={TextField} hintText="Phone" floatingLabelText="Phone"/>
-        <Field name="email" component={TextField} hintText="Email" floatingLabelText="Email"/>
+        <Field name="email" component={TextField} hintText="Email for bussiness" floatingLabelText="Email for bussiness"/>
         <Field name="brief" component={TextField} hintText="Brief" floatingLabelText="Brief"/>
+        <Field name="room" component={TextField} hintText="Room" floatingLabelText="Room"/>
         <AutoComplete
           hintText="Address"
           floatingLabelText="Address"
@@ -108,6 +151,8 @@ class EditListInfoForm extends Component {
           onUpdateInput={this.handleAddressUpdateInput}
           onNewRequest={this.selectAddress}
           />
+        <FieldArray name="experience" component={renderExperience}/>
+
         <FlatButton type="submit">Submit</FlatButton>
       </form>
     );

@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import FlatButton from 'material-ui/FlatButton';
+import Chip from 'material-ui/Chip';
 import fetch from '../../core/fetch/fetch';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
+import categoryTypes from '../../assets/categories'
 
 import EditListInfoFrom from '../../forms/EditListInfoForm/EditListInfoForm';
 
@@ -39,6 +41,13 @@ class DashboardView extends Component {
     }).then(function(json) {
       let userInfo = json.userInfo
       let listInfo = json.listInfo
+      if (json.listInfo.categories) {
+        var modifiedCategories = []
+        json.listInfo.categories.forEach((category_code) => {
+          modifiedCategories.push(categoryTypes[category_code - 1])
+        })
+        json.listInfo.modifiedCategories = modifiedCategories
+      }
       if (userInfo.verify === false) {
         self.setState({emailIsVerified: false})
       }
@@ -216,8 +225,20 @@ class DashboardView extends Component {
                                 <span className="field-title">
                                   Categories
                                 </span>
+                                { this.state.listInfo.modifiedCategories ? this.state.listInfo.modifiedCategories.map((category) => {
+                                  return (
+                                    <Chip key={category.code} style={{margin: "4px 8px 4px 0"}}>
+                                      {category.name}
+                                    </Chip>
+                                  )
+                                }) : null}
+                              </div>
+                              <div className="flex-column" style={{marginTop: "16px"}}>
+                                <span className="field-title">
+                                  Room
+                                </span>
                                 <span className="field-content">
-                                  {this.state.listInfo.categories}
+                                  {this.state.listInfo.room}
                                 </span>
                               </div>
                               <div className="flex-column" style={{marginTop: "16px"}}>
@@ -232,9 +253,14 @@ class DashboardView extends Component {
                                 <span className="field-title">
                                   Experience
                                 </span>
-                                <span className="field-content">
-                                  {this.state.listInfo.experience}
-                                </span>
+                                { this.state.listInfo.experience ? this.state.listInfo.experience.map((experience, index) => {
+                                  return (
+                                    <div key={index} style={{margin: "8px 0 0 0", border: "1px solid #ddd", padding: "16px"}}>
+                                      <span style={{fontWeight: 600, fontSize: "20px"}}>{experience.title}</span>
+                                      <p style={{margin: "8px 0 0 0", fontSize: "14px"}}>{experience.text}</p>
+                                    </div>
+                                  )
+                                }) : null}
                               </div>
                             </div>
                           ) }
