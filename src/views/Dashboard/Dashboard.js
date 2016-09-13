@@ -180,6 +180,14 @@ class DashboardView extends Component {
                               </div>
                             </div>
                             <EditListInfoFrom initialValues={this.state.listInfo} onSubmit={this.handleEditListFormSubmit}></EditListInfoFrom>
+                            <FlatButton
+                              label="Cancel"
+                              style={{marginTop: 16}}
+                              backgroundColor="transparent"
+                              onClick={()=>{
+                                this.setState({editListInfo: false})
+                              }}
+                              />
                           </div>
                         ) : (
                           <div className="flex-column">
@@ -194,122 +202,124 @@ class DashboardView extends Component {
                                   backgroundColor="transparent"
                                   onClick={()=>{
                                     this.setState({editListInfo: true})
-                                  }}/>
-                                  <FlatButton
-                                    label="Preview"
-                                    labelStyle={{color: "#fff"}}
-                                    rippleColor="#B2DFDB"
-                                    backgroundColor="#00BFA5"
-                                    hoverColor="#26A69A"
-                                    onClick={()=>{
-                                      this.props.dispatch(push('/p/' + this.state.listInfo._id))
-                                    }}/>
-                                </div>
+                                  }}
+                                  />
+                                <FlatButton
+                                  label="Preview"
+                                  labelStyle={{color: "#fff"}}
+                                  rippleColor="#B2DFDB"
+                                  backgroundColor="#00BFA5"
+                                  hoverColor="#26A69A"
+                                  onClick={()=>{
+                                    this.props.dispatch(push('/p/' + this.state.listInfo._id))
+                                  }}
+                                  />
+                              </div>
 
-                              </div>
-                              <div className="flex-column" style={{marginTop: "16px"}}>
-                                <span className="field-title">
-                                  Phone
-                                </span>
-                                <span className="field-content">
-                                  {this.state.listInfo.phone}
-                                </span>
-                              </div>
-                              <div className="flex-column" style={{marginTop: "16px"}}>
-                                <span className="field-title">
-                                  Email
-                                </span>
-                                <span className="field-content">
-                                  {this.state.listInfo.email}
-                                </span>
-                              </div>
-                              <div className="flex-column" style={{marginTop: "16px"}}>
-                                <span className="field-title">
-                                  Brief
-                                </span>
-                                <span className="field-content">
-                                  {this.state.listInfo.brief}
-                                </span>
-                              </div>
-                              <div className="flex-column" style={{marginTop: "16px"}}>
-                                <span className="field-title">
-                                  Categories
-                                </span>
-                                { this.state.listInfo.modifiedCategories ? this.state.listInfo.modifiedCategories.map((category) => {
-                                  return (
-                                    <Chip key={category.code} style={{margin: "4px 8px 4px 0"}}>
-                                      {category.name}
-                                    </Chip>
-                                  )
-                                }) : null}
-                              </div>
-                              <div className="flex-column" style={{marginTop: "16px"}}>
-                                <span className="field-title">
-                                  Room
-                                </span>
-                                <span className="field-content">
-                                  {this.state.listInfo.room}
-                                </span>
-                              </div>
-                              <div className="flex-column" style={{marginTop: "16px"}}>
-                                <span className="field-title">
-                                  Address
-                                </span>
-                                <span className="field-content">
-                                  {this.state.listInfo.address}
-                                </span>
-                              </div>
-                              <div className="flex-column" style={{marginTop: "16px"}}>
-                                <span className="field-title">
-                                  Experience
-                                </span>
-                                { this.state.listInfo.experience ? this.state.listInfo.experience.map((experience, index) => {
-                                  return (
-                                    <div key={index} style={{margin: "8px 0 0 0", border: "1px solid #ddd", padding: "16px"}}>
-                                      <span style={{fontWeight: 600, fontSize: "20px"}}>{experience.title}</span>
-                                      <p style={{margin: "8px 0 0 0", fontSize: "14px"}}>{experience.text}</p>
-                                    </div>
-                                  )
-                                }) : null}
-                              </div>
                             </div>
-                          ) }
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  <div style={noShadowCardStyle}>
-                    <div className="default-padding">
-                      Listing Data
-                    </div>
+                            <div className="flex-column" style={{marginTop: "16px"}}>
+                              <span className="field-title">
+                                Phone
+                              </span>
+                              <span className="field-content">
+                                {this.state.listInfo.phone}
+                              </span>
+                            </div>
+                            <div className="flex-column" style={{marginTop: "16px"}}>
+                              <span className="field-title">
+                                Email
+                              </span>
+                              <span className="field-content">
+                                {this.state.listInfo.email}
+                              </span>
+                            </div>
+                            <div className="flex-column" style={{marginTop: "16px"}}>
+                              <span className="field-title">
+                                Brief
+                              </span>
+                              <span className="field-content">
+                                {this.state.listInfo.brief}
+                              </span>
+                            </div>
+                            <div className="flex-column" style={{marginTop: "16px"}}>
+                              <span className="field-title">
+                                Categories
+                              </span>
+                              { this.state.listInfo.modifiedCategories ? this.state.listInfo.modifiedCategories.map((category) => {
+                                return (
+                                  <Chip key={category.code} style={{margin: "4px 8px 4px 0"}}>
+                                    {category.name}
+                                  </Chip>
+                                )
+                              }) : null}
+                            </div>
+                            <div className="flex-column" style={{marginTop: "16px"}}>
+                              <span className="field-title">
+                                Room
+                              </span>
+                              <span className="field-content">
+                                {this.state.listInfo.room}
+                              </span>
+                            </div>
+                            <div className="flex-column" style={{marginTop: "16px"}}>
+                              <span className="field-title">
+                                Address
+                              </span>
+                              <span className="field-content">
+                                {this.state.listInfo.address}
+                              </span>
+                            </div>
+                            <div className="flex-column" style={{marginTop: "16px"}}>
+                              <span className="field-title">
+                                Experience
+                              </span>
+                              { this.state.listInfo.experience ? this.state.listInfo.experience.map((experience, index) => {
+                                return (
+                                  <div key={index} style={{margin: "8px 0 0 0", border: "1px solid #ddd", padding: "16px"}}>
+                                    <span style={{fontWeight: 600, fontSize: "20px"}}>{experience.title}</span>
+                                    <p style={{margin: "8px 0 0 0", fontSize: "14px"}}>{experience.text}</p>
+                                  </div>
+                                )
+                              }) : null}
+                            </div>
+                          </div>
+                        ) }
+                      </div>
+                    )}
                   </div>
                 </div>
-                <div className="flex-column" style={{flex: 30}}>
-                  <div style={noShadowCardStyle}>
-                    <div className="flex-column default-padding">
-                      Message
-                    </div>
+                <div style={noShadowCardStyle}>
+                  <div className="default-padding">
+                    Listing Data
                   </div>
                 </div>
-
               </div>
+              <div className="flex-column" style={{flex: 30}}>
+                <div style={noShadowCardStyle}>
+                  <div className="flex-column default-padding">
+                    Message
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
-      );
-    }
+      </div>
+    );
   }
+}
 
-  const mapStatesToProps = (states) => {
-    return {
-      auth: states.auth
-    };
-  }
+const mapStatesToProps = (states) => {
+  return {
+    auth: states.auth
+  };
+}
 
-  const mapDispatchToProps = (dispatch) => {
-    return {
-      dispatch
-    };
-  }
+const mapDispatchToProps = (dispatch) => {
+  return {
+    dispatch
+  };
+}
 
-  export default connect(mapStatesToProps, mapDispatchToProps)(DashboardView);
+export default connect(mapStatesToProps, mapDispatchToProps)(DashboardView);

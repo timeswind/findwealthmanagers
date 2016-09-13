@@ -213,9 +213,9 @@ class GetListed extends Component {
   getSelectedCategoryChips() {
 
     const chips = []
-    this.state.categories.forEach((category) => {
+    this.state.categories.map((category) => {
       chips.push(
-        <Chip key={ category.name } style={{margin: "0 8px 8px 0"}}
+        <Chip key={ category.code } style={{margin: "0 8px 8px 0"}}
           onRequestDelete={() => this.handleCategoryChipDelete(category.code)}>
           { category.name }
         </Chip>

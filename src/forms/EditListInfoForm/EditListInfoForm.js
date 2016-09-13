@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
-import { Field, FieldArray, reduxForm, change } from 'redux-form';
+import { Field, FieldArray, reduxForm, change, reset } from 'redux-form';
 import { TextField } from 'redux-form-material-ui';
 import AutoComplete from 'material-ui/AutoComplete';
 import { connect } from 'react-redux';
 import FlatButton from 'material-ui/FlatButton';
+import CategorySelector from '../../components/CategorySelector/CategorySelector';
+
 
 const validate = values => {
   const errors = {}
-  const requiredFields = [ 'phone', 'email', 'brief' ]
+  const requiredFields = [ 'phone', 'brief' ]
   requiredFields.forEach(field => {
     if (!values[ field ]) {
       errors[ field ] = 'Required'
@@ -17,6 +19,8 @@ const validate = values => {
   if (values.email && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
     errors.email = 'Invalid email address'
   }
+
+  console.log(values)
   return errors
 }
 
@@ -88,9 +92,19 @@ class EditListInfoForm extends Component {
     this.geocoder = new window.google.maps.Geocoder();
   }
 
+  onCategorySelect = (categories) => {
+    const formattedCategories = categories.map((category) => {
+      return category.code
+    })
+    this.props.dispatch(change('editListInfo', 'categories', formattedCategories))
+  }
+
   render() {
     const renderExperience = ({ fields }) => (
       <div className="flex-column">
+        <span className="field-title">
+          Experience
+        </span>
         {fields.map((experience, index) =>
           <div className="flex-column" key={index} style={{margin: "8px 0 0 0", border: "1px solid #ddd", padding: "0 16px 16px 16px"}}>
             <Field
@@ -125,8 +139,8 @@ class EditListInfoForm extends Component {
           label="Add experience"
           labelStyle={{color: "#FFF"}}
           rippleColor="#B2DFDB"
-          backgroundColor="#2196F3"
-          hoverColor="#64B5F6"
+          backgroundColor="#546E7A"
+          hoverColor="#37474F"
           style={{marginTop: "16px"}}
           onClick={() => fields.push()}/>
       </div>
@@ -136,6 +150,8 @@ class EditListInfoForm extends Component {
       <form onSubmit={handleSubmit} className="flex-column">
         <Field name="phone" component={TextField} hintText="Phone" floatingLabelText="Phone"/>
         <Field name="email" component={TextField} hintText="Email for bussiness" floatingLabelText="Email for bussiness"/>
+        <CategorySelector onSelect={this.onCategorySelect} initialValues={this.props.initialValues.categories}></CategorySelector>
+
         <Field name="brief" component={TextField} hintText="Brief" floatingLabelText="Brief"/>
         <Field name="room" component={TextField} hintText="Room" floatingLabelText="Room"/>
         <AutoComplete
@@ -153,22 +169,39 @@ class EditListInfoForm extends Component {
           />
         <FieldArray name="experience" component={renderExperience}/>
 
-        <FlatButton type="submit">Submit</FlatButton>
-      </form>
-    );
+        <FlatButton
+          label="submit"
+          type="submit"
+          labelStyle={{color: "#FFF"}}
+          rippleColor="#B2DFDB"
+          backgroundColor="#2196F3"
+          hoverColor="#64B5F6"
+          style={{marginTop: "16px"}}/>
+        <FlatButton
+          label="RESET"
+          labelStyle={{color: "#FFF"}}
+          rippleColor="#B2DFDB"
+          backgroundColor="#2196F3"
+          hoverColor="#64B5F6"
+          style={{marginTop: "16px"}}
+          onClick={()=>{
+            this.props.dispatch(reset('editListInfo'))
+          }}/>
+        </form>
+      );
+    }
   }
-}
 
-// Decorate the form component
-EditListInfoForm = reduxForm({
-  form: 'editListInfo', // a unique name for this form
-  validate
-})(EditListInfoForm);
+  // Decorate the form component
+  EditListInfoForm = reduxForm({
+    form: 'editListInfo', // a unique name for this form
+    validate
+  })(EditListInfoForm);
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    dispatch
-  };
-}
+  const mapDispatchToProps = (dispatch) => {
+    return {
+      dispatch
+    };
+  }
 
-export default connect(null, mapDispatchToProps)(EditListInfoForm);
+  export default connect(null, mapDispatchToProps)(EditListInfoForm);

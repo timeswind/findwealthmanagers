@@ -24,7 +24,8 @@ class Profile extends Component {
     email: "",
     affiliation: "",
     brief: "",
-    categories: []
+    categories: [],
+    experience: []
   }
   componentWillMount() {
     console.log('componentWillMount')
@@ -145,14 +146,14 @@ class Profile extends Component {
                     </div>
                     <div className="p-tab-wrapper">
                       <h2>Experience</h2>
-                      { this.state.experience ? this.state.experience.map((experience, index) => {
+                      { this.state.experience.map((experience, index) => {
                         return (
-                          <div key={index} style={{margin: "8px 0 0 0", border: "1px solid #ddd", padding: "16px"}}>
-                            <span style={{fontWeight: 600, fontSize: "20px"}}>{experience.title}</span>
+                          <div key={index} style={{margin: "16px 0 0 0", paddingTop: "16px", borderTop: "1px solid #ddd"}}>
+                            <span style={{fontWeight: 600, fontSize: "18px"}}>{experience.title}</span>
                             <p style={{margin: "8px 0 0 0", fontSize: "14px"}}>{experience.text}</p>
                           </div>
                         )
-                      }) : null}
+                      })}
                     </div>
 
                   </Tab>
