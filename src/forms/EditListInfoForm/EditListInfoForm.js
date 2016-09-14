@@ -125,24 +125,28 @@ class EditListInfoForm extends Component {
               fullWidth={true}
               rows={3}
               label={`Text #${index + 1}`}/>
-            <FlatButton
-              label="Remove"
-              labelStyle={{color: "#FFF"}}
-              rippleColor="#B2DFDB"
-              backgroundColor="#F44336"
-              hoverColor="#E57373"
-              style={{marginTop: "16px"}}
-              onClick={() => fields.remove(index)}/>
+            <div className="flex-row justify-right">
+              <FlatButton
+                label="Remove"
+                labelStyle={{color: "#FFF"}}
+                rippleColor="#B2DFDB"
+                backgroundColor="#F44336"
+                hoverColor="#E57373"
+                style={{marginTop: "16px"}}
+                onClick={() => fields.remove(index)}/>
+            </div>
           </div>
         )}
-        <FlatButton
-          label="Add experience"
-          labelStyle={{color: "#FFF"}}
-          rippleColor="#B2DFDB"
-          backgroundColor="#546E7A"
-          hoverColor="#37474F"
-          style={{marginTop: "16px"}}
-          onClick={() => fields.push()}/>
+        <div className="flex-row">
+          <FlatButton
+            label="Add experience"
+            labelStyle={{color: "#FFF"}}
+            rippleColor="#B2DFDB"
+            backgroundColor="#546E7A"
+            hoverColor="#37474F"
+            style={{marginTop: "16px"}}
+            onClick={() => fields.push()}/>
+        </div>
       </div>
     )
     const { handleSubmit } = this.props;
@@ -168,40 +172,52 @@ class EditListInfoForm extends Component {
           onNewRequest={this.selectAddress}
           />
         <FieldArray name="experience" component={renderExperience}/>
+        <div className="flex-row justify-right">
 
-        <FlatButton
-          label="submit"
-          type="submit"
-          labelStyle={{color: "#FFF"}}
-          rippleColor="#B2DFDB"
-          backgroundColor="#2196F3"
-          hoverColor="#64B5F6"
-          style={{marginTop: "16px"}}/>
-        <FlatButton
-          label="RESET"
-          labelStyle={{color: "#FFF"}}
-          rippleColor="#B2DFDB"
-          backgroundColor="#2196F3"
-          hoverColor="#64B5F6"
-          style={{marginTop: "16px"}}
-          onClick={()=>{
-            this.props.dispatch(reset('editListInfo'))
-          }}/>
-        </form>
-      );
-    }
+          <FlatButton
+            label="cancle"
+            style={{marginTop: "16px", marginLeft: "16px"}}
+            onClick={()=>{
+              this.props.handleCancle()
+            }}
+            />
+          <FlatButton
+            label="RESET"
+            labelStyle={{color: "#FFF"}}
+            rippleColor="#B2DFDB"
+            backgroundColor="#FFC107"
+            hoverColor="#F57C00"
+            style={{marginTop: "16px", marginLeft: "16px"}}
+            onClick={()=>{
+              this.props.dispatch(reset('editListInfo'))
+            }}
+            />
+          <FlatButton
+            label="submit"
+            type="submit"
+            labelStyle={{color: "#FFF"}}
+            rippleColor="#B2DFDB"
+            backgroundColor="#2196F3"
+            hoverColor="#64B5F6"
+            style={{marginTop: "16px", marginLeft: "16px"}}
+            />
+        </div>
+
+      </form>
+    );
   }
+}
 
-  // Decorate the form component
-  EditListInfoForm = reduxForm({
-    form: 'editListInfo', // a unique name for this form
-    validate
-  })(EditListInfoForm);
+// Decorate the form component
+EditListInfoForm = reduxForm({
+  form: 'editListInfo', // a unique name for this form
+  validate
+})(EditListInfoForm);
 
-  const mapDispatchToProps = (dispatch) => {
-    return {
-      dispatch
-    };
-  }
+const mapDispatchToProps = (dispatch) => {
+  return {
+    dispatch
+  };
+}
 
-  export default connect(null, mapDispatchToProps)(EditListInfoForm);
+export default connect(null, mapDispatchToProps)(EditListInfoForm);

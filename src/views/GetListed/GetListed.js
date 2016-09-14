@@ -448,6 +448,14 @@ class GetListed extends Component {
                         <p>To reach more customer, you could:</p>
                         <p>Add address to the listing profile</p>
                         <p>Add profile photos</p>
+                        <RaisedButton
+                          label="GO TO dashboard"
+                          primary={true}
+                          onClick={()=>{
+                            this.props.dispatch(push('/dashboard'))
+                          }}
+                          style={{marginRight: 12}}
+                          />
                         <p>...</p>
                       </div>
                     </Card>
@@ -461,33 +469,62 @@ class GetListed extends Component {
               </div>
 
             ) : (
-              <Stepper activeStep={stepIndex} orientation="vertical">
-                <Step>
-                  <StepLabel>Collect information</StepLabel>
-                  <StepContent>
-                    {this.getStepContent(0)}
-                    {this.renderStepActions(0)}
-                  </StepContent>
-                </Step>
-                <Step>
-                  { this.props.auth.isLogin ? (
-                    <StepLabel>Confirm account</StepLabel>
+              <div>
+                <Stepper activeStep={stepIndex} orientation="vertical">
+                  <Step>
+                    <StepLabel>Collect information</StepLabel>
+                    <StepContent>
+                      {this.getStepContent(0)}
+                      {this.renderStepActions(0)}
+                    </StepContent>
+                  </Step>
+                  <Step>
+                    { this.props.auth.isLogin ? (
+                      <StepLabel>Confirm account</StepLabel>
+                    ) : (
+                      <StepLabel>Create account</StepLabel>
+                    ) }
+                    <StepContent>
+                      {this.getStepContent(1)}
+                      {this.renderStepActions(1)}
+                    </StepContent>
+                  </Step>
+                  <Step>
+                    <StepLabel>Accep terms</StepLabel>
+                    <StepContent>
+                      {this.getStepContent(2)}
+                      {this.renderStepActions(2)}
+                    </StepContent>
+                  </Step>
+                </Stepper>
+                <div style={contentStyle}>
+                  {finished ? (
+                    <Card>
+                      <CardTitle title="Congradualation!"/>
+                      <div className="default-padding">
+                        <p>You have successfuly create a basic listing profile</p>
+                        <p>To reach more customer, you could:</p>
+                        <p>Add address to the listing profile</p>
+                        <p>Add profile photos</p>
+                        <RaisedButton
+                          label="GO TO dashboard"
+                          primary={true}
+                          onClick={()=>{
+                            this.props.dispatch(push('/dashboard'))
+                          }}
+                          style={{marginRight: 12}}
+                          />
+                        <p>...</p>
+                      </div>
+                    </Card>
                   ) : (
-                    <StepLabel>Create account</StepLabel>
-                  ) }
-                  <StepContent>
-                    {this.getStepContent(1)}
-                    {this.renderStepActions(1)}
-                  </StepContent>
-                </Step>
-                <Step>
-                  <StepLabel>Accep terms</StepLabel>
-                  <StepContent>
-                    {this.getStepContent(2)}
-                    {this.renderStepActions(2)}
-                  </StepContent>
-                </Step>
-              </Stepper>
+                    <div>
+                      <div>{this.getStepContent(stepIndex)}</div>
+                      {this.renderStepActions(stepIndex)}
+                    </div>
+                  )}
+                </div>
+              </div>
             ) }
           </div>
         </div>

@@ -125,6 +125,10 @@
   align-items: center;
 }
 
+.justify-right {
+  justify-content: flex-end;
+}
+
 .justify-center {
   justify-content: center;
 }
@@ -201,4 +205,11 @@
   .home-search-field {
     padding: 16px 0;
   }
+}
+.light-card{
+  border-radius: 3px;
+  margin-top: 16px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,.04);
+  border: 1px solid rgba(0,0,0,.09);
 }

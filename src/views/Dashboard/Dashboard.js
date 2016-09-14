@@ -8,9 +8,11 @@ import categoryTypes from '../../assets/categories'
 
 import EditListInfoFrom from '../../forms/EditListInfoForm/EditListInfoForm';
 
-const noShadowCardStyle = {
+const lessShadowCardStyle = {
   backgroundColor: "#FFF",
-  border: "1px solid #ddd",
+  boxShadow: '0 1px 4px rgba(0,0,0,.04)',
+  border: '1px solid rgba(0,0,0,.09)',
+  borderRadius: '3px',
   marginBottom: "16px"
 }
 
@@ -85,6 +87,10 @@ class DashboardView extends Component {
     })
   }
 
+  handleEditListFormCancel = () => {
+    this.setState({ editListInfo: false })
+  }
+
   updateListInfo (listInfo) {
     this.setState({ "listInfo": listInfo })
   }
@@ -101,7 +107,7 @@ class DashboardView extends Component {
             ) : null }
             <div className="flex-row">
               <div className="flex-column" style={{flex: 70, marginRight: "16px"}}>
-                <div className="flex-row" style={noShadowCardStyle}>
+                <div className="flex-row" style={lessShadowCardStyle}>
                   <div className="flex-column default-padding">
                     <div style={{marginBottom: "16px", fontSize: "24px"}}>
                       Account info
@@ -144,7 +150,7 @@ class DashboardView extends Component {
                     ) : null}
                   </div>
                 </div>
-                <div className="flex-column" style={noShadowCardStyle}>
+                <div className="flex-column" style={lessShadowCardStyle}>
                   <div className="flex-column default-padding">
                     { !this.state.listed ? (
                       <div className="flex-column">
@@ -168,26 +174,8 @@ class DashboardView extends Component {
                               <div style={{fontSize: "24px"}}>
                                 List Information
                               </div>
-                              <div>
-                                <FlatButton
-                                  label="Cancel"
-                                  labelStyle={{color: "#4285f4"}}
-                                  backgroundColor="transparent"
-                                  onClick={()=>{
-                                    this.setState({editListInfo: false})
-                                  }}
-                                  />
-                              </div>
                             </div>
-                            <EditListInfoFrom initialValues={this.state.listInfo} onSubmit={this.handleEditListFormSubmit}></EditListInfoFrom>
-                            <FlatButton
-                              label="Cancel"
-                              style={{marginTop: 16}}
-                              backgroundColor="transparent"
-                              onClick={()=>{
-                                this.setState({editListInfo: false})
-                              }}
-                              />
+                            <EditListInfoFrom handleCancle={this.handleEditListFormCancel} initialValues={this.state.listInfo} onSubmit={this.handleEditListFormSubmit}></EditListInfoFrom>
                           </div>
                         ) : (
                           <div className="flex-column">
@@ -288,14 +276,14 @@ class DashboardView extends Component {
                     )}
                   </div>
                 </div>
-                <div style={noShadowCardStyle}>
+                <div style={lessShadowCardStyle}>
                   <div className="default-padding">
                     Listing Data
                   </div>
                 </div>
               </div>
               <div className="flex-column" style={{flex: 30}}>
-                <div style={noShadowCardStyle}>
+                <div style={lessShadowCardStyle}>
                   <div className="flex-column default-padding">
                     Message
                   </div>

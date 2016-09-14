@@ -39,7 +39,7 @@ class Home extends Component {
         <div className="App-header">
           <div style={headerWrapperStyle} className="home-search-field">
             <h2 className="header-promot">Easily Find Wealth Managers Near You.</h2>
-            <SearchCard></SearchCard>
+            <SearchCard path="home"></SearchCard>
           </div>
         </div>
         <div className="App-body">

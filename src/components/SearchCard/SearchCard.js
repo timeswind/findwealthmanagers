@@ -105,9 +105,13 @@ class SearchCard extends Component {
     this.geocoder = new window.google.maps.Geocoder();
   }
 
-  search() {
+  search = () => {
     const { dispatch } = this.props;
-    dispatch(push('/search'))
+    if (this.props.path && this.props.path === 'home') {
+      dispatch(push('/search'))
+    } else {
+      this.props.onSearch()
+    }
   }
 
   render() {
@@ -157,26 +161,24 @@ class SearchCard extends Component {
             rippleColor="#B2DFDB"
             backgroundColor="#00BFA5"
             hoverColor="#26A69A"
-            onClick={()=>{
-              this.search()
-            }}/>
-          </div>
-        </Card>
-      );
-    }
+            onClick={this.search}/>
+        </div>
+      </Card>
+    );
   }
+}
 
-  const mapStatesToProps = (states) => {
-    return {
-      search: states.search
-    };
-  }
+const mapStatesToProps = (states) => {
+  return {
+    search: states.search
+  };
+}
 
-  const mapDispatchToProps = (dispatch) => {
-    return {
-      dispatch,
-      actions: bindActionCreators(SearchActions, dispatch)
-    };
-  }
+const mapDispatchToProps = (dispatch) => {
+  return {
+    dispatch,
+    actions: bindActionCreators(SearchActions, dispatch)
+  };
+}
 
-  export default connect(mapStatesToProps, mapDispatchToProps)(SearchCard);
+export default connect(mapStatesToProps, mapDispatchToProps)(SearchCard);
