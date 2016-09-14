@@ -31,17 +31,37 @@ mockManagersData.forEach((mockManagerData) => {
 class Search extends Component {
   componentDidMount() {
     console.log(this.props.search)
+    const categories = this.props.search.categories
+    const loc = this.props.search.coordinate
+    fetch('/api/public/search?categories=' + categories +'&lat=' + loc[0] + '&long=' + loc[1], {
+      method: "GET",
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+    }).then(function(response) {
+      return response.json()
+    }).then(function(json) {
+      console.log(json)
+      if (json.success === true) {
+
+      } else {
+        // self.props.dispatch(push('/'))
+      }
+    }).catch(function(ex) {
+      console.log('failed', ex)
+    })
   }
   render() {
 
     return (
       <div className="search">
         <div className="g-background" style={{padding: "77px 0"}}>
-            <div style={{maxWidth: "860px", margin: '32px auto 0 auto'}}>
-              <SearchCard></SearchCard>
-              <div>{mockTopManagers}</div>
+          <div style={{maxWidth: "860px", margin: '32px auto 0 auto'}}>
+            <SearchCard></SearchCard>
+            <div>{mockTopManagers}</div>
 
-            </div>
+          </div>
         </div>
         <MainFooter></MainFooter>
       </div>

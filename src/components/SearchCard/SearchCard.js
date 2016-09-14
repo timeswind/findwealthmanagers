@@ -55,7 +55,7 @@ class SearchCard extends Component {
         console.log(results)
         let longitude = results[0].geometry.location.lng()
         let latitude = results[0].geometry.location.lat()
-        let loc = [latitude, longitude]
+        let loc = [longitude, latitude]
         actions.setSearchCoordinate(loc)
       } else {
         console.log("Geocode was not successful for the following reason: " + status);

@@ -47,7 +47,7 @@ class EditListInfoForm extends Component {
         console.log(results)
         let longitude = results[0].geometry.location.lng()
         let latitude = results[0].geometry.location.lat()
-        let loc = [latitude, longitude]
+        let loc = [longitude, latitude] //getjson format [ lng, lat ]
         console.log(loc)
         self.props.dispatch(change('editListInfo', 'loc', loc))
       } else {
