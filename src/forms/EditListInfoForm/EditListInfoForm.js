@@ -156,7 +156,15 @@ class EditListInfoForm extends Component {
         <Field name="email" component={TextField} hintText="Email for bussiness" floatingLabelText="Email for bussiness"/>
         <CategorySelector onSelect={this.onCategorySelect} initialValues={this.props.initialValues.categories}></CategorySelector>
 
-        <Field name="brief" component={TextField} hintText="Brief" floatingLabelText="Brief"/>
+        <Field
+          name="brief"
+          multiLine={true}
+          fullWidth={true}
+          rows={3}
+          component={TextField}
+          hintText="Brief"
+          floatingLabelText="Brief"
+          />
         <Field name="room" component={TextField} hintText="Room" floatingLabelText="Room"/>
         <AutoComplete
           hintText="Address"

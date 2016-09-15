@@ -74,8 +74,11 @@ class LoginView extends Component {
         localStore.session("name", json.name);
         localStore.session("email", json.email);
         localStore.session("role", json.role);
-
-        dispatch(push('/'))
+        if (json.role !== 1) {
+          dispatch(push('/dashboard'))
+        } else {
+          dispatch(push('/'))
+        }
       } else {
         if (json.error) {
           newState.errorText.result = json.error;

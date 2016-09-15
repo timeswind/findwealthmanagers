@@ -8,7 +8,7 @@ import TopWealthManagerCard from '../../components/TopWealthManagerCard/TopWealt
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as SearchActions from '../../redux/actions/search';
-// import { push } from 'react-router-redux'
+import { push } from 'react-router-redux'
 import SearchCard from '../../components/SearchCard/SearchCard'
 import categories from '../../assets/categories'
 
@@ -65,6 +65,11 @@ class Search extends Component {
     })
   }
 
+  goToListDetail(id) {
+    var path = '/p/' + id
+    this.props.dispatch(push(path))
+  }
+
   render() {
 
     return (
@@ -76,7 +81,9 @@ class Search extends Component {
               <div className="flex-column">
                 { this.state.results.map((list) => {
                   return (
-                    <div key={list._id} className="light-card flex-row" style={{cursor: "pointer"}}>
+                    <div key={list._id} className="light-card flex-row" style={{cursor: "pointer"}}  onClick={()=>{
+                        this.goToListDetail(list._id)
+                      }}>
                       <div className="flex-column align-center default-padding raleway" style={{flex: 30}}>
                         <Avatar
                           src="http://www.lovemarks.com/wp-content/uploads/profile-avatars/default-avatar-tech-guy.png"

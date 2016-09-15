@@ -109,7 +109,7 @@ class DashboardView extends Component {
               <div className="flex-column" style={{flex: 70, marginRight: "16px"}}>
                 <div className="flex-row" style={lessShadowCardStyle}>
                   <div className="flex-column default-padding">
-                    <div style={{marginBottom: "16px", fontSize: "24px"}}>
+                    <div style={{marginBottom: "16px", fontSize: "24px", fontWeight: '600'}} className="raleway">
                       Account info
                     </div>
                     <div className="flex-row">
@@ -154,7 +154,7 @@ class DashboardView extends Component {
                   <div className="flex-column default-padding">
                     { !this.state.listed ? (
                       <div className="flex-column">
-                        <div style={{marginBottom: "16px", fontSize: "24px"}}>
+                        <div style={{marginBottom: "16px", fontSize: "24px", fontWeight: '600'}} className="raleway">
                           List Information
                         </div>
                         <FlatButton
@@ -171,7 +171,7 @@ class DashboardView extends Component {
                         { this.state.editListInfo ? (
                           <div className="flex-column">
                             <div className="flex-row flex-center">
-                              <div style={{fontSize: "24px"}}>
+                              <div style={{fontSize: "24px", fontWeight: '600'}} className="raleway">
                                 List Information
                               </div>
                             </div>
@@ -180,7 +180,7 @@ class DashboardView extends Component {
                         ) : (
                           <div className="flex-column">
                             <div className="flex-row flex-center">
-                              <div style={{fontSize: "24px"}}>
+                              <div style={{fontSize: "24px", fontWeight: '600'}} className="raleway">
                                 List Information
                               </div>
                               <div>
@@ -277,14 +277,26 @@ class DashboardView extends Component {
                   </div>
                 </div>
                 <div style={lessShadowCardStyle}>
-                  <div className="default-padding">
+                  <div className="flex-column default-padding raleway" style={{fontSize: "24px", fontWeight: '600'}}>
                     Listing Data
                   </div>
                 </div>
               </div>
               <div className="flex-column" style={{flex: 30}}>
+                <div className="flex-column" style={lessShadowCardStyle}>
+                  <div className="flex-row flex-center">
+                    <div className="flex-column default-padding raleway" style={{fontSize: "24px", fontWeight: '600'}}>
+                      Appointment
+                    </div>
+                    <FlatButton
+                      label="manage"
+                      labelStyle={{color: "rgb(66, 133, 244)"}}
+                      />
+                  </div>
+
+                </div>
                 <div style={lessShadowCardStyle}>
-                  <div className="flex-column default-padding">
+                  <div className="flex-column default-padding raleway" style={{fontSize: "24px", fontWeight: '600'}}>
                     Message
                   </div>
                 </div>
