@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
+import { RouteTransition } from 'react-router-transition';
 import './App.css';
 import Navbar from './components/Navbar/Navbar'
 
@@ -8,16 +8,14 @@ class App extends Component {
     return (
       <div>
         <Navbar></Navbar>
-        <ReactCSSTransitionGroup
-          component="div"
-          transitionName="fade"
-          transitionEnterTimeout={500}
-          transitionLeaveTimeout={500}
+        <RouteTransition
+          pathname={this.props.location.pathname}
+          atEnter={{ opacity: 0 }}
+          atLeave={{ opacity: 0 }}
+          atActive={{ opacity: 1 }}
           >
-          {React.cloneElement(this.props.children, {
-            key: this.props.location.pathname
-          })}
-        </ReactCSSTransitionGroup>
+          {this.props.children}
+        </RouteTransition>
       </div>
     );
   }

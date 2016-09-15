@@ -18,7 +18,7 @@ import localStore from 'store2';
 
 import App from './App';
 import Home from './views/Home/Home';
-import GetListedView from './views/GetListed/GetListed';
+// import GetListedView from './views/GetListed/GetListed';
 import LoginView from './views/LoginView/LoginView';
 import SignupView from './views/SignupView/SignupView';
 import SearchView from './views/Search/Search';
@@ -101,20 +101,24 @@ const MUI = () => (
       <Router history={history} render={applyRouterMiddleware(useScroll())}>
         <Route path="/" component={App}>
           <IndexRoute component={Home}/>
-          <Route path="getlisted" component={GetListedView} />
-          <Route path="search" component={SearchView} />
-          <Route path="login" component={LoginView} />
-          <Route path="signup" component={SignupView} />
-          <Route path="dashboard" component={DashboardView} onEnter={requireAuth} />
-          <Route path="p/:id" component={ProfileView}/>
-        </Route>
-      </Router>
-    </Provider>
-  </MuiThemeProvider>
-);
+          <Route path="getlisted" getComponent={function(location, cb){
+              require.ensure([], (require) => {
+                cb(null, require('./views/GetListed/GetListed.js').default)
+              })
+            }} />
+            <Route path="search" component={SearchView} />
+            <Route path="login" component={LoginView} />
+            <Route path="signup" component={SignupView} />
+            <Route path="dashboard" component={DashboardView} onEnter={requireAuth} />
+            <Route path="p/:id" component={ProfileView}/>
+          </Route>
+        </Router>
+      </Provider>
+    </MuiThemeProvider>
+  );
 
-injectTapEventPlugin();
-ReactDOM.render(
-  <MUI />,
-  document.getElementById('root')
-);
+  injectTapEventPlugin();
+  ReactDOM.render(
+    <MUI />,
+    document.getElementById('root')
+  );
