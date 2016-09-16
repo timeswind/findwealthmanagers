@@ -36,6 +36,26 @@ mockManagersData.forEach((mockManagerData) => {
 })
 
 class Home extends Component {
+  state = {
+    userMenuOpen: false
+  }
+
+  handleTouchTap = (event) => {
+    // This prevents ghost click.
+    event.preventDefault();
+
+    this.setState({
+      userMenuOpen: true,
+      anchorEl: event.currentTarget,
+    });
+  };
+
+  handleRequestClose = () => {
+    this.setState({
+      userMenuOpen: false,
+    });
+  };
+
   routerPush (path) {
     this.props.dispatch(push(path))
   }
