@@ -8,6 +8,8 @@ import categoryTypes from '../../assets/categories'
 
 import EditListInfoFrom from '../../forms/EditListInfoForm/EditListInfoForm';
 
+import './Dashboard.css'
+
 const lessShadowCardStyle = {
   backgroundColor: "#FFF",
   boxShadow: '0 1px 4px rgba(0,0,0,.04)',
@@ -108,53 +110,55 @@ class DashboardView extends Component {
             <div className="flex-row">
               <div className="flex-column" style={{flex: 70, marginRight: "16px"}}>
                 <div className="flex-row" style={lessShadowCardStyle}>
-                  <div className="flex-column default-padding">
-                    <div style={{marginBottom: "16px", fontSize: "24px", fontWeight: '600'}} className="raleway">
+                  <div className="flex-column">
+                    <div className="panel-header">
                       Account info
                     </div>
-                    <div className="flex-row">
-                      <div className="flex-column">
-                        <span className="field-title">
-                          FirstName
-                        </span>
-                        <span className="field-content">
-                          {this.state.userInfo.firstName}
-                        </span>
+                    <div className="panel-body">
+                      <div className="flex-row">
+                        <div className="flex-column">
+                          <span className="field-title">
+                            FirstName
+                          </span>
+                          <span className="field-content">
+                            {this.state.userInfo.firstName}
+                          </span>
+                        </div>
+                        <div className="flex-column" style={{marginLeft: "32px"}}>
+                          <span className="field-title">
+                            LastName
+                          </span>
+                          <span className="field-content">
+                            {this.state.userInfo.lastName}
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex-column" style={{marginLeft: "32px"}}>
-                        <span className="field-title">
-                          LastName
-                        </span>
-                        <span className="field-content">
-                          {this.state.userInfo.lastName}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex-column" style={{marginTop: "16px"}}>
-                      <span className="field-title">
-                        Email
-                      </span>
-                      <span className="field-content">
-                        {this.state.userInfo.email}
-                      </span>
-                    </div>
-                    { this.state.userInfo.role === 2 ? (
                       <div className="flex-column" style={{marginTop: "16px"}}>
                         <span className="field-title">
-                          Affiliation
+                          Email
                         </span>
                         <span className="field-content">
-                          {this.state.userInfo.affiliation}
+                          {this.state.userInfo.email}
                         </span>
                       </div>
-                    ) : null}
+                      { this.state.userInfo.role === 2 ? (
+                        <div className="flex-column" style={{marginTop: "16px"}}>
+                          <span className="field-title">
+                            Affiliation
+                          </span>
+                          <span className="field-content">
+                            {this.state.userInfo.affiliation}
+                          </span>
+                        </div>
+                      ) : null}
+                    </div>
                   </div>
                 </div>
                 <div className="flex-column" style={lessShadowCardStyle}>
                   <div className="flex-column default-padding">
                     { !this.state.listed ? (
                       <div className="flex-column">
-                        <div style={{marginBottom: "16px", fontSize: "24px", fontWeight: '600'}} className="raleway">
+                        <div style={{marginBottom: "16px", fontSize: "22px", fontWeight: '600'}} className="raleway">
                           List Information
                         </div>
                         <FlatButton
@@ -171,7 +175,7 @@ class DashboardView extends Component {
                         { this.state.editListInfo ? (
                           <div className="flex-column">
                             <div className="flex-row flex-center">
-                              <div style={{fontSize: "24px", fontWeight: '600'}} className="raleway">
+                              <div style={{fontSize: "22px", fontWeight: '600'}} className="raleway">
                                 List Information
                               </div>
                             </div>
@@ -180,7 +184,7 @@ class DashboardView extends Component {
                         ) : (
                           <div className="flex-column">
                             <div className="flex-row flex-center">
-                              <div style={{fontSize: "24px", fontWeight: '600'}} className="raleway">
+                              <div style={{fontSize: "22px", fontWeight: '600'}} className="raleway">
                                 List Information
                               </div>
                               <div>
@@ -277,7 +281,7 @@ class DashboardView extends Component {
                   </div>
                 </div>
                 <div style={lessShadowCardStyle}>
-                  <div className="flex-column default-padding raleway" style={{fontSize: "24px", fontWeight: '600'}}>
+                  <div className="flex-column default-padding raleway" style={{fontSize: "22px", fontWeight: '600'}}>
                     Listing Data
                   </div>
                 </div>
@@ -285,7 +289,7 @@ class DashboardView extends Component {
               <div className="flex-column" style={{flex: 30}}>
                 <div className="flex-column" style={lessShadowCardStyle}>
                   <div className="flex-row flex-center">
-                    <div className="flex-column default-padding raleway" style={{fontSize: "24px", fontWeight: '600'}}>
+                    <div className="flex-column default-padding raleway" style={{fontSize: "22px", fontWeight: '600'}}>
                       Appointment
                     </div>
                     <FlatButton
@@ -296,7 +300,7 @@ class DashboardView extends Component {
 
                 </div>
                 <div style={lessShadowCardStyle}>
-                  <div className="flex-column default-padding raleway" style={{fontSize: "24px", fontWeight: '600'}}>
+                  <div className="flex-column default-padding raleway" style={{fontSize: "22px", fontWeight: '600'}}>
                     Message
                   </div>
                 </div>

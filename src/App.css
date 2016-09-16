@@ -11,6 +11,14 @@
   z-index: 3;
 }
 
+.home-navbar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 0 auto;
+  max-width: 1150px
+}
+
 .navbar {
   display: flex;
   flex-direction: row;
@@ -35,17 +43,14 @@
   margin: 0 auto
 }
 
-.App-header {
-  background-color: #00b0ff;
+.Home-App-header {
+  background-color: #161616;
   background-image: url("./assets/header-pic.jpg");
   background-repeat: no-repeat;
   background-position: 50%;
   background-size:cover;
-  padding: 69px 16px 32px 16px;
+  padding: 16px;
   color: white;
-  /*position: relative;
-  top: 77px;*/
-  z-index: 1;
 }
 
 .header-promot {
@@ -73,6 +78,14 @@
 .flex-column {
   display: flex;
   flex-direction: column;
+}
+.nav-brand-text-white {
+  font-size: 32px;
+  font-family: "Raleway";
+  text-shadow: 1px 2px 3px #333;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
 }
 
 

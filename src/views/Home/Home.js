@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import Menu from 'material-ui/Menu';
+import MenuItem from 'material-ui/MenuItem';
+import Popover from 'material-ui/Popover';
 import SearchCard from '../../components/SearchCard/SearchCard';
 import MainFooter from '../../components/MainFooter/MainFooter';
 import FontIcon from 'material-ui/FontIcon';
@@ -33,10 +36,81 @@ mockManagersData.forEach((mockManagerData) => {
 })
 
 class Home extends Component {
+  routerPush (path) {
+    this.props.dispatch(push(path))
+  }
   render() {
     return (
       <div className="home">
-        <div className="App-header">
+        <div className="Home-App-header">
+          <div className="home-navbar">
+            <a className="nav-brand-text-white">WEALTHIE</a>
+            { this.props.auth.isLogin ? (
+              <div className="flex-row flex-center" style={{marginLeft: "auto"}}>
+                <div className="raleway">
+                  <div className="flex-row flex-center"
+                    onTouchTap={this.handleTouchTap}
+                    style={{cursor: "pointer"}}>
+                    <span>{this.props.auth.name}</span>
+                    <FontIcon
+                      className="material-icons"
+                      style={{fontSize: "20px"}}>
+                      keyboard_arrow_down
+                    </FontIcon>
+                  </div>
+                  <Popover
+                    open={this.state.userMenuOpen}
+                    anchorEl={this.state.anchorEl}
+                    anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+                    targetOrigin={{horizontal: 'right', vertical: 'top'}}
+                    onRequestClose={this.handleRequestClose}
+                    >
+                    <Menu>
+                      <MenuItem primaryText="Dashboard"
+                        onClick={()=>{
+                          this.routerPush('/dashboard')
+                          this.handleRequestClose()
+                        }}
+                        />
+                      <MenuItem primaryText="Help &amp; feedback"/>
+                      <MenuItem primaryText="Sign out"
+                        onClick={()=>{
+                          this.logout()
+                          this.handleRequestClose()
+                        }}
+                        />
+                    </Menu>
+                  </Popover>
+                </div>
+              </div>
+            ) : (
+              <div className="flex-row" style={{marginLeft: "auto"}}>
+                <div className="flex-row flex-center login-signup-wrapper" style={{marginRight: "16px"}}>
+                  <FlatButton
+                    label="Account"
+                    hoverColor="transparent"
+                    style={{color: "#fff", textShadow: "1px 2px 3px #333"}}
+                    onClick={() => {
+                      this.routerPush('/login')
+                    }}
+                    />
+                </div>
+                { this.props.path !== '/getlisted' ? (
+                  <FlatButton
+                    backgroundColor="rgba(0, 0, 0, 0.5)"
+                    hoverColor="rgba(0, 0, 0, 0.7)"
+                    rippleColor="rgba(0, 0, 0, 0.9)"
+                    style={{color: "#fff"}}
+                    label="GET LISTED TODAY"
+                    onClick={() => {
+                      this.routerPush('/getlisted')
+                    }}
+                    />
+                ) : null}
+
+              </div>
+            )}
+          </div>
           <div style={headerWrapperStyle} className="home-search-field">
             <h2 className="header-promot">Easily Find Wealth Managers Near You.</h2>
             <SearchCard path="home"></SearchCard>
@@ -108,6 +182,12 @@ class Home extends Component {
     );
   }
 }
+const mapStatesToProps = (state) => {
+  return {
+    path: state.routing.locationBeforeTransitions.pathname,
+    auth: state.auth
+  };
+}
 
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -116,4 +196,4 @@ const mapDispatchToProps = (dispatch) => {
 }
 
 
-export default connect(null, mapDispatchToProps)(Home);
+export default connect(mapStatesToProps, mapDispatchToProps)(Home);

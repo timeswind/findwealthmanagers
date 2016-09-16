@@ -23,7 +23,6 @@ import LoginView from './views/LoginView/LoginView';
 import SignupView from './views/SignupView/SignupView';
 import SearchView from './views/Search/Search';
 import DashboardView from './views/Dashboard/Dashboard';
-import ProfileView from './views/Profile/Profile';
 
 import { reducer as formReducer } from 'redux-form'
 import authReducers from './redux/reducers/auth';
@@ -105,20 +104,26 @@ const MUI = () => (
               require.ensure([], (require) => {
                 cb(null, require('./views/GetListed/GetListed.js').default)
               })
-            }} />
-            <Route path="search" component={SearchView} />
-            <Route path="login" component={LoginView} />
-            <Route path="signup" component={SignupView} />
-            <Route path="dashboard" component={DashboardView} onEnter={requireAuth} />
-            <Route path="p/:id" component={ProfileView}/>
-          </Route>
-        </Router>
-      </Provider>
-    </MuiThemeProvider>
-  );
+            }}
+            />
+          <Route path="search" component={SearchView} />
+          <Route path="login" component={LoginView} />
+          <Route path="signup" component={SignupView} />
+          <Route path="dashboard" component={DashboardView} onEnter={requireAuth} />
+          <Route path="p/:id" getComponent={function(location, cb){
+              require.ensure([], (require) => {
+                cb(null, require('./views/Profile/Profile').default)
+              })
+            }}
+            />
+        </Route>
+      </Router>
+    </Provider>
+  </MuiThemeProvider>
+);
 
-  injectTapEventPlugin();
-  ReactDOM.render(
-    <MUI />,
-    document.getElementById('root')
-  );
+injectTapEventPlugin();
+ReactDOM.render(
+  <MUI />,
+  document.getElementById('root')
+);

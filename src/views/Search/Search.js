@@ -4,7 +4,6 @@ import React, { Component } from 'react';
 import Avatar from 'material-ui/Avatar';
 import FontIcon from 'material-ui/FontIcon';
 import MainFooter from '../../components/MainFooter/MainFooter'
-import TopWealthManagerCard from '../../components/TopWealthManagerCard/TopWealthManagerCard';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as SearchActions from '../../redux/actions/search';

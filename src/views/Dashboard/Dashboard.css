@@ -1,0 +1,14 @@
+.panel-header {
+  font-family: 'Raleway';
+  flex-direction: row;
+  align-items: center;
+  font-size: 22px;
+  font-weight: 600;
+  padding: 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #ddd;
+}
+
+.panel-body {
+  padding: 0 16px 16px 16px
+}
