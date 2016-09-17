@@ -116,6 +116,12 @@ const MUI = () => (
               })
             }}
             />
+          <Route path="clients" getComponent={function(location, cb){
+              require.ensure([], (require) => {
+                cb(null, require('./views/Clients/Clients').default)
+              })
+            }}
+            />
         </Route>
       </Router>
     </Provider>

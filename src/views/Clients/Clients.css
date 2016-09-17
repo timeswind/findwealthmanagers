@@ -1,0 +1,8 @@
+.clients-side-panel {
+  border-right: 1px solid #ddd;
+  background: #fff;
+}
+
+.clients-search-bar {
+  padding: 8px 0 8px 16px;
+}

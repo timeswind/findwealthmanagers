@@ -8,6 +8,8 @@ import FontIcon from 'material-ui/FontIcon';
 import FlatButton from 'material-ui/FlatButton';
 import TopWealthManagerCard from '../../components/TopWealthManagerCard/TopWealthManagerCard';
 import mockManagersData from '../../mockdata/managers';
+import * as AuthActions from '../../redux/actions/auth.js';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 
@@ -55,6 +57,11 @@ class Home extends Component {
       userMenuOpen: false,
     });
   };
+
+  logout() {
+    const { actions } = this.props;
+    actions.logout()
+  }
 
   routerPush (path) {
     this.props.dispatch(push(path))
@@ -211,7 +218,8 @@ const mapStatesToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    dispatch
+    dispatch,
+    actions: bindActionCreators(AuthActions, dispatch)
   };
 }
 

@@ -99,8 +99,8 @@ class DashboardView extends Component {
 
   render() {
     return (
-      <div className="view-body flex-column g-background">
-        <div className="g-background" style={{padding:"36px 8px 64px 8px"}}>
+      <div className="view-body flex-column">
+        <div style={{padding:"36px 8px 64px 8px"}}>
           <div style={{width: '100%', maxWidth: "1080px", margin: '0 auto'}}>
             { this.state.emailIsVerified === false ? (
               <div className="flex-column default-padding raleway" style={{marginBottom: "16px", backgroundColor: "#fff", border: "1px solid #FF9800", color: "#FF9800"}}>
@@ -109,49 +109,47 @@ class DashboardView extends Component {
             ) : null }
             <div className="flex-row">
               <div className="flex-column" style={{flex: 70, marginRight: "16px"}}>
-                <div className="flex-row" style={lessShadowCardStyle}>
-                  <div className="flex-column">
-                    <div className="panel-header">
-                      Account info
-                    </div>
-                    <div className="panel-body">
-                      <div className="flex-row">
-                        <div className="flex-column">
-                          <span className="field-title">
-                            FirstName
-                          </span>
-                          <span className="field-content">
-                            {this.state.userInfo.firstName}
-                          </span>
-                        </div>
-                        <div className="flex-column" style={{marginLeft: "32px"}}>
-                          <span className="field-title">
-                            LastName
-                          </span>
-                          <span className="field-content">
-                            {this.state.userInfo.lastName}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="flex-column" style={{marginTop: "16px"}}>
+                <div className="flex-column" style={lessShadowCardStyle}>
+                  <div className="panel-header">
+                    Account info
+                  </div>
+                  <div className="panel-body">
+                    <div className="flex-row">
+                      <div className="flex-column">
                         <span className="field-title">
-                          Email
+                          FirstName
                         </span>
                         <span className="field-content">
-                          {this.state.userInfo.email}
+                          {this.state.userInfo.firstName}
                         </span>
                       </div>
-                      { this.state.userInfo.role === 2 ? (
-                        <div className="flex-column" style={{marginTop: "16px"}}>
-                          <span className="field-title">
-                            Affiliation
-                          </span>
-                          <span className="field-content">
-                            {this.state.userInfo.affiliation}
-                          </span>
-                        </div>
-                      ) : null}
+                      <div className="flex-column" style={{marginLeft: "32px"}}>
+                        <span className="field-title">
+                          LastName
+                        </span>
+                        <span className="field-content">
+                          {this.state.userInfo.lastName}
+                        </span>
+                      </div>
                     </div>
+                    <div className="flex-column" style={{marginTop: "16px"}}>
+                      <span className="field-title">
+                        Email
+                      </span>
+                      <span className="field-content">
+                        {this.state.userInfo.email}
+                      </span>
+                    </div>
+                    { this.state.userInfo.role === 2 ? (
+                      <div className="flex-column" style={{marginTop: "16px"}}>
+                        <span className="field-title">
+                          Affiliation
+                        </span>
+                        <span className="field-content">
+                          {this.state.userInfo.affiliation}
+                        </span>
+                      </div>
+                    ) : null}
                   </div>
                 </div>
                 <div className="flex-column" style={lessShadowCardStyle}>
