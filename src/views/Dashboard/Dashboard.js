@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import FlatButton from 'material-ui/FlatButton';
+import FontIcon from 'material-ui/FontIcon';
 import Chip from 'material-ui/Chip';
 import fetch from '../../core/fetch/fetch';
 import { connect } from 'react-redux';
@@ -102,6 +103,20 @@ class DashboardView extends Component {
       <div className="view-body flex-column">
         <div style={{padding:"36px 8px 64px 8px"}}>
           <div style={{width: '100%', maxWidth: "1080px", margin: '0 auto'}}>
+            <div className="flex-row">
+              <div className="flex-25" style={{marginRight: "16px", cursor: 'pointer'}}>
+                <div className="flex-row flex-center default-padding raleway" style={lessShadowCardStyle} onClick={()=>{
+                    this.props.dispatch(push('/clients'))
+                  }}>
+                  <FontIcon className="material-icons">book</FontIcon>
+                  <span style={{marginLeft: "16px"}}>Client Book</span>
+                  <FontIcon className="material-icons" style={{marginLeft: "auto"}}>keyboard_arrow_right</FontIcon>
+                </div>
+              </div>
+              <div className="flex-25">
+
+              </div>
+            </div>
             { this.state.emailIsVerified === false ? (
               <div className="flex-column default-padding raleway" style={{marginBottom: "16px", backgroundColor: "#fff", border: "1px solid #FF9800", color: "#FF9800"}}>
                 Your email is not varified

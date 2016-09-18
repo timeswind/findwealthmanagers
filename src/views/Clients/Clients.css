@@ -6,3 +6,23 @@
 .clients-search-bar {
   padding: 8px 0 8px 16px;
 }
+
+.clients-detail-panel-wrapper {
+  margin: 16px;
+}
+
+.clients-detail-panel {
+
+}
+
+.clients-detail-panel-item {
+  flex: 50;
+  background: #fff;
+  border-radius: 3px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.04);
+  border: 1px solid rgba(0,0,0,.09);
+}
+
+.clients-detail-panel-item:first-child {
+  margin-right: 16px
+}
