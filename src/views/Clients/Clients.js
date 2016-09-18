@@ -4,18 +4,16 @@ import FontIcon from 'material-ui/FontIcon';
 import Avatar from 'material-ui/Avatar';
 import Popover from 'material-ui/Popover';
 import {List, ListItem} from 'material-ui/List';
-import Divider from 'material-ui/Divider';
 import ActionAccountBox from 'material-ui/svg-icons/action/account-box';
 import CommunicationCall from 'material-ui/svg-icons/communication/call';
-import CommunicationChatBubble from 'material-ui/svg-icons/communication/chat-bubble';
 import {indigo500} from 'material-ui/styles/colors';
 import CommunicationEmail from 'material-ui/svg-icons/communication/email';
 import Subheader from 'material-ui/Subheader';
-import FlatButton from 'material-ui/FlatButton';
+// import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 import fetch from '../../core/fetch/fetch';
 import { connect } from 'react-redux';
-import { push } from 'react-router-redux';
+// import { push } from 'react-router-redux';
 import AddClientSimpleForm from '../../forms/AddClientSimpleForm/AddClientSimpleForm';
 import update from 'react-addons-update';
 
@@ -157,13 +155,25 @@ class Clients extends Component {
   }
 
   updateClientNote = (value) => {
-    console.log(value)
+    this.patchClientInfo('note', value)
+  }
+  updateClientName = (value) => {
+    this.patchClientInfo('name', value)
+  }
+  updateClientPhone = (value) => {
+    this.patchClientInfo('phone', value)
+  }
+  updateClientEmail = (value) => {
+    this.patchClientInfo('email', value)
+  }
+
+  patchClientInfo (patchField, data) {
     var patch = {
       id: this.state.selectedClient._id,
-      field: 'note',
-      data: value
+      field: patchField,
+      data: data
     }
-    var self = this
+    // var self = this
     fetch('/api/protect/client', {
       method: "PATCH",
       headers: {
@@ -179,6 +189,7 @@ class Clients extends Component {
     }).catch(function(ex) {
       console.log('failed', ex)
     })
+
   }
 
   render() {
@@ -241,6 +252,9 @@ class Clients extends Component {
                         hintText="Name"
                         value={this.state.selectedClient.name}
                         onChange={this.handleClientNameInput}
+                        onBlur={(e)=>{
+                          this.updateClientName(e.target.value)
+                        }}
                         />
                     }
                     />
@@ -253,6 +267,9 @@ class Clients extends Component {
                         hintText="Phone"
                         value={this.state.selectedClient.phone}
                         onChange={this.handleClientPhoneInput}
+                        onBlur={(e)=>{
+                          this.updateClientPhone(e.target.value)
+                        }}
                         />
                     }
                     />
@@ -265,6 +282,9 @@ class Clients extends Component {
                         hintText="Email"
                         value={this.state.selectedClient.email}
                         onChange={this.handleClientEmailInput}
+                        onBlur={(e)=>{
+                          this.updateClientEmail(e.target.value)
+                        }}
                         />
                     }
                     />
