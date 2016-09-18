@@ -24,6 +24,16 @@ class CategorySelector extends Component {
     }
   }
 
+  componentWillReceiveProps(nextProp) {
+    const initialCategories = [];
+    if (nextProp.initialValues) {
+      nextProp.initialValues.forEach((code) => {
+        initialCategories.push(categoryTypes[code - 1])
+      })
+    }
+    this.setState({categories: initialCategories})
+  }
+
   selectCategory = (event, index, value) => {
     this.chipData = this.state.categories;
     if (this.chipData.length !== 3) {

@@ -40,15 +40,12 @@ class EditListInfoForm extends Component {
     var self = this
 
     self.props.dispatch(change('editListInfo', 'address', chosenAddress))
-    console.log('select address')
     this.geocoder.geocode( { 'address': chosenAddress}, function(results, status) {
 
       if (status === window.google.maps.GeocoderStatus.OK) {
-        console.log(results)
         let longitude = results[0].geometry.location.lng()
         let latitude = results[0].geometry.location.lat()
         let loc = [longitude, latitude] //getjson format [ lng, lat ]
-        console.log(loc)
         self.props.dispatch(change('editListInfo', 'loc', loc))
       } else {
         console.log("Geocode was not successful for the following reason: " + status);

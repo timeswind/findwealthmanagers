@@ -16,6 +16,8 @@ import { connect } from 'react-redux';
 // import { push } from 'react-router-redux';
 import AddClientSimpleForm from '../../forms/AddClientSimpleForm/AddClientSimpleForm';
 import update from 'react-addons-update';
+import CategorySelector from '../../components/CategorySelector/CategorySelector';
+import categoryTypes from '../../assets/categories'
 
 import './Clients.css'
 
@@ -24,12 +26,15 @@ class Clients extends Component {
     addClientButtonOpen: false,
     clients:[],
     selectedClient:{
+      index: null,
       _id: "",
       name: "",
       email: "",
       phone: "",
-      note: ""
-    }
+      note: "",
+      categories: []
+    },
+    categories: []
   }
 
   componentWillMount() {
@@ -49,6 +54,13 @@ class Clients extends Component {
       return response.json()
     }).then(function(json) {
       if (json.success) {
+        // json.clients.forEach((client, index) => {
+        //   if (client.categories) {
+        //     json.clients[index]['modifiedCategories'] = client.categories.map((code) => {
+        //       return (categoryTypes[code - 1])
+        //     })
+        //   }
+        // })
         self.updateClients(json.clients)
       }
       console.log(json)
@@ -57,7 +69,7 @@ class Clients extends Component {
     })
   }
 
-  getClient(client_id) {
+  getClient(client_id, index) {
     var self = this
     fetch('/api/protect/client?id=' + client_id, {
       method: "GET",
@@ -70,21 +82,24 @@ class Clients extends Component {
       return response.json()
     }).then(function(json) {
       if (json.success) {
-        self.updateSelectedClient(json.client)
+        self.updateSelectedClient(json.client, index)
       }
     }).catch(function(ex) {
       console.log('failed', ex)
     })
   }
 
-  updateSelectedClient(newClient) {
+  updateSelectedClient(newClient, index) {
+    this.setState({categories: newClient.categories || []})
     var newState = update(this.state, {
       selectedClient: {
+        index: { $set: index },
         _id: { $set: newClient._id },
         name: { $set: newClient.name },
         phone: { $set: newClient.phone || "" },
         email: { $set: newClient.email },
-        note: { $set: newClient.note }
+        note: { $set: newClient.note },
+        categories: { $set: newClient.categories || [] }
       }
     });
     this.setState(newState);
@@ -166,8 +181,38 @@ class Clients extends Component {
   updateClientEmail = (value) => {
     this.patchClientInfo('email', value)
   }
+  updateClientCategories = (categories) => {
+    let modifiedCategories = categories.map((category) => {
+      return category.code
+    })
+    let clientIndex = this.state.selectedClient.index
+    var newState = update(this.state, {
+      clients: {
+        [clientIndex] : {
+          categories : { $set: modifiedCategories }
+        }
+      },
+      selectedClient: {
+        categories: { $set: modifiedCategories}
+      }
+    });
+    this.setState(newState);
+    this.patchClientInfo('categories', modifiedCategories)
+  }
 
   patchClientInfo (patchField, data) {
+    let clientIndex = this.state.selectedClient.index
+    if (patchField !== 'categories') {
+      var newState = update(this.state, {
+        clients: {
+          [clientIndex] : {
+            [patchField] : { $set: data }
+          }
+        }
+      });
+      this.setState(newState);
+    }
+
     var patch = {
       id: this.state.selectedClient._id,
       field: patchField,
@@ -189,7 +234,6 @@ class Clients extends Component {
     }).catch(function(ex) {
       console.log('failed', ex)
     })
-
   }
 
   render() {
@@ -223,14 +267,16 @@ class Clients extends Component {
                 </Popover>
               </div>
             </div>
-            { this.state.clients.map((client)=>{
+            { this.state.clients.map((client, index)=>{
               return (
                 <ListItem
                   key={client._id}
                   primaryText={client.name}
-                  secondaryText={client.email}
+                  secondaryText={client.categories.map((code)=>{
+                    return (<span key={code}>{categoryTypes[code - 1].name}, </span>)
+                  })}
                   onClick={()=>{
-                    this.getClient(client._id)
+                    this.getClient(client._id, index)
                   }}
                   leftAvatar={<Avatar src="http://www.lovemarks.com/wp-content/uploads/profile-avatars/default-avatar-tech-guy.png" />}
                   rightIcon={<FontIcon className="material-icons">keyboard_arrow_right</FontIcon>}
@@ -258,8 +304,7 @@ class Clients extends Component {
                         />
                     }
                     />
-                </List>
-                <List>
+
                   <ListItem
                     leftIcon={<CommunicationCall color={indigo500} style={{top: '16px'}}/>}
                     primaryText={
@@ -273,8 +318,7 @@ class Clients extends Component {
                         />
                     }
                     />
-                </List>
-                <List>
+
                   <ListItem
                     leftIcon={<CommunicationEmail color={indigo500} style={{top: '16px'}}/>}
                     primaryText={
@@ -289,6 +333,14 @@ class Clients extends Component {
                     }
                     />
                 </List>
+                <div style={{margin: "16px"}}>
+                  <CategorySelector
+                    onSelect={(values)=>{
+                      this.updateClientCategories(values)
+                    }}
+                    initialValues={this.state.selectedClient.categories}
+                    />
+                </div>
                 <Subheader>Note</Subheader>
                 <div style={{margin: '0 16px', border: '1px solid #ddd'}}>
                   <TextField
