@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import IconButton from 'material-ui/IconButton';
+import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 import FontIcon from 'material-ui/FontIcon';
 import Avatar from 'material-ui/Avatar';
 import Popover from 'material-ui/Popover';
 import {List, ListItem} from 'material-ui/List';
 import ActionAccountBox from 'material-ui/svg-icons/action/account-box';
 import CommunicationCall from 'material-ui/svg-icons/communication/call';
+import Group from 'material-ui/svg-icons/social/group';
 import {indigo500} from 'material-ui/styles/colors';
 import CommunicationEmail from 'material-ui/svg-icons/communication/email';
 import Subheader from 'material-ui/Subheader';
@@ -26,15 +28,16 @@ class Clients extends Component {
     addClientButtonOpen: false,
     clients:[],
     selectedClient:{
+      fetching: false,
       index: null,
       _id: "",
       name: "",
       email: "",
       phone: "",
       note: "",
+      gender: null,
       categories: []
-    },
-    categories: []
+    }
   }
 
   componentWillMount() {
@@ -70,6 +73,12 @@ class Clients extends Component {
   }
 
   getClient(client_id, index) {
+    var newState = update(this.state, {
+      selectedClient: {
+        fetching: { $set: true },
+      }
+    })
+    this.setState(newState)
     var self = this
     fetch('/api/protect/client?id=' + client_id, {
       method: "GET",
@@ -93,12 +102,14 @@ class Clients extends Component {
     this.setState({categories: newClient.categories || []})
     var newState = update(this.state, {
       selectedClient: {
+        fetching: { $set: false },
         index: { $set: index },
         _id: { $set: newClient._id },
         name: { $set: newClient.name },
         phone: { $set: newClient.phone || "" },
         email: { $set: newClient.email },
         note: { $set: newClient.note },
+        gender: { $set: newClient.gender },
         categories: { $set: newClient.categories || [] }
       }
     });
@@ -169,6 +180,10 @@ class Clients extends Component {
     this.setState(newState)
   }
 
+  updateClientGender = (event, value) => {
+    this.patchClientInfo('gender', value)
+  }
+
   updateClientNote = (value) => {
     this.patchClientInfo('note', value)
   }
@@ -201,6 +216,7 @@ class Clients extends Component {
   }
 
   patchClientInfo (patchField, data) {
+    console.log(patchField)
     let clientIndex = this.state.selectedClient.index
     if (patchField !== 'categories') {
       var newState = update(this.state, {
@@ -211,6 +227,15 @@ class Clients extends Component {
         }
       });
       this.setState(newState);
+    }
+
+    if (patchField === 'gender') {
+      var newState2 = update(this.state, {
+        selectedClient: {
+          gender: { $set: data}
+        }
+      });
+      this.setState(newState2);
     }
 
     var patch = {
@@ -241,7 +266,7 @@ class Clients extends Component {
       <div className="view-body flex-column">
         <div style={{position: 'absolute', top: '62px', left: 0, bottom: 0, right: 0}} className="flex-row">
           <div className="clients-side-panel flex-column" style={{flex: 30, height: '100%'}}>
-            <div className="flex-row flex-center">
+            <div className="flex-row flex-center" style={{flexShrink: 0}}>
               <div className="clients-search-bar" style={{flex: 80}}>
                 <TextField
                   hintText="Search"
@@ -273,7 +298,7 @@ class Clients extends Component {
                   key={client._id}
                   primaryText={client.name}
                   secondaryText={client.categories.map((code)=>{
-                    return (<span key={code}>{categoryTypes[code - 1].name}, </span>)
+                    return (<a key={code} style={{marginRight: "8px"}}>{categoryTypes[code - 1].name}</a>)
                   })}
                   onClick={()=>{
                     this.getClient(client._id, index)
@@ -286,98 +311,115 @@ class Clients extends Component {
 
           </div>
           <div className="clients-detail-panel-wrapper" style={{flex: 70}}>
-            <div className="clients-detail-panel flex-row" style={{height: '100%'}}>
-              <div className="clients-detail-panel-item">
-                <Subheader>Contact</Subheader>
+            { this.state.selectedClient.index !== null ? (
+              <div className="clients-detail-panel flex-row" style={{height: '100%'}}>
+                <div className="clients-detail-panel-item">
+                  <Subheader>Contact</Subheader>
 
-                <List>
-                  <ListItem
-                    leftIcon={<ActionAccountBox color={indigo500} style={{top: '16px'}}/>}
-                    primaryText={
+                  <List>
+                    <ListItem
+                      leftIcon={<ActionAccountBox color={indigo500} style={{top: '16px'}}/>}
+                      primaryText={
+                        <TextField
+                          hintText="Name"
+                          value={this.state.selectedClient.name}
+                          onChange={this.handleClientNameInput}
+                          onBlur={(e)=>{
+                            this.updateClientName(e.target.value)
+                          }}
+                          />
+                      }
+                      />
+                    <ListItem
+                      leftIcon={<CommunicationCall color={indigo500} style={{top: '16px'}}/>}
+                      primaryText={
+                        <TextField
+                          hintText="Phone"
+                          value={this.state.selectedClient.phone}
+                          onChange={this.handleClientPhoneInput}
+                          onBlur={(e)=>{
+                            this.updateClientPhone(e.target.value)
+                          }}
+                          />
+                      }
+                      />
+                    <ListItem
+                      leftIcon={<CommunicationEmail color={indigo500} style={{top: '16px'}}/>}
+                      primaryText={
+                        <TextField
+                          hintText="Email"
+                          value={this.state.selectedClient.email}
+                          onChange={this.handleClientEmailInput}
+                          onBlur={(e)=>{
+                            this.updateClientEmail(e.target.value)
+                          }}
+                          />
+                      }
+                      />
+                      <ListItem
+                        leftIcon={<Group color={indigo500} style={{top: '4px'}}/>}
+                        primaryText={
+                          <RadioButtonGroup name="gender" valueSelected={this.state.selectedClient.gender} className="flex-row" onChange={this.updateClientGender}>
+                            <RadioButton
+                              value={1}
+                              label="Male"
+                              style={{width: 80, marginRight: 16}}
+                              />
+                            <RadioButton
+                              value={2}
+                              label="Female"
+                              style={{width: 80}}
+                              />
+                          </RadioButtonGroup>
+                        }
+                        />
+                    </List>
+                    <div style={{margin: "16px"}}>
+                      <CategorySelector
+                        onSelect={(values)=>{
+                          this.updateClientCategories(values)
+                        }}
+                        initialValues={this.state.selectedClient.categories}
+                        />
+                    </div>
+                    <Subheader>Note</Subheader>
+                    <div style={{margin: '0 16px', border: '1px solid #ddd'}}>
                       <TextField
-                        hintText="Name"
-                        value={this.state.selectedClient.name}
-                        onChange={this.handleClientNameInput}
+                        multiLine={true}
+                        rows={3}
+                        hintText="Note"
+                        value={this.state.selectedClient.note}
+                        style={{padding: '0 16px', width: "calc(100% - 64px)"}}
+                        onChange={this.handleClientNoteInput}
                         onBlur={(e)=>{
-                          this.updateClientName(e.target.value)
+                          this.updateClientNote(e.target.value)
                         }}
                         />
-                    }
-                    />
+                    </div>
+                  </div>
+                  <div className="clients-detail-panel-item">
+                    <Subheader>Appointment</Subheader>
 
-                  <ListItem
-                    leftIcon={<CommunicationCall color={indigo500} style={{top: '16px'}}/>}
-                    primaryText={
-                      <TextField
-                        hintText="Phone"
-                        value={this.state.selectedClient.phone}
-                        onChange={this.handleClientPhoneInput}
-                        onBlur={(e)=>{
-                          this.updateClientPhone(e.target.value)
-                        }}
-                        />
-                    }
-                    />
-
-                  <ListItem
-                    leftIcon={<CommunicationEmail color={indigo500} style={{top: '16px'}}/>}
-                    primaryText={
-                      <TextField
-                        hintText="Email"
-                        value={this.state.selectedClient.email}
-                        onChange={this.handleClientEmailInput}
-                        onBlur={(e)=>{
-                          this.updateClientEmail(e.target.value)
-                        }}
-                        />
-                    }
-                    />
-                </List>
-                <div style={{margin: "16px"}}>
-                  <CategorySelector
-                    onSelect={(values)=>{
-                      this.updateClientCategories(values)
-                    }}
-                    initialValues={this.state.selectedClient.categories}
-                    />
+                  </div>
                 </div>
-                <Subheader>Note</Subheader>
-                <div style={{margin: '0 16px', border: '1px solid #ddd'}}>
-                  <TextField
-                    multiLine={true}
-                    rows={3}
-                    hintText="Note"
-                    value={this.state.selectedClient.note}
-                    style={{padding: '0 16px', width: "calc(100% - 64px)"}}
-                    onChange={this.handleClientNoteInput}
-                    onBlur={(e)=>{
-                      this.updateClientNote(e.target.value)
-                    }}
-                    />
-                </div>
-              </div>
-              <div className="clients-detail-panel-item">
-                <Subheader>Appointment</Subheader>
-
-              </div>
+              ) : null }
             </div>
           </div>
         </div>
-      </div>
-    )
+      )
+    }
   }
-}
 
-const mapStatesToProps = (states) => {
-  return {
-    auth: states.auth
-  };
-}
+  const mapStatesToProps = (states) => {
+    return {
+      auth: states.auth
+    };
+  }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    dispatch
-  };
-}
+  const mapDispatchToProps = (dispatch) => {
+    return {
+      dispatch
+    };
+  }
 
-export default connect(mapStatesToProps, mapDispatchToProps)(Clients);
+  export default connect(mapStatesToProps, mapDispatchToProps)(Clients);

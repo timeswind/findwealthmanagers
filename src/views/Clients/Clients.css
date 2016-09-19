@@ -1,6 +1,7 @@
 .clients-side-panel {
   border-right: 1px solid #ddd;
   background: #fff;
+  overflow-y: scroll;
 }
 
 .clients-search-bar {
@@ -21,8 +22,9 @@
   border-radius: 3px;
   box-shadow: 0 1px 4px rgba(0,0,0,.04);
   border: 1px solid rgba(0,0,0,.09);
+  overflow-y: scroll;
 }
 
 .clients-detail-panel-item:first-child {
-  margin-right: 16px
+  margin-right: 16px;
 }
