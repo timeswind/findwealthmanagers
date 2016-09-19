@@ -14,8 +14,8 @@ class CategorySelector extends Component {
   constructor(props) {
     super(props)
     const initialCategories = [];
-    if (this.props.initialValues) {
-      this.props.initialValues.forEach((code) => {
+    if (props.initialValues) {
+      props.initialValues.forEach((code) => {
         initialCategories.push(categoryTypes[code - 1])
       })
     }
@@ -59,7 +59,6 @@ class CategorySelector extends Component {
     if(this.props.onSelect) {
       this.props.onSelect(newCategories);
     }
-    this.setState({newState});
   }
 
   render() {

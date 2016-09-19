@@ -20,7 +20,6 @@ const validate = values => {
     errors.email = 'Invalid email address'
   }
 
-  console.log(values)
   return errors
 }
 
@@ -28,7 +27,8 @@ class EditListInfoForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      addressPredictions: []
+      addressPredictions: [],
+      selectCategories: props.initialValues.categories
     };
     this.AddressAutoCompleteService = null
     this.geocoder = null
@@ -71,7 +71,6 @@ class EditListInfoForm extends Component {
       input: address,
       componentRestrictions: {country: 'us'}
     }, function (predictions) {
-      console.log(predictions)
       var results = [];
       if (predictions) {
         predictions.forEach((prediction) => {
@@ -93,6 +92,9 @@ class EditListInfoForm extends Component {
     const formattedCategories = categories.map((category) => {
       return category.code
     })
+    this.props.initialValues.categories = formattedCategories
+    this.setState({selectCategories: formattedCategories})
+    console.log(this.props.initialValues.categories)
     this.props.dispatch(change('editListInfo', 'categories', formattedCategories))
   }
 
@@ -151,7 +153,7 @@ class EditListInfoForm extends Component {
       <form onSubmit={handleSubmit} className="flex-column">
         <Field name="phone" component={TextField} hintText="Phone" floatingLabelText="Phone"/>
         <Field name="email" component={TextField} hintText="Email for bussiness" floatingLabelText="Email for bussiness"/>
-        <CategorySelector onSelect={this.onCategorySelect} initialValues={this.props.initialValues.categories}></CategorySelector>
+        <CategorySelector onSelect={this.onCategorySelect} initialValues={this.state.selectCategories}></CategorySelector>
 
         <Field
           name="brief"

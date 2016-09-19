@@ -382,8 +382,10 @@ class Clients extends Component {
                         initialValues={this.state.selectedClient.categories}
                         />
                     </div>
+                  </div>
+                  <div className="clients-detail-panel-item">
                     <Subheader>Note</Subheader>
-                    <div style={{margin: '0 16px', border: '1px solid #ddd'}}>
+                    <div style={{margin: '0 16px 32px 16px', border: '1px solid #ddd'}}>
                       <TextField
                         multiLine={true}
                         rows={3}
@@ -396,8 +398,6 @@ class Clients extends Component {
                         }}
                         />
                     </div>
-                  </div>
-                  <div className="clients-detail-panel-item">
                     <Subheader>Appointment</Subheader>
 
                   </div>

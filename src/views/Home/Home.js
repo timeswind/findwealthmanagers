@@ -77,11 +77,11 @@ class Home extends Component {
                 <div className="raleway">
                   <div className="flex-row flex-center"
                     onTouchTap={this.handleTouchTap}
-                    style={{cursor: "pointer"}}>
+                    style={{cursor: "pointer", backgroundColor:"rgba(0, 0, 0, 0.5)", padding: "8px 16px", borderRadius: "3px"}}>
                     <span>{this.props.auth.name}</span>
                     <FontIcon
                       className="material-icons"
-                      style={{fontSize: "20px"}}>
+                      style={{fontSize: "20px", color: "#fff"}}>
                       keyboard_arrow_down
                     </FontIcon>
                   </div>
@@ -114,9 +114,10 @@ class Home extends Component {
               <div className="flex-row" style={{marginLeft: "auto"}}>
                 <div className="flex-row flex-center login-signup-wrapper" style={{marginRight: "16px"}}>
                   <FlatButton
-                    label="Account"
-                    hoverColor="transparent"
-                    style={{color: "#fff", textShadow: "1px 2px 3px #333"}}
+                    label="Login/Signup"
+                    hoverColor="#2a8a2d"
+                    backgroundColor="#32b337"
+                    style={{color: "#fff"}}
                     onClick={() => {
                       this.routerPush('/login')
                     }}

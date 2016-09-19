@@ -250,17 +250,19 @@ class DashboardView extends Component {
                               <span className="field-title">
                                 Categories
                               </span>
-                              { this.state.listInfo.modifiedCategories ? this.state.listInfo.modifiedCategories.map((category) => {
-                                return (
-                                  <Chip key={category.code} style={{margin: "4px 8px 4px 0"}}>
-                                    {category.name}
-                                  </Chip>
-                                )
-                              }) : null}
+                              <div className="flex-row">
+                                { this.state.listInfo.modifiedCategories ? this.state.listInfo.modifiedCategories.map((category) => {
+                                  return (
+                                    <Chip key={category.code} style={{margin: "4px 8px 4px 0"}}>
+                                      {category.name}
+                                    </Chip>
+                                  )
+                                }) : null}
+                              </div>
                             </div>
                             <div className="flex-column" style={{marginTop: "16px"}}>
                               <span className="field-title">
-                                Room
+                                Building/Suite
                               </span>
                               <span className="field-content">
                                 {this.state.listInfo.room}

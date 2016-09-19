@@ -5,19 +5,19 @@ import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
 import AutoComplete from 'material-ui/AutoComplete';
 import FlatButton from 'material-ui/FlatButton';
-import us_states from '../../assets/us_states.js';
+// import us_states from '../../assets/us_states.js';
 import categories from '../../assets/categories.js'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as SearchActions from '../../redux/actions/search.js';
 import { push } from 'react-router-redux'
 
-const usStates = [];
+// const usStates = [];
 const managerCategories = []
 
-us_states.forEach((state) => {
-  usStates.push(<MenuItem value={state.abbreviation} key={state.abbreviation} label={state.abbreviation} primaryText={state.name} />);
-})
+// us_states.forEach((state) => {
+//   usStates.push(<MenuItem value={state.abbreviation} key={state.abbreviation} label={state.abbreviation} primaryText={state.name} />);
+// })
 
 categories.forEach((category) => {
   managerCategories.push(<MenuItem value={category.code} key={category.code} label={category.name} primaryText={category.name} />);
@@ -37,11 +37,11 @@ class SearchCard extends Component {
     this.initGoolePlaceAutocomplete()
   }
 
-  selectUsState = (event, index, usState) => {
-    const { actions } = this.props
-    actions.setSearchUSSTATE(usState)
-    // this.setState({ "usState": usState })
-  }
+  // selectUsState = (event, index, usState) => {
+  //   const { actions } = this.props
+  //   actions.setSearchUSSTATE(usState)
+  // }
+
   selectCategory = (event, index, category_code) => {
     const { actions } = this.props
     actions.setSearchCategories([category_code])
@@ -119,13 +119,6 @@ class SearchCard extends Component {
       <Card className="search-card">
         <div className="flex-column" style={{padding: "4px 32px 32px 32px"}}>
           <div className="flex-row" style={{marginBottom: "0"}}>
-            <SelectField
-              floatingLabelText="State"
-              value={this.props.search.usState}
-              onChange={this.selectUsState}
-              style={{flex: "30", marginRight: "16px"}}>
-              {usStates}
-            </SelectField>
             <AutoComplete
               hintText="Street"
               floatingLabelText="Street"
@@ -136,7 +129,6 @@ class SearchCard extends Component {
               onUpdateInput={this.handleAddressUpdateInput}
               searchText={this.props.search.address}
               onNewRequest={this.selectAddress}
-              style={{flex: "70"}}
               />
           </div>
           <div className="flex-row flex-center" style={{marginBottom: "16px"}}>

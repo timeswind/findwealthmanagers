@@ -85,7 +85,6 @@ if (localStore.session.get("token") && localStore.session.get("email") && localS
 }
 
 function requireAuth(nextState, replace) {
-  console.log()
   if (!store.getState().auth.isLogin) {
     replace({
       pathname: '/login',
@@ -94,13 +93,41 @@ function requireAuth(nextState, replace) {
   }
 }
 
+function requireHaveNotListed(nextState, replace, callback) {
+  if (store.getState().auth.isLogin) {
+    let advisor_id = store.getState().auth.id
+    fetch('/api/public/list?type=advisor&id=' + advisor_id, {
+      method: "GET",
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+    }).then(function(response) {
+      return response.json()
+    }).then(function(json) {
+      console.log(json)
+        if (json.success) {
+          replace({
+            pathname: '/dashboard',
+            state: { nextPathname: nextState.location.pathname }
+          })
+        }
+        callback();
+    }).catch(function(ex) {
+      console.log('failed', ex)
+    })
+  }
+  callback();
+
+}
+
 const MUI = () => (
   <MuiThemeProvider muiTheme={muiTheme}>
     <Provider store={store}>
       <Router history={history} render={applyRouterMiddleware(useScroll())}>
         <Route path="/" component={App}>
           <IndexRoute component={Home}/>
-          <Route path="getlisted" getComponent={function(location, cb){
+          <Route path="getlisted" onEnter={requireHaveNotListed} getComponent={function(location, cb){
               require.ensure([], (require) => {
                 cb(null, require('./views/GetListed/GetListed.js').default)
               })
