@@ -96,6 +96,11 @@ class Clients extends Component {
   }
 
   updateSelectedClient(newClient, index) {
+    if (typeof (newClient.married) === 'boolean') {
+      newClient.married = newClient.married.toString()
+    } else {
+      newClient.married = null
+    }
     this.setState({categories: newClient.categories || []})
     var newState = update(this.state, {
       selectedClient: {
@@ -111,7 +116,7 @@ class Clients extends Component {
         childrens: { $set: newClient.childrens || "" },
         job: { $set: newClient.job || "" },
         income: { $set: newClient.income || "" },
-        married: { $set: newClient.married.toString() || "" },
+        married: { $set: newClient.married },
         categories: { $set: newClient.categories || [] }
       }
     });
