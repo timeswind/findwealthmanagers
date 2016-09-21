@@ -36,6 +36,10 @@ class Clients extends Component {
       phone: "",
       note: "",
       gender: null,
+      age: null,
+      married: null,
+      job: "",
+      income: "",
       categories: []
     }
   }
@@ -57,13 +61,6 @@ class Clients extends Component {
       return response.json()
     }).then(function(json) {
       if (json.success) {
-        // json.clients.forEach((client, index) => {
-        //   if (client.categories) {
-        //     json.clients[index]['modifiedCategories'] = client.categories.map((code) => {
-        //       return (categoryTypes[code - 1])
-        //     })
-        //   }
-        // })
         self.updateClients(json.clients)
       }
       console.log(json)
@@ -107,9 +104,14 @@ class Clients extends Component {
         _id: { $set: newClient._id },
         name: { $set: newClient.name },
         phone: { $set: newClient.phone || "" },
-        email: { $set: newClient.email },
-        note: { $set: newClient.note },
-        gender: { $set: newClient.gender },
+        email: { $set: newClient.email || "" },
+        note: { $set: newClient.note || "" },
+        gender: { $set: newClient.gender || "" },
+        age: { $set: newClient.age || "" },
+        childrens: { $set: newClient.childrens || "" },
+        job: { $set: newClient.job || "" },
+        income: { $set: newClient.income || "" },
+        married: { $set: newClient.married.toString() || "" },
         categories: { $set: newClient.categories || [] }
       }
     });
@@ -180,8 +182,28 @@ class Clients extends Component {
     this.setState(newState)
   }
 
-  updateClientGender = (event, value) => {
-    this.patchClientInfo('gender', value)
+  handleClientAgeInput = (event) => {
+    var newState = this.state
+    newState.selectedClient.age = event.target.value
+    this.setState(newState)
+  }
+
+  handleClientChildrensInput = (event) => {
+    var newState = this.state
+    newState.selectedClient.childrens = event.target.value
+    this.setState(newState)
+  }
+
+  handleClientJobInput = (event) => {
+    var newState = this.state
+    newState.selectedClient.job = event.target.value
+    this.setState(newState)
+  }
+
+  handleClientIncomeInput = (event) => {
+    var newState = this.state
+    newState.selectedClient.income = event.target.value
+    this.setState(newState)
   }
 
   updateClientNote = (value) => {
@@ -195,6 +217,24 @@ class Clients extends Component {
   }
   updateClientEmail = (value) => {
     this.patchClientInfo('email', value)
+  }
+  updateClientGender = (event, value) => {
+    this.patchClientInfo('gender', value)
+  }
+  updateClientMarriageStatus = (event, value) => {
+    this.patchClientInfo('married', value)
+  }
+  updateClientAge = (value) => {
+    this.patchClientInfo('age', value)
+  }
+  updateClientChildrens = (value) => {
+    this.patchClientInfo('childrens', value)
+  }
+  updateClientJob = (value) => {
+    this.patchClientInfo('job', value)
+  }
+  updateClientIncome = (value) => {
+    this.patchClientInfo('income', value)
   }
   updateClientCategories = (categories) => {
     let modifiedCategories = categories.map((category) => {
@@ -229,10 +269,10 @@ class Clients extends Component {
       this.setState(newState);
     }
 
-    if (patchField === 'gender') {
+    if (patchField === 'gender' || patchField === 'married') {
       var newState2 = update(this.state, {
         selectedClient: {
-          gender: { $set: data}
+          [patchField]: { $set: data }
         }
       });
       this.setState(newState2);
@@ -356,70 +396,139 @@ class Clients extends Component {
                           />
                       }
                       />
-                      <ListItem
-                        leftIcon={<Group color={indigo500} style={{top: '4px'}}/>}
-                        primaryText={
-                          <RadioButtonGroup name="gender" valueSelected={this.state.selectedClient.gender} className="flex-row" onChange={this.updateClientGender}>
-                            <RadioButton
-                              value={1}
-                              label="Male"
-                              style={{width: 80, marginRight: 16}}
-                              />
-                            <RadioButton
-                              value={2}
-                              label="Female"
-                              style={{width: 80}}
-                              />
-                          </RadioButtonGroup>
-                        }
-                        />
-                    </List>
-                    <div style={{margin: "16px"}}>
-                      <CategorySelector
-                        onSelect={(values)=>{
-                          this.updateClientCategories(values)
-                        }}
-                        initialValues={this.state.selectedClient.categories}
-                        />
-                    </div>
-                  </div>
-                  <div className="clients-detail-panel-item">
-                    <Subheader>Note</Subheader>
-                    <div style={{margin: '0 16px 32px 16px', border: '1px solid #ddd'}}>
-                      <TextField
-                        multiLine={true}
-                        rows={3}
-                        hintText="Note"
-                        value={this.state.selectedClient.note}
-                        style={{padding: '0 16px', width: "calc(100% - 64px)"}}
-                        onChange={this.handleClientNoteInput}
-                        onBlur={(e)=>{
-                          this.updateClientNote(e.target.value)
-                        }}
-                        />
-                    </div>
-                    <Subheader>Appointment</Subheader>
-
+                    <ListItem
+                      leftIcon={<span style={{top: '8px'}}>Gender</span>}
+                      primaryText={
+                        <RadioButtonGroup name="gender" valueSelected={this.state.selectedClient.gender} className="flex-row" onChange={this.updateClientGender} style={{marginLeft: 16}}>
+                          <RadioButton
+                            value={1}
+                            label="Male"
+                            style={{width: 80, marginRight: 16}}
+                            />
+                          <RadioButton
+                            value={2}
+                            label="Female"
+                            style={{width: 80}}
+                            />
+                        </RadioButtonGroup>
+                      }
+                      />
+                    <ListItem
+                      leftIcon={<span style={{top: '8px'}}>Married</span>}
+                      primaryText={
+                        <RadioButtonGroup name="gender" valueSelected={this.state.selectedClient.married} className="flex-row" onChange={this.updateClientMarriageStatus} style={{marginLeft: 16}}>
+                          <RadioButton
+                            value="true"
+                            label="Yes"
+                            style={{width: 80, marginRight: 16}}
+                            />
+                          <RadioButton
+                            value="false"
+                            label="No"
+                            style={{width: 80}}
+                            />
+                        </RadioButtonGroup>
+                      }
+                      />
+                    <ListItem
+                      primaryText={
+                        <TextField
+                          hintText="Age"
+                          floatingLabelText="Age"
+                          value={this.state.selectedClient.age}
+                          onChange={this.handleClientAgeInput}
+                          onBlur={(e)=>{
+                            this.updateClientAge(e.target.value)
+                          }}
+                          />
+                      }
+                      />
+                    <ListItem
+                      primaryText={
+                        <TextField
+                          hintText="Childrens"
+                          floatingLabelText="Childrens"
+                          value={this.state.selectedClient.childrens}
+                          onChange={this.handleClientChildrensInput}
+                          onBlur={(e)=>{
+                            this.updateClientChildrens(e.target.value)
+                          }}
+                          />
+                      }
+                      />
+                    <ListItem
+                      primaryText={
+                        <TextField
+                          hintText="Job"
+                          floatingLabelText="Job"
+                          value={this.state.selectedClient.job}
+                          onChange={this.handleClientJobInput}
+                          onBlur={(e)=>{
+                            this.updateClientJob(e.target.value)
+                          }}
+                          />
+                      }
+                      />
+                    <ListItem
+                      primaryText={
+                        <TextField
+                          hintText="Income"
+                          floatingLabelText="Income"
+                          value={this.state.selectedClient.income}
+                          onChange={this.handleClientIncomeInput}
+                          onBlur={(e)=>{
+                            this.updateClientIncome(e.target.value)
+                          }}
+                          />
+                      }
+                      />
+                  </List>
+                  <div style={{margin: "16px"}}>
+                    <CategorySelector
+                      onSelect={(values)=>{
+                        this.updateClientCategories(values)
+                      }}
+                      initialValues={this.state.selectedClient.categories}
+                      />
                   </div>
                 </div>
-              ) : null }
-            </div>
+                <div className="clients-detail-panel-item">
+                  <Subheader>Note</Subheader>
+                  <div style={{margin: '0 16px 32px 16px', border: '1px solid #ddd'}}>
+                    <TextField
+                      multiLine={true}
+                      rows={3}
+                      hintText="Note"
+                      value={this.state.selectedClient.note}
+                      style={{padding: '0 16px', width: "calc(100% - 64px)"}}
+                      onChange={this.handleClientNoteInput}
+                      onBlur={(e)=>{
+                        this.updateClientNote(e.target.value)
+                      }}
+                      />
+                  </div>
+                  <Subheader>Appointment</Subheader>
+
+                </div>
+              </div>
+            ) : null }
           </div>
         </div>
-      )
-    }
+      </div>
+    )
   }
+}
 
-  const mapStatesToProps = (states) => {
-    return {
-      auth: states.auth
-    };
-  }
+const mapStatesToProps = (states) => {
+  return {
+    auth: states.auth
+  };
+}
 
-  const mapDispatchToProps = (dispatch) => {
-    return {
-      dispatch
-    };
-  }
+const mapDispatchToProps = (dispatch) => {
+  return {
+    dispatch
+  };
+}
 
-  export default connect(mapStatesToProps, mapDispatchToProps)(Clients);
+export default connect(mapStatesToProps, mapDispatchToProps)(Clients);
