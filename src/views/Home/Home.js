@@ -99,6 +99,12 @@ class Home extends Component {
                           this.handleRequestClose()
                         }}
                         />
+                      <MenuItem primaryText="Client Book"
+                        onClick={()=>{
+                          this.routerPush('/clients')
+                          this.handleRequestClose()
+                        }}
+                        />
                       <MenuItem primaryText="Help &amp; feedback"/>
                       <MenuItem primaryText="Sign out"
                         onClick={()=>{

@@ -106,13 +106,13 @@ function requireHaveNotListed(nextState, replace, callback) {
       return response.json()
     }).then(function(json) {
       console.log(json)
-        if (json.success) {
-          replace({
-            pathname: '/dashboard',
-            state: { nextPathname: nextState.location.pathname }
-          })
-        }
-        callback();
+      if (json.success) {
+        replace({
+          pathname: '/dashboard',
+          state: { nextPathname: nextState.location.pathname }
+        })
+      }
+      callback();
     }).catch(function(ex) {
       console.log('failed', ex)
     })
@@ -149,6 +149,13 @@ const MUI = () => (
               })
             }}
             />
+          <Route path="verify-email/:token" onEnter={requireAuth} getComponent={function(location, cb){
+              require.ensure([], (require) => {
+                cb(null, require('./views/Verifyemail/Verifyemail').default)
+              })
+            }}
+            />
+
         </Route>
       </Router>
     </Provider>

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import FlatButton from 'material-ui/FlatButton';
 import FontIcon from 'material-ui/FontIcon';
 import Chip from 'material-ui/Chip';
+import CircularProgress from 'material-ui/CircularProgress';
 import fetch from '../../core/fetch/fetch';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
@@ -22,6 +23,7 @@ const lessShadowCardStyle = {
 class DashboardView extends Component {
   state = {
     emailIsVerified: true,
+    verifyEmailState: "",
     listed: false,
     userInfo: {},
     listInfo: {},
@@ -99,6 +101,8 @@ class DashboardView extends Component {
   }
 
   verifyEmail() {
+    var self = this
+    this.setState({verifyEmailState: "pending"})
     fetch('/api/protect/verify-email', {
       method: "get",
       headers: {
@@ -111,9 +115,12 @@ class DashboardView extends Component {
     }).then(function(json) {
       console.log(json)
       if (json.success) {
-
+        self.setState({verifyEmailState: "sent"})
+      } else {
+        self.setState({verifyEmailState: ""})
       }
     }).catch(function(ex) {
+      self.setState({verifyEmailState: ""})
       console.log('failed', ex)
     })
   }
@@ -140,13 +147,23 @@ class DashboardView extends Component {
             { this.state.emailIsVerified === false ? (
               <div className="flex-row flex-center default-padding raleway" style={{marginBottom: "16px", backgroundColor: "#fff", border: "1px solid #FF9800", color: "#FF9800"}}>
                 <span>Your email is not varified</span>
-                <FlatButton
-                  label="verify now"
-                  style={{marginLeft: "auto", color: "rgb(255, 152, 0)"}}
-                  onClick={()=>{
-                    this.verifyEmail()
-                  }}
-                  />
+                { this.state.verifyEmailState === 'pending' ? (
+                  <CircularProgress />
+                ) : (
+                  <div style={{marginLeft: "auto"}}>
+                    {this.state.verifyEmailState === 'sent' ? (
+                      <span>Email sent</span>
+                    ) : (
+                      <FlatButton
+                        label="verify now"
+                        style={{marginLeft: "auto", color: "rgb(255, 152, 0)"}}
+                        onClick={()=>{
+                          this.verifyEmail()
+                        }}
+                        />
+                    )}
+                  </div>
+                ) }
               </div>
             ) : null }
             <div className="flex-row">
