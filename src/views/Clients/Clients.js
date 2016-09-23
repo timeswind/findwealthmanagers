@@ -1,17 +1,19 @@
 import React, { Component } from 'react';
 import IconButton from 'material-ui/IconButton';
-import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
+import FlatButton from 'material-ui/FlatButton';
+import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
 import FontIcon from 'material-ui/FontIcon';
 import Avatar from 'material-ui/Avatar';
 import Popover from 'material-ui/Popover';
-import {List, ListItem} from 'material-ui/List';
+import { List, ListItem } from 'material-ui/List';
 import ActionAccountBox from 'material-ui/svg-icons/action/account-box';
 import CommunicationCall from 'material-ui/svg-icons/communication/call';
-import Group from 'material-ui/svg-icons/social/group';
-import {indigo500} from 'material-ui/styles/colors';
+import { indigo500 } from 'material-ui/styles/colors';
 import CommunicationEmail from 'material-ui/svg-icons/communication/email';
 import Subheader from 'material-ui/Subheader';
-// import FlatButton from 'material-ui/FlatButton';
+import Dialog from 'material-ui/Dialog';
+import DatePicker from 'material-ui/DatePicker';
+import TimePicker from 'material-ui/TimePicker';
 import TextField from 'material-ui/TextField';
 import fetch from '../../core/fetch/fetch';
 import { connect } from 'react-redux';
@@ -26,6 +28,7 @@ import './Clients.css'
 class Clients extends Component {
   state = {
     addClientButtonOpen: false,
+    addAppointmentModalOpen: false,
     clients:[],
     selectedClient:{
       fetching: false,
@@ -41,6 +44,12 @@ class Clients extends Component {
       job: "",
       income: "",
       categories: []
+    },
+    newAppointment: {
+      date: null,
+      start: null,
+      end: null,
+      note: ""
     }
   }
 
@@ -306,10 +315,68 @@ class Clients extends Component {
     })
   }
 
+  handleAddAppointmentModalOpen = () => {
+    this.setState({addAppointmentModalOpen: true});
+  };
+
+  handleAddAppointmentModalClose = () => {
+    this.setState({addAppointmentModalOpen: false});
+  };
+
+  handleChangeDatePicker = (event, date) => {
+    var newState = update(this.state, {
+      newAppointment: {
+        date: { $set: date }
+      }
+    });
+    this.setState(newState);
+  };
+
+  handleChangeStartTimePicker = (event, date) => {
+    var newState = update(this.state, {
+      newAppointment: {
+        start: { $set: date }
+      }
+    });
+    this.setState(newState);
+  };
+
+  handleChangeEndTimePicker = (event, date) => {
+    var newState = update(this.state, {
+      newAppointment: {
+        end: { $set: date }
+      }
+    });
+    this.setState(newState);
+  };
+
+  handleAppointmentNoteInput = (event) => {
+    var newState = update(this.state, {
+      newAppointment: {
+        note: { $set: event.target.value }
+      }
+    });
+    this.setState(newState);
+  }
+
+  addNewAppointment() {
+    console.log(this.state.newAppointment)
+  }
+
   render() {
+    const addAppointmentActions = [
+      <FlatButton
+        label="Add"
+        primary={true}
+        keyboardFocused={true}
+        onTouchTap={()=>{
+          this.addNewAppointment()
+        }}
+        />,
+    ];
     return (
       <div className="view-body flex-column">
-        <div style={{position: 'absolute', top: '62px', left: 0, bottom: 0, right: 0}} className="flex-row">
+        <div className="flex-row clients-panel">
           <div className="clients-side-panel flex-column" style={{flex: 30, height: '100%'}}>
             <div className="flex-row flex-center" style={{flexShrink: 0}}>
               <div className="clients-search-bar" style={{flex: 80}}>
@@ -440,6 +507,7 @@ class Clients extends Component {
                         <TextField
                           hintText="Age"
                           floatingLabelText="Age"
+                          floatingLabelFocusStyle={{fontSize: 22}}
                           value={this.state.selectedClient.age}
                           onChange={this.handleClientAgeInput}
                           onBlur={(e)=>{
@@ -453,6 +521,7 @@ class Clients extends Component {
                         <TextField
                           hintText="Childrens"
                           floatingLabelText="Childrens"
+                          floatingLabelFocusStyle={{fontSize: 22}}
                           value={this.state.selectedClient.childrens}
                           onChange={this.handleClientChildrensInput}
                           onBlur={(e)=>{
@@ -466,6 +535,7 @@ class Clients extends Component {
                         <TextField
                           hintText="Job"
                           floatingLabelText="Job"
+                          floatingLabelFocusStyle={{fontSize: 22}}
                           value={this.state.selectedClient.job}
                           onChange={this.handleClientJobInput}
                           onBlur={(e)=>{
@@ -479,6 +549,7 @@ class Clients extends Component {
                         <TextField
                           hintText="Income"
                           floatingLabelText="Income"
+                          floatingLabelFocusStyle={{fontSize: 22}}
                           value={this.state.selectedClient.income}
                           onChange={this.handleClientIncomeInput}
                           onBlur={(e)=>{
@@ -513,12 +584,46 @@ class Clients extends Component {
                       />
                   </div>
                   <Subheader>Appointment</Subheader>
+                  <div className="flex-column">
+                    <FlatButton label="Add appointment" style={{margin: "0 16px"}} backgroundColor="#e7e7e7" onTouchTap={this.handleAddAppointmentModalOpen}/>
+                  </div>
 
                 </div>
               </div>
             ) : null }
           </div>
         </div>
+        <Dialog
+          title="New Appointment"
+          actions={addAppointmentActions}
+          modal={false}
+          open={this.state.addAppointmentModalOpen}
+          onRequestClose={this.handleAddAppointmentModalClose}
+          >
+          <DatePicker
+            hintText="Pick Date"
+            floatingLabelText="Date"
+            value={this.state.newAppointment.date}
+            onChange={this.handleChangeDatePicker}/>
+          <TimePicker
+            hintText="Pick Time"
+            floatingLabelText="Start Time"
+            value={this.state.newAppointment.start}
+            onChange={this.handleChangeStartTimePicker}/>
+          <TimePicker
+            hintText="Pick Time"
+            floatingLabelText="End Time"
+            value={this.state.newAppointment.end}
+            onChange={this.handleChangeEndTimePicker}/>
+          <TextField
+            multiLine={true}
+            rows={2}
+            hintText="Note"
+            floatingLabelText="Note"
+            value={this.state.newAppointment.note}
+            onChange={this.handleAppointmentNoteInput}
+            />
+        </Dialog>
       </div>
     )
   }

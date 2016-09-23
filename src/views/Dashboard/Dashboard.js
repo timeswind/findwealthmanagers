@@ -98,6 +98,26 @@ class DashboardView extends Component {
     this.setState({ "listInfo": listInfo })
   }
 
+  verifyEmail() {
+    fetch('/api/protect/verify-email', {
+      method: "get",
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + this.props.auth.token
+      }
+    }).then(function(response) {
+      return response.json()
+    }).then(function(json) {
+      console.log(json)
+      if (json.success) {
+
+      }
+    }).catch(function(ex) {
+      console.log('failed', ex)
+    })
+  }
+
   render() {
     return (
       <div className="view-body flex-column">
@@ -118,8 +138,15 @@ class DashboardView extends Component {
               </div>
             </div>
             { this.state.emailIsVerified === false ? (
-              <div className="flex-column default-padding raleway" style={{marginBottom: "16px", backgroundColor: "#fff", border: "1px solid #FF9800", color: "#FF9800"}}>
-                Your email is not varified
+              <div className="flex-row flex-center default-padding raleway" style={{marginBottom: "16px", backgroundColor: "#fff", border: "1px solid #FF9800", color: "#FF9800"}}>
+                <span>Your email is not varified</span>
+                <FlatButton
+                  label="verify now"
+                  style={{marginLeft: "auto", color: "rgb(255, 152, 0)"}}
+                  onClick={()=>{
+                    this.verifyEmail()
+                  }}
+                  />
               </div>
             ) : null }
             <div className="flex-row">

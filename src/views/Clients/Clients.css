@@ -1,7 +1,19 @@
+.clients-panel {
+
+}
+
 .clients-side-panel {
   border-right: 1px solid #ddd;
   background: #fff;
-  overflow-y: auto;
+  height: 100%;
+  width: 380px;
+  position: fixed;
+  z-index: 1;
+  left: 0px;
+  top: 62px;
+  transform: translate(0px, 0px);
+  overflow: auto;
+  padding-bottom: 64px
 }
 
 .clients-search-bar {
@@ -10,6 +22,7 @@
 
 .clients-detail-panel-wrapper {
   margin: 16px;
+  padding-left: 380px
 }
 
 .clients-detail-panel {
