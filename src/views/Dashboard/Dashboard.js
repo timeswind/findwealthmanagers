@@ -148,7 +148,7 @@ class DashboardView extends Component {
               <div className="flex-row flex-center default-padding raleway" style={{marginBottom: "16px", backgroundColor: "#fff", border: "1px solid #FF9800", color: "#FF9800"}}>
                 <span>Your email is not varified</span>
                 { this.state.verifyEmailState === 'pending' ? (
-                  <CircularProgress />
+                  <CircularProgress size={0.5}/>
                 ) : (
                   <div style={{marginLeft: "auto"}}>
                     {this.state.verifyEmailState === 'sent' ? (
