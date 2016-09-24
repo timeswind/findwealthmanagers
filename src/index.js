@@ -149,7 +149,7 @@ const MUI = () => (
               })
             }}
             />
-          <Route path="verify-email/:token" onEnter={requireAuth} getComponent={function(location, cb){
+          <Route path="verify-email/:token" getComponent={function(location, cb){
               require.ensure([], (require) => {
                 cb(null, require('./views/Verifyemail/Verifyemail').default)
               })
