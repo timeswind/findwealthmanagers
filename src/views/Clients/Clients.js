@@ -21,7 +21,9 @@ import { connect } from 'react-redux';
 import AddClientSimpleForm from '../../forms/AddClientSimpleForm/AddClientSimpleForm';
 import update from 'react-addons-update';
 import CategorySelector from '../../components/CategorySelector/CategorySelector';
-import categoryTypes from '../../assets/categories'
+import categoryTypes from '../../assets/categories';
+import { TimeToIndex, IndexToTime } from '../../core/TimeToIndex';
+import moment from 'moment';
 
 import './Clients.css'
 
@@ -43,7 +45,9 @@ class Clients extends Component {
       married: null,
       job: "",
       income: "",
-      categories: []
+      categories: [],
+      appointments: [],
+      feedback: ""
     },
     newAppointment: {
       date: null,
@@ -97,6 +101,16 @@ class Clients extends Component {
       return response.json()
     }).then(function(json) {
       if (json.success) {
+        if (json.appointments) {
+          console.log(json.appointments)
+          json.client["appointments"] = json.appointments.map((appointment) => {
+            var obj = {}
+            obj["date"] = appointment.date
+            obj["start"] = IndexToTime(appointment.start)
+            obj["end"] = IndexToTime(appointment.end)
+            return obj
+          })
+        }
         self.updateSelectedClient(json.client, index)
       }
     }).catch(function(ex) {
@@ -126,7 +140,9 @@ class Clients extends Component {
         job: { $set: newClient.job || "" },
         income: { $set: newClient.income || "" },
         married: { $set: newClient.married },
-        categories: { $set: newClient.categories || [] }
+        categories: { $set: newClient.categories || [] },
+        appointments: { $set: newClient.appointments || [] },
+        feedback: { $set: newClient.feedback || "" }
       }
     });
     this.setState(newState);
@@ -134,6 +150,20 @@ class Clients extends Component {
 
   updateClients(clients) {
     this.setState({ clients: clients })
+  }
+
+  updateSelectedClientAppointment = function (appointment) {
+    appointment["date"] = appointment.date
+    appointment["start"] = IndexToTime(appointment.start)
+    appointment["end"] = IndexToTime(appointment.end)
+    console.log(appointment)
+    var newState = update(this.state, {
+      selectedClient: {
+        appointments: { $push: [appointment] }
+      }
+    })
+    this.setState(newState);
+
   }
 
   handleAddClientButtonTouchTap = (event) => {
@@ -270,7 +300,6 @@ class Clients extends Component {
   }
 
   patchClientInfo (patchField, data) {
-    console.log(patchField)
     let clientIndex = this.state.selectedClient.index
     if (patchField !== 'categories') {
       var newState = update(this.state, {
@@ -360,7 +389,40 @@ class Clients extends Component {
   }
 
   addNewAppointment() {
-    console.log(this.state.newAppointment)
+    var self = this
+    if (this.state.newAppointment.date && this.state.newAppointment.start && this.state.newAppointment.end) {
+
+      const client = this.state.selectedClient._id
+      const date = this.state.newAppointment.date
+      const start = TimeToIndex(this.state.newAppointment.start)
+      const end = TimeToIndex(this.state.newAppointment.end)
+      const data = {
+        client,
+        date,
+        start,
+        end
+      }
+
+      fetch('/api/protect/appointment', {
+        method: "post",
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + this.props.auth.token
+        },
+        body: JSON.stringify(data)
+      }).then(function(response) {
+        return response.json()
+      }).then(function(json) {
+        if (json.success) {
+          self.updateSelectedClientAppointment(json.newAppointment)
+          self.handleAddAppointmentModalClose()
+        }
+        console.log(json)
+      }).catch(function(ex) {
+        console.log('failed', ex)
+      })
+    }
   }
 
   render() {
@@ -583,8 +645,21 @@ class Clients extends Component {
                       }}
                       />
                   </div>
-                  <Subheader>Appointment</Subheader>
+                  <Subheader>Appointments</Subheader>
+
                   <div className="flex-column">
+                    <List>
+                      {this.state.selectedClient.appointments.map((appointment, index)=>{
+                        return (
+                          <ListItem
+                            key={index}
+                            primaryText={moment(appointment.start).format('h:mm a') + " - " + moment(appointment.end).format('h:mm a')}
+                            secondaryText={moment(appointment.date).format('MMMM DD YYYY')}
+                            />
+                        )
+                      })}
+                    </List>
+
                     <FlatButton label="Add appointment" style={{margin: "0 16px"}} backgroundColor="#e7e7e7" onTouchTap={this.handleAddAppointmentModalOpen}/>
                   </div>
 
