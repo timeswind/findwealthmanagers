@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import FlatButton from 'material-ui/FlatButton';
 import FontIcon from 'material-ui/FontIcon';
 import Chip from 'material-ui/Chip';
+import Divider from 'material-ui/Divider';
 import CircularProgress from 'material-ui/CircularProgress';
 import fetch from '../../core/fetch/fetch';
 import { connect } from 'react-redux';
@@ -12,6 +13,7 @@ import Subheader from 'material-ui/Subheader';
 import EditListInfoFrom from '../../forms/EditListInfoForm/EditListInfoForm';
 import { TimeToIndex, IndexToTime } from '../../core/TimeToIndex';
 import moment from 'moment';
+import _ from 'lodash';
 
 import './Dashboard.css'
 
@@ -72,16 +74,28 @@ class DashboardView extends Component {
       }
 
       if (appointmentInfo !== false) {
-        appointmentInfo = appointmentInfo.map((appointment) => {
+        appointmentInfo = _
+        .chain(appointmentInfo)
+        .sortBy(function(appointment){
+          return new Date(appointment.date)
+        })
+        .map(function(appointment) {
           var obj = {}
+          if (new Date().setHours(0, 0, 0, 0) === new Date(appointment.date).setHours(0, 0, 0, 0)) {
+            obj["date"] = "today"
+          } else {
+            obj["date"] = new Date(appointment.date)
+            obj["day"] = obj["date"].getDate()
+          }
           obj["_id"] = appointment._id
-          obj["date"] = appointment.date
           obj["client"] = appointment.client.name || ""
           obj["note"] = appointment.note || ""
           obj["start"] = IndexToTime(appointment.start)
           obj["end"] = IndexToTime(appointment.end)
           return obj
         })
+        .value()
+        console.log(appointmentInfo)
         self.setState({appointments: appointmentInfo})
       }
 
@@ -146,6 +160,7 @@ class DashboardView extends Component {
   }
 
   render() {
+    var appointments = this.state.appointments
     return (
       <div className="view-body flex-column">
         <div style={{padding:"36px 8px 64px 8px"}}>
@@ -192,6 +207,7 @@ class DashboardView extends Component {
                   <div className="panel-header">
                     Account info
                   </div>
+                  <Divider />
                   <div className="panel-body">
                     <div className="flex-row">
                       <div className="flex-column">
@@ -232,7 +248,7 @@ class DashboardView extends Component {
                   </div>
                 </div>
                 <div className="flex-column" style={lessShadowCardStyle}>
-                  <div className="flex-column default-padding">
+                  <div className="flex-column">
                     { !this.state.listed ? (
                       <div className="flex-column">
                         <div style={{marginBottom: "16px", fontSize: "22px", fontWeight: '600'}} className="raleway">
@@ -251,16 +267,19 @@ class DashboardView extends Component {
                       <div>
                         { this.state.editListInfo ? (
                           <div className="flex-column">
-                            <div className="flex-row flex-center">
+                            <div className="flex-row flex-center  default-padding">
                               <div style={{fontSize: "22px", fontWeight: '600'}} className="raleway">
                                 List Information
                               </div>
                             </div>
-                            <EditListInfoFrom handleCancle={this.handleEditListFormCancel} initialValues={this.state.listInfo} onSubmit={this.handleEditListFormSubmit}></EditListInfoFrom>
+                            <Divider />
+                            <div className="default-padding">
+                              <EditListInfoFrom handleCancle={this.handleEditListFormCancel} initialValues={this.state.listInfo} onSubmit={this.handleEditListFormSubmit}></EditListInfoFrom>
+                            </div>
                           </div>
                         ) : (
                           <div className="flex-column">
-                            <div className="flex-row flex-center">
+                            <div className="flex-row flex-center  default-padding">
                               <div style={{fontSize: "22px", fontWeight: '600'}} className="raleway">
                                 List Information
                               </div>
@@ -286,72 +305,75 @@ class DashboardView extends Component {
                               </div>
 
                             </div>
-                            <div className="flex-column" style={{marginTop: "16px"}}>
-                              <span className="field-title">
-                                Phone
-                              </span>
-                              <span className="field-content">
-                                {this.state.listInfo.phone}
-                              </span>
-                            </div>
-                            <div className="flex-column" style={{marginTop: "16px"}}>
-                              <span className="field-title">
-                                Email
-                              </span>
-                              <span className="field-content">
-                                {this.state.listInfo.email}
-                              </span>
-                            </div>
-                            <div className="flex-column" style={{marginTop: "16px"}}>
-                              <span className="field-title">
-                                Brief
-                              </span>
-                              <span className="field-content">
-                                {this.state.listInfo.brief}
-                              </span>
-                            </div>
-                            <div className="flex-column" style={{marginTop: "16px"}}>
-                              <span className="field-title">
-                                Categories
-                              </span>
-                              <div className="flex-row">
-                                { this.state.listInfo.modifiedCategories ? this.state.listInfo.modifiedCategories.map((category) => {
+                            <Divider />
+                            <div className="default-padding">
+                              <div className="flex-column">
+                                <span className="field-title">
+                                  Phone
+                                </span>
+                                <span className="field-content">
+                                  {this.state.listInfo.phone}
+                                </span>
+                              </div>
+                              <div className="flex-column" style={{marginTop: "16px"}}>
+                                <span className="field-title">
+                                  Email
+                                </span>
+                                <span className="field-content">
+                                  {this.state.listInfo.email}
+                                </span>
+                              </div>
+                              <div className="flex-column" style={{marginTop: "16px"}}>
+                                <span className="field-title">
+                                  Brief
+                                </span>
+                                <span className="field-content">
+                                  {this.state.listInfo.brief}
+                                </span>
+                              </div>
+                              <div className="flex-column" style={{marginTop: "16px"}}>
+                                <span className="field-title">
+                                  Categories
+                                </span>
+                                <div className="flex-row">
+                                  { this.state.listInfo.modifiedCategories ? this.state.listInfo.modifiedCategories.map((category) => {
+                                    return (
+                                      <Chip key={category.code} style={{margin: "4px 8px 4px 0"}}>
+                                        {category.name}
+                                      </Chip>
+                                    )
+                                  }) : null}
+                                </div>
+                              </div>
+                              <div className="flex-column" style={{marginTop: "16px"}}>
+                                <span className="field-title">
+                                  Building/Suite
+                                </span>
+                                <span className="field-content">
+                                  {this.state.listInfo.room}
+                                </span>
+                              </div>
+                              <div className="flex-column" style={{marginTop: "16px"}}>
+                                <span className="field-title">
+                                  Address
+                                </span>
+                                <span className="field-content">
+                                  {this.state.listInfo.address}
+                                </span>
+                              </div>
+                              <div className="flex-column" style={{marginTop: "16px"}}>
+                                <span className="field-title">
+                                  Experience
+                                </span>
+                                { this.state.listInfo.experience ? this.state.listInfo.experience.map((experience, index) => {
                                   return (
-                                    <Chip key={category.code} style={{margin: "4px 8px 4px 0"}}>
-                                      {category.name}
-                                    </Chip>
+                                    <div key={index} style={{margin: "8px 0 0 0", border: "1px solid #ddd", padding: "16px"}}>
+                                      <span style={{fontWeight: 600, fontSize: "20px"}}>{experience.title}</span>
+                                      <p style={{margin: "8px 0 0 0", fontSize: "14px"}}>{experience.text}</p>
+                                    </div>
                                   )
                                 }) : null}
                               </div>
-                            </div>
-                            <div className="flex-column" style={{marginTop: "16px"}}>
-                              <span className="field-title">
-                                Building/Suite
-                              </span>
-                              <span className="field-content">
-                                {this.state.listInfo.room}
-                              </span>
-                            </div>
-                            <div className="flex-column" style={{marginTop: "16px"}}>
-                              <span className="field-title">
-                                Address
-                              </span>
-                              <span className="field-content">
-                                {this.state.listInfo.address}
-                              </span>
-                            </div>
-                            <div className="flex-column" style={{marginTop: "16px"}}>
-                              <span className="field-title">
-                                Experience
-                              </span>
-                              { this.state.listInfo.experience ? this.state.listInfo.experience.map((experience, index) => {
-                                return (
-                                  <div key={index} style={{margin: "8px 0 0 0", border: "1px solid #ddd", padding: "16px"}}>
-                                    <span style={{fontWeight: 600, fontSize: "20px"}}>{experience.title}</span>
-                                    <p style={{margin: "8px 0 0 0", fontSize: "14px"}}>{experience.text}</p>
-                                  </div>
-                                )
-                              }) : null}
                             </div>
                           </div>
                         ) }
@@ -376,31 +398,63 @@ class DashboardView extends Component {
                       labelStyle={{color: "rgb(66, 133, 244)"}}
                       />
                   </div>
-                  <List>
+                  <Divider />
+                  <div style={{padding: 0}}>
                     <Subheader>Today</Subheader>
-                    { this.state.appointments.map((appointment) => {
+                    <Divider />
+                    { this.state.appointments.map((appointment, index) => {
                       return (
-                        <ListItem
-                          key={appointment._id}
-                          primaryText={
-                            <div className="flex-row">
-                              <span>{moment(appointment.start).format('h:mm a') + " - " + moment(appointment.end).format('h:mm a')}</span>
-                              <span style={{marginLeft: "auto", color: "#ff9800"}}>{appointment.client}</span>
+                        <div
+                          key={appointment._id}>
+                          { appointment.date === 'today' ? (
+                            <ListItem
+                              primaryText={
+                                <div className="flex-row">
+                                  <span>{moment(appointment.start).format('h:mm a') + " - " + moment(appointment.end).format('h:mm a')}</span>
+                                  <span style={{marginLeft: "auto", color: "#ff9800"}}>{appointment.client}</span>
+                                </div>
+                              }
+                              secondaryText={
+                                appointment.note !== "" ? (
+                                  <p>
+                                    {appointment.note}
+                                  </p>
+                                ): null
+                              }
+                              />
+                          ) : (
+                            <div>
+                              { appointments[index].day === appointments[index - 1].day ? null : (
+                                <div>
+                                  <Divider />
+                                  <Subheader>{moment(appointment.date).format('MMM DD')}</Subheader>
+                                  <Divider />
+                                </div>
+                              ) }
+                              <ListItem
+                                primaryText={
+                                  <div className="flex-column">
+                                    <div className="flex-row">
+                                      <span>{moment(appointment.start).format('h:mm a') + " - " + moment(appointment.end).format('h:mm a')}</span>
+                                      <span style={{marginLeft: "auto", color: "#ff9800"}}>{appointment.client}</span>
+                                    </div>
+                                  </div>
+                                }
+                                secondaryText={
+                                  appointment.note !== "" ? (
+                                    <p>
+                                      {appointment.note}
+                                    </p>
+                                  ): null
+                                }
+                                />
                             </div>
-                          }
-                          secondaryText={
-                            appointment.note !== "" ? (
-                              <p>
-                                {appointment.note}
-                              </p>
-                            ): null
-                          }
-                          />
+                          ) }
+                        </div>
+
                       )
                     }) }
-
-
-                  </List>
+                  </div>
 
                 </div>
                 <div style={lessShadowCardStyle}>

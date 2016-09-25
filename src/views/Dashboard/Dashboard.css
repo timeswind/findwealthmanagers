@@ -5,10 +5,8 @@
   font-size: 22px;
   font-weight: 600;
   padding: 16px;
-  margin-bottom: 16px;
-  border-bottom: 1px solid #ddd;
 }
 
 .panel-body {
-  padding: 0 16px 16px 16px
+  padding: 16px
 }
