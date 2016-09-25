@@ -106,6 +106,7 @@ class Clients extends Component {
           json.client["appointments"] = json.appointments.map((appointment) => {
             var obj = {}
             obj["date"] = appointment.date
+            obj["note"] = appointment.note || ""
             obj["start"] = IndexToTime(appointment.start)
             obj["end"] = IndexToTime(appointment.end)
             return obj
@@ -154,6 +155,7 @@ class Clients extends Component {
 
   updateSelectedClientAppointment = function (appointment) {
     appointment["date"] = appointment.date
+    appointment["note"] = appointment.note || ""
     appointment["start"] = IndexToTime(appointment.start)
     appointment["end"] = IndexToTime(appointment.end)
     console.log(appointment)
@@ -396,11 +398,13 @@ class Clients extends Component {
       const date = this.state.newAppointment.date
       const start = TimeToIndex(this.state.newAppointment.start)
       const end = TimeToIndex(this.state.newAppointment.end)
+      const note = this.state.newAppointment.note
       const data = {
         client,
         date,
         start,
-        end
+        end,
+        note
       }
 
       fetch('/api/protect/appointment', {
@@ -653,8 +657,21 @@ class Clients extends Component {
                         return (
                           <ListItem
                             key={index}
-                            primaryText={moment(appointment.start).format('h:mm a') + " - " + moment(appointment.end).format('h:mm a')}
-                            secondaryText={moment(appointment.date).format('MMMM DD YYYY')}
+                            primaryText={
+                              <div style={{margin: 0}} className="flex-row">
+                                <span style={{backgroundColor: "#304966", height: 31, width: 36, padding: 8, color: "#fff", borderRadius: 3}}>{moment(appointment.date).format('MMM DD')} </span>
+                                <div style={{marginLeft: "auto"}} className="flex-column align-right">
+                                  <span>{moment(appointment.start).format('h:mm a') + " - " + moment(appointment.end).format('h:mm a')}</span>
+                                    {
+                                      appointment.note !== "" ? (
+                                        <p style={{color:"#666"}}>
+                                          {appointment.note}
+                                        </p>
+                                      ): null
+                                    }
+                                </div>
+                              </div>
+                            }
                             />
                         )
                       })}

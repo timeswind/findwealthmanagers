@@ -6,9 +6,12 @@ import CircularProgress from 'material-ui/CircularProgress';
 import fetch from '../../core/fetch/fetch';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
-import categoryTypes from '../../assets/categories'
-
+import categoryTypes from '../../assets/categories';
+import {List, ListItem} from 'material-ui/List';
+import Subheader from 'material-ui/Subheader';
 import EditListInfoFrom from '../../forms/EditListInfoForm/EditListInfoForm';
+import { TimeToIndex, IndexToTime } from '../../core/TimeToIndex';
+import moment from 'moment';
 
 import './Dashboard.css'
 
@@ -27,7 +30,8 @@ class DashboardView extends Component {
     listed: false,
     userInfo: {},
     listInfo: {},
-    editListInfo: false
+    editListInfo: false,
+    appointments: []
   };
 
   componentWillMount() {
@@ -46,8 +50,10 @@ class DashboardView extends Component {
     }).then(function(response) {
       return response.json()
     }).then(function(json) {
+      console.log(json)
       let userInfo = json.userInfo
       let listInfo = json.listInfo
+      var appointmentInfo = json.appointmentInfo
       if (json.listInfo.categories) {
         var modifiedCategories = []
         json.listInfo.categories.forEach((category_code) => {
@@ -63,6 +69,20 @@ class DashboardView extends Component {
         self.setState({listInfo: listInfo})
       } else {
         self.setState({listed: false})
+      }
+
+      if (appointmentInfo !== false) {
+        appointmentInfo = appointmentInfo.map((appointment) => {
+          var obj = {}
+          obj["_id"] = appointment._id
+          obj["date"] = appointment.date
+          obj["client"] = appointment.client.name || ""
+          obj["note"] = appointment.note || ""
+          obj["start"] = IndexToTime(appointment.start)
+          obj["end"] = IndexToTime(appointment.end)
+          return obj
+        })
+        self.setState({appointments: appointmentInfo})
       }
 
       self.setState({userInfo: userInfo})
@@ -356,6 +376,31 @@ class DashboardView extends Component {
                       labelStyle={{color: "rgb(66, 133, 244)"}}
                       />
                   </div>
+                  <List>
+                    <Subheader>Today</Subheader>
+                    { this.state.appointments.map((appointment) => {
+                      return (
+                        <ListItem
+                          key={appointment._id}
+                          primaryText={
+                            <div className="flex-row">
+                              <span>{moment(appointment.start).format('h:mm a') + " - " + moment(appointment.end).format('h:mm a')}</span>
+                              <span style={{marginLeft: "auto", color: "#ff9800"}}>{appointment.client}</span>
+                            </div>
+                          }
+                          secondaryText={
+                            appointment.note !== "" ? (
+                              <p>
+                                {appointment.note}
+                              </p>
+                            ): null
+                          }
+                          />
+                      )
+                    }) }
+
+
+                  </List>
 
                 </div>
                 <div style={lessShadowCardStyle}>

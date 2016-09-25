@@ -142,6 +142,10 @@
   align-items: center;
 }
 
+.align-right {
+  align-items: flex-end;
+}
+
 .justify-right {
   justify-content: flex-end;
 }
