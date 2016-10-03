@@ -98,8 +98,7 @@ class ManageCalendar extends Component {
   }
 
   deleteDayScheduleEvent = (calendar_id, event_id) => {
-    console.log(calendar_id)
-    console.log(event_id)
+    var self = this
     let data = 'type=event&calendar_id=' + calendar_id + '&event_id=' + event_id
     fetch('/api/protect/calendar?' + data, {
       method: "DELETE",
@@ -112,6 +111,7 @@ class ManageCalendar extends Component {
       return response.json()
     }).then(function(json) {
       if (json.calendar.available && json.calendar.available.length > 0) {
+        self.setState({ eventDetailDialogOpen: false })
         self.updateCalendarData(json.calendar)
       }
     }).catch(function(ex) {
