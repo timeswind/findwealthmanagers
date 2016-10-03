@@ -8,10 +8,10 @@ import fetch from '../../core/fetch/fetch';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 import categoryTypes from '../../assets/categories';
-import {List, ListItem} from 'material-ui/List';
+import { ListItem } from 'material-ui/List';
 import Subheader from 'material-ui/Subheader';
 import EditListInfoFrom from '../../forms/EditListInfoForm/EditListInfoForm';
-import { TimeToIndex, IndexToTime } from '../../core/TimeToIndex';
+import { IndexToTime } from '../../core/TimeToIndex';
 import moment from 'moment';
 import _ from 'lodash';
 
@@ -396,6 +396,9 @@ class DashboardView extends Component {
                     <FlatButton
                       label="manage"
                       labelStyle={{color: "rgb(66, 133, 244)"}}
+                      onClick={()=>{
+                        this.props.dispatch(push('/dashboard/calendar'))
+                      }}
                       />
                   </div>
                   <Divider />
@@ -424,7 +427,12 @@ class DashboardView extends Component {
                               />
                           ) : (
                             <div>
-                              { appointments[index].day === appointments[index - 1].day ? null : (
+                              { index === 0 ? (
+                                <ListItem
+                                  primaryText="No appointment"
+                                  />
+                              ) : null}
+                              { index > 0 && appointments[index].day === appointments[index - 1].day ? null : (
                                 <div>
                                   <Divider />
                                   <Subheader>{moment(appointment.date).format('MMM DD')}</Subheader>

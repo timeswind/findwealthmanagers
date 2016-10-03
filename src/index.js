@@ -11,24 +11,22 @@ import { syncHistoryWithStore, routerReducer, routerMiddleware } from 'react-rou
 import IndexRoute from 'react-router/lib/IndexRoute';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
+
+// import Raven from 'raven-js';
 // import { IntlProvider } from 'react-intl';
 // global.Intl = require('intl');
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import localStore from 'store2';
 
 import App from './App';
-import Home from './views/Home/Home';
-// import GetListedView from './views/GetListed/GetListed';
-import LoginView from './views/LoginView/LoginView';
-import SignupView from './views/SignupView/SignupView';
-import SearchView from './views/Search/Search';
-import DashboardView from './views/Dashboard/Dashboard';
 
 import { reducer as formReducer } from 'redux-form'
 import authReducers from './redux/reducers/auth';
 import searchReducers from './redux/reducers/search';
 
 import './index.css';
+
+// Raven.config('https://428f8ff22ea44869a1b6410cf83d7905@sentry.io/101570').install();
 
 const muiTheme = getMuiTheme({
   palette: {
@@ -126,36 +124,70 @@ const MUI = () => (
     <Provider store={store}>
       <Router history={history} render={applyRouterMiddleware(useScroll())}>
         <Route path="/" component={App}>
-          <IndexRoute component={Home}/>
-          <Route path="getlisted" onEnter={requireHaveNotListed} getComponent={function(location, cb){
+          <IndexRoute getComponent={function(location, cb){
               require.ensure([], (require) => {
-                cb(null, require('./views/GetListed/GetListed.js').default)
+                cb(null, require('./views/Home/Home').default)
               })
-            }}
-            />
-          <Route path="search" component={SearchView} />
-          <Route path="login" component={LoginView} />
-          <Route path="signup" component={SignupView} />
-          <Route path="dashboard" component={DashboardView} onEnter={requireAuth} />
-          <Route path="p/:id" getComponent={function(location, cb){
+            }}>
+          </IndexRoute>
+          <Route path="/getlisted" onEnter={requireHaveNotListed} getComponent={function(location, cb){
+              require.ensure([], (require) => {
+                cb(null, require('./views/GetListed/GetListed').default)
+              })
+            }}>
+          </Route>
+          <Route path="/search" getComponent={function(location, cb){
+              require.ensure([], (require) => {
+                cb(null, require('./views/Search/Search').default)
+              })
+            }}>
+          </Route>
+          <Route path="/login" getComponent={function(location, cb){
+              require.ensure([], (require) => {
+                cb(null, require('./views/LoginView/LoginView').default)
+              })
+            }}>
+          </Route>
+          <Route path="/signup" getComponent={function(location, cb){
+              require.ensure([], (require) => {
+                cb(null, require('./views/SignupView/SignupView').default)
+              })
+            }}>
+          </Route>
+          <Route path="/dashboard" onEnter={requireAuth}>
+            <IndexRoute getComponent={function(location, cb){
+                require.ensure([], (require) => {
+                  cb(null, require('./views/Dashboard/Dashboard').default)
+                })
+              }}>
+            </IndexRoute>
+            <Route path="calendar" getComponent={function(location, cb){
+                require.ensure([], (require) => {
+                  cb(null, require('./views/ManageCalendar/ManageCalendar').default)
+                })
+              }}>
+            </Route>
+          </Route>
+          <Route path="/p/:id" getComponent={function(location, cb){
               require.ensure([], (require) => {
                 cb(null, require('./views/Profile/Profile').default)
               })
-            }}
-            />
-          <Route path="clients" onEnter={requireAuth} getComponent={function(location, cb){
+            }}>
+
+          </Route>
+
+          <Route path="/clients" onEnter={requireAuth} getComponent={function(location, cb){
               require.ensure([], (require) => {
                 cb(null, require('./views/Clients/Clients').default)
               })
-            }}
-            />
-          <Route path="verify-email/:token" getComponent={function(location, cb){
+            }}>
+          </Route>/>
+          <Route path="/verify-email/:token" getComponent={function(location, cb){
               require.ensure([], (require) => {
                 cb(null, require('./views/Verifyemail/Verifyemail').default)
               })
-            }}
-            />
-
+            }}>
+          </Route>
         </Route>
       </Router>
     </Provider>
