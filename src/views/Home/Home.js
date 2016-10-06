@@ -42,7 +42,7 @@ class Home extends Component {
     userMenuOpen: false
   }
 
-  handleTouchTap = (event) => {
+  handleUserManuTouchTap = (event) => {
     // This prevents ghost click.
     event.preventDefault();
 
@@ -76,7 +76,7 @@ class Home extends Component {
               <div className="flex-row flex-center" style={{marginLeft: "auto"}}>
                 <div className="raleway">
                   <div className="flex-row flex-center"
-                    onTouchTap={this.handleTouchTap}
+                    onTouchTap={this.handleUserManuTouchTap}
                     style={{cursor: "pointer", backgroundColor:"rgba(0, 0, 0, 0.5)", padding: "8px 16px", borderRadius: "3px"}}>
                     <span>{this.props.auth.name}</span>
                     <FontIcon
@@ -94,20 +94,20 @@ class Home extends Component {
                     >
                     <Menu>
                       <MenuItem primaryText="Dashboard"
-                        onClick={()=>{
+                        onTouchTap={()=>{
                           this.routerPush('/dashboard')
                           this.handleRequestClose()
                         }}
                         />
                       <MenuItem primaryText="Client Book"
-                        onClick={()=>{
+                        onTouchTap={()=>{
                           this.routerPush('/clients')
                           this.handleRequestClose()
                         }}
                         />
                       <MenuItem primaryText="Help &amp; feedback"/>
                       <MenuItem primaryText="Sign out"
-                        onClick={()=>{
+                        onTouchTap={()=>{
                           this.logout()
                           this.handleRequestClose()
                         }}
@@ -124,7 +124,7 @@ class Home extends Component {
                     hoverColor="#2a8a2d"
                     backgroundColor="#32b337"
                     style={{color: "#fff"}}
-                    onClick={() => {
+                    onTouchTap={() => {
                       this.routerPush('/login')
                     }}
                     />
@@ -136,7 +136,7 @@ class Home extends Component {
                     rippleColor="rgba(0, 0, 0, 0.9)"
                     style={{color: "#fff"}}
                     label="GET LISTED TODAY"
-                    onClick={() => {
+                    onTouchTap={() => {
                       this.routerPush('/getlisted')
                     }}
                     />

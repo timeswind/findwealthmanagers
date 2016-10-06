@@ -121,7 +121,7 @@ class LoginView extends Component {
                   hoverColor="#495767"
                   rippleColor="#B2DFDB"
                   label="login"
-                  onClick={() => {
+                  onTouchTap={() => {
                     this.login()
                   }}
                   style={{color: "#fff", width: "256px", marginTop: "36px"}}

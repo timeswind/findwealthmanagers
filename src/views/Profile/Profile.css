@@ -48,7 +48,6 @@
 
 
 .p-tabs-inner-wrapper {
-  max-width: 800px;
   margin: 0 auto;
 }
 
@@ -57,4 +56,45 @@
   border-radius: 3px;
   background: #ddd;
   margin-right: 8px;
+}
+
+
+.weekday {
+  position: relative;
+  flex: 1 0 0px;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid #ddd;
+}
+
+.time-slot {
+  height: 36px;
+  border-top: 1px solid #eee;
+  width: 100%;
+}
+
+.time-label .time-slot:first-child, .hour-slot .time-slot:first-child{
+  border-top: 1px solid #ccc;
+}
+
+.table-header {
+  padding: 0 8px;
+  line-height: 49px;
+}
+
+.weekday:first-child {
+  border-left: none
+}
+
+.calender-event {
+  padding: 8px;
+  box-sizing: border-box;
+  position: absolute;
+  width: 100%;
+  background: #32b337;
+  color: #fff;
+  cursor: pointer;
+}
+.calender-event:hover {
+  background: #2b982f;
 }

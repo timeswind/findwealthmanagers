@@ -110,10 +110,8 @@ class ManageCalendar extends Component {
     }).then(function(response) {
       return response.json()
     }).then(function(json) {
-      if (json.calendar.available && json.calendar.available.length > 0) {
-        self.setState({ eventDetailDialogOpen: false })
-        self.updateCalendarData(json.calendar)
-      }
+      self.setState({ eventDetailDialogOpen: false })
+      self.updateCalendarData(json.calendar)
     }).catch(function(ex) {
       console.log('failed', ex)
     })
@@ -192,21 +190,6 @@ class ManageCalendar extends Component {
       )
     }
     return labels
-  }
-
-  renderDaySchedules (day_index) {
-    if (this.state.daySchedules[day_index] !== null) {
-      this.state.daySchedules[day_index].map((event)=>{
-        return (
-          <div className="calender-event" key={event._id}>
-            {event.from}
-          </div>
-        )
-      })
-    } else {
-      return null
-    }
-
   }
 
   renderDayScheduleBlock (day) {
