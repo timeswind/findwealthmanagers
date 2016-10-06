@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
-import RaisedButton from 'material-ui/RaisedButton';
 import DropDownMenu from 'material-ui/DropDownMenu';
 import MenuItem from 'material-ui/MenuItem';
 import { connect } from 'react-redux';
@@ -10,6 +9,7 @@ import AddAvailableTimeForm from '../../forms/AddAvailableTimeForm/AddAvailableT
 import './ManageCalendar.css';
 import moment from 'moment';
 import { IndexToTime } from '../../core/TimeToIndex';
+
 
 const weekdaysName = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const monthsName = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -20,12 +20,12 @@ class ManageCalendar extends Component {
     let today = new Date()
     let year = today.getFullYear()
     let month_index= today.getMonth()
-    let day = today.getDate()
+    let date = today.getDate()
     this.state = {
       year: year,
       month: month_index + 1,
       weeksCount: this.weekCountInMonth(year, month_index + 1),
-      currentWeek: this.currentWeekIn(day, year, month_index),
+      currentWeek: this.currentWeekIn(date, year, month_index),
       newEventDialogOpen: false,
       eventDetailDialogOpen: false,
       detailEvent: null,
@@ -36,6 +36,73 @@ class ManageCalendar extends Component {
 
   componentWillMount() {
     this.getCurrentMonthCalendar()
+  }
+
+
+  navigateWeekPrivious () {
+    let currentMonth = this.state.month
+    let currentWeek = this.state.currentWeek
+    if (currentMonth === 1 && currentWeek === 1) {
+      this.updateCalendar( this.state.year - 1, 12, this.weekCountInMonth(this.state.year - 1, 12), this.weekCountInMonth(this.state.year - 1, 12))
+    } else if (currentWeek === 1) {
+      this.updateCalendar( this.state.year, this.state.month - 1, this.weekCountInMonth(this.state.year, this.state.month - 1), this.weekCountInMonth(this.state.year, this.state.month - 1))
+    } else {
+      this.updateCalendar( this.state.year, this.state.month, this.state.weeksCount, this.state.currentWeek - 1)
+    }
+  }
+
+  navigateWeekCurrent () {
+    let today = new Date()
+    let currentYear = today.getFullYear()
+    let currentMonth = today.getMonth() + 1
+    let currentDate = today.getDate()
+    let weeksCount =  this.weekCountInMonth(currentYear, currentMonth)
+    let currentWeek = this.currentWeekIn(currentDate, currentYear, currentMonth - 1)
+    this.updateCalendar( currentYear, currentMonth, weeksCount, currentWeek)
+  }
+
+
+  navigateWeekNext () {
+    let currentMonth = this.state.month
+    let currentWeek = this.state.currentWeek
+    let currentMonthWeekCount = this.state.weeksCount
+    if (currentMonth === 12 && currentWeek === currentMonthWeekCount) {
+      this.updateCalendar( this.state.year + 1, 1, this.weekCountInMonth(this.state.year + 1, 1), 1)
+    } else if (currentWeek === currentMonthWeekCount) {
+      this.updateCalendar( this.state.year, this.state.month + 1, this.weekCountInMonth(this.state.year, this.state.month + 1), 1)
+    } else {
+      this.updateCalendar( this.state.year, this.state.month, this.state.weeksCount, this.state.currentWeek + 1)
+    }
+  }
+
+  updateCalendar (year, month, weeks_count_in_month, week) {
+    this.setState({
+      year: year,
+      month: month,
+      weeksCount: weeks_count_in_month,
+      currentWeek: week
+    })
+  }
+
+  getMonthCalendar (year, month) {
+    let self = this
+    let apiURL = '/api/protect/calendar?year=' + year + '&month=' + month
+    fetch(apiURL, {
+      method: "GET",
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + this.props.auth.token
+      },
+    }).then(function(response) {
+      return response.json()
+    }).then(function(json) {
+      if (json.calendar.available && json.calendar.available.length > 0) {
+        self.updateCalendarData(json.calendar)
+      }
+    }).catch(function(ex) {
+      console.log('failed', ex)
+    })
   }
 
   getCurrentMonthCalendar() {
@@ -150,7 +217,7 @@ class ManageCalendar extends Component {
     return Math.ceil( used / 7);
   }
 
-  currentWeekIn = function (day, year, month_index) {
+  currentWeekIn = function (date, year, month_index) {
     var lastmonth;
 
     if (arguments.length === 3) {
@@ -161,7 +228,7 @@ class ManageCalendar extends Component {
     }
 
     var lastOflastMonth = new Date(year, lastmonth, 0);
-    var used = lastOflastMonth.getDay() + day;
+    var used = lastOflastMonth.getDay() + date;
     return Math.ceil(used / 7);
   }
 
@@ -228,8 +295,37 @@ class ManageCalendar extends Component {
                   )
                 }) }
               </DropDownMenu>
-              <RaisedButton label="New Event" onTouchTap={this.handleNewEventDialogOpen} />
+              <div>{" Week " + this.state.currentWeek}</div>
 
+            </div>
+          </div>
+          <div className="flex-column flex-center" style={{position: "relative"}}>
+
+            <FlatButton
+              backgroundColor="rgb(50, 179, 55)"
+              labelStyle={{color: "#FFF"}}
+              style={{position: "absolute", right: 9}}
+              label="ADD OFFICE TIME" onTouchTap={this.handleNewEventDialogOpen} />
+
+            <div className="flex-row flex-center light-shadow">
+              <FlatButton
+                label="<"
+                onTouchTap={()=>{
+                  this.navigateWeekPrivious()
+                }}
+                />
+              <FlatButton
+                label="This Week"
+                onTouchTap={()=>{
+                  this.navigateWeekCurrent()
+                }}
+                />
+              <FlatButton
+                label=">"
+                onTouchTap={()=>{
+                  this.navigateWeekNext()
+                }}
+                />
             </div>
           </div>
           <div className="manage-calendar-body flex-column raleway">
@@ -266,7 +362,7 @@ class ManageCalendar extends Component {
           </div>
         </div>
         <Dialog
-          title="Add available time"
+          title="Add office time"
           modal={false}
           open={this.state.newEventDialogOpen}
           onRequestClose={this.handleEventDetailDialogClose}

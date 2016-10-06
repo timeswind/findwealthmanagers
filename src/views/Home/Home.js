@@ -58,6 +58,7 @@ class Home extends Component {
     });
   };
 
+
   logout() {
     const { actions } = this.props;
     actions.logout()
