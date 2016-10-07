@@ -43,6 +43,7 @@ class Profile extends Component {
       weeksCount: this.weekCountInMonth(year, month_index + 1),
       currentWeek: this.currentWeekIn(day, year, month_index),
       calendarId: "",
+      advisorId: "",
       daySchedules: [null, null, null, null, null, null, null]
     }
   }
@@ -67,6 +68,7 @@ class Profile extends Component {
         console.log(formattedCategories)
         self.setState({
           name: json.advisorInfo.firstName + " " + json.advisorInfo.lastName,
+          advisorId: json.advisorInfo._id,
           email: json.listInfo.email,
           location: json.listInfo.address,
           affiliation: json.listInfo.affiliation,
@@ -80,6 +82,54 @@ class Profile extends Component {
       }
     }).catch(function(ex) {
       console.log('failed', ex)
+    })
+  }
+
+  navigateWeekPrivious () {
+    let currentMonth = this.state.month
+    let currentWeek = this.state.currentWeek
+    if (currentMonth === 1 && currentWeek === 1) {
+      this.updateCalendar( this.state.year - 1, 12, this.weekCountInMonth(this.state.year - 1, 12), this.weekCountInMonth(this.state.year - 1, 12))
+    } else if (currentWeek === 1) {
+      this.updateCalendar( this.state.year, this.state.month - 1, this.weekCountInMonth(this.state.year, this.state.month - 1), this.weekCountInMonth(this.state.year, this.state.month - 1))
+    } else {
+      this.updateCalendar( this.state.year, this.state.month, this.state.weeksCount, this.state.currentWeek - 1)
+    }
+  }
+
+  navigateWeekCurrent () {
+    let today = new Date()
+    let currentYear = today.getFullYear()
+    let currentMonth = today.getMonth() + 1
+    let currentDate = today.getDate()
+    let weeksCount =  this.weekCountInMonth(currentYear, currentMonth)
+    let currentWeek = this.currentWeekIn(currentDate, currentYear, currentMonth - 1)
+    this.updateCalendar( currentYear, currentMonth, weeksCount, currentWeek)
+  }
+
+
+  navigateWeekNext () {
+    let currentMonth = this.state.month
+    let currentWeek = this.state.currentWeek
+    let currentMonthWeekCount = this.state.weeksCount
+    if (currentMonth === 12 && currentWeek === currentMonthWeekCount) {
+      this.updateCalendar( this.state.year + 1, 1, this.weekCountInMonth(this.state.year + 1, 1), 1)
+    } else if (currentWeek === currentMonthWeekCount) {
+      this.updateCalendar( this.state.year, this.state.month + 1, this.weekCountInMonth(this.state.year, this.state.month + 1), 1)
+    } else {
+      this.updateCalendar( this.state.year, this.state.month, this.state.weeksCount, this.state.currentWeek + 1)
+    }
+  }
+
+  updateCalendar (year, month, weeks_count_in_month, week) {
+    if (year !== this.state.year || month !== this.state.month) {
+      this.getMonthCalendar(year, month)
+    }
+    this.setState({
+      year: year,
+      month: month,
+      weeksCount: weeks_count_in_month,
+      currentWeek: week
     })
   }
 
@@ -97,6 +147,27 @@ class Profile extends Component {
     this.setState({
       calendarId: calendar._id,
       daySchedules: daySchedules
+    })
+  }
+
+  getMonthCalendar (year, month) {
+    let self = this
+    let apiURL = '/api/public/calendar?year=' + year + '&month=' + month + '&advisor_id=' + this.state.advisorId
+    fetch(apiURL, {
+      method: "GET",
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + this.props.auth.token
+      },
+    }).then(function(response) {
+      return response.json()
+    }).then(function(json) {
+      if (json.success && json.calendar.available && json.calendar.available.length > 0) {
+        self.updateCalendarData(json.calendar)
+      }
+    }).catch(function(ex) {
+      console.log('failed', ex)
     })
   }
 
@@ -260,7 +331,28 @@ class Profile extends Component {
 
                   </Tab>
                   <Tab label="Calendar" value="calendar" style={{backgroundColor: "#fff", color: "#333"}}>
-
+                    <div className="flex-column flex-center" style={{marginTop: 16}}>
+                      <div className="flex-row flex-center light-shadow">
+                        <FlatButton
+                          label="<"
+                          onTouchTap={()=>{
+                            this.navigateWeekPrivious()
+                          }}
+                          />
+                        <FlatButton
+                          label="This Week"
+                          onTouchTap={()=>{
+                            this.navigateWeekCurrent()
+                          }}
+                          />
+                        <FlatButton
+                          label=">"
+                          onTouchTap={()=>{
+                            this.navigateWeekNext()
+                          }}
+                          />
+                      </div>
+                    </div>
                     <div className="p-tab-wrapper" style={{padding: 0}}>
                       <div className="flex-row">
                         <div style={{flex: "0.5 0 0px"}} className="flex-column">

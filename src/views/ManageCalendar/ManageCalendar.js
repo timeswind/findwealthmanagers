@@ -76,6 +76,9 @@ class ManageCalendar extends Component {
   }
 
   updateCalendar (year, month, weeks_count_in_month, week) {
+    if (year !== this.state.year || month !== this.state.month) {
+      this.getMonthCalendar(year, month)
+    }
     this.setState({
       year: year,
       month: month,
@@ -143,25 +146,36 @@ class ManageCalendar extends Component {
   }
 
   handleAddAvailableTimeFormSubmit = (values) => {
-    this.handleNewEventDialogClose()
-    var self = this
-    fetch('/api/protect/calendar', {
-      method: "POST",
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.props.auth.token
-      },
-      body: JSON.stringify(values)
-    }).then(function(response) {
-      return response.json()
-    }).then(function(json) {
-      if (json.calendar.available && json.calendar.available.length > 0) {
-        self.updateCalendarData(json.calendar)
-      }
-    }).catch(function(ex) {
-      console.log('failed', ex)
-    })
+    console.log('good to submit')
+    if (!values.from) {
+      window.alert('missing the from time')
+    } else if (!values.to) {
+      window.alert('missing the from time')
+    } else if (values.to < values.from) {
+      window.alert('end time is earlier then from time')
+    } else {
+      values['year'] = this.state.year
+      values['month'] = this.state.month
+      this.handleNewEventDialogClose()
+      var self = this
+      fetch('/api/protect/calendar', {
+        method: "POST",
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + this.props.auth.token
+        },
+        body: JSON.stringify(values)
+      }).then(function(response) {
+        return response.json()
+      }).then(function(json) {
+        if (json.calendar.available && json.calendar.available.length > 0) {
+          self.updateCalendarData(json.calendar)
+        }
+      }).catch(function(ex) {
+        console.log('failed', ex)
+      })
+    }
   }
 
   deleteDayScheduleEvent = (calendar_id, event_id) => {

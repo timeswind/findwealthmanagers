@@ -9,7 +9,7 @@ import { TimeToIndex } from '../../core/TimeToIndex';
 
 const validate = values => {
   const errors = {}
-  const requiredFields = [ 'day' ]
+  const requiredFields = [ 'day', 'from', 'to' ]
   requiredFields.forEach(field => {
     if (!values[ field ]) {
       errors[ field ] = 'Required'
@@ -50,12 +50,12 @@ class AddAvailableTimeForm extends Component {
             }
           </Field>
           <TimePicker
-            format="24hr"
+            format="ampm"
             hintText="Pick Start Time"
             onChange={this.handleChangeStartTimePicker}
             />
           <TimePicker
-            format="24hr"
+            format="ampm"
             hintText="Pick End Time"
             onChange={this.handleChangeEndTimePicker}
             />
