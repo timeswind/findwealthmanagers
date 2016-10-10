@@ -38,6 +38,8 @@ class Search extends Component {
       if (json.success === true) {
         if (json.listInfo.length > 0) {
           self.updateResults(json.listInfo)
+        } else {
+          self.updateResults(null)
         }
       } else {
         // self.props.dispatch(push('/'))
@@ -48,20 +50,26 @@ class Search extends Component {
   }
 
   updateResults(results) {
-    console.log(results)
-    results.map((result) => {
-      result.categories = result.categories.map((category_code) => {
-        return categories[category_code - 1]
+    if (results === null) {
+      this.setState({
+        found: false,
+        results: []
       })
-      return (
-        result
-      )
-    })
+    } else {
+      results.map((result) => {
+        result.categories = result.categories.map((category_code) => {
+          return categories[category_code - 1]
+        })
+        return (
+          result
+        )
+      })
 
-    this.setState({
-      found: true,
-      results: results
-    })
+      this.setState({
+        found: true,
+        results: results
+      })
+    }
   }
 
   goToListDetail(id) {

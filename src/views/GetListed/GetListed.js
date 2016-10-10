@@ -13,6 +13,9 @@ import categories from '../../assets/categories.js';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 import fetch from '../../core/fetch/fetch';
+import localStore from 'store2';
+import { bindActionCreators } from 'redux';
+import * as AuthActions from '../../redux/actions/auth.js';
 
 const categoryMenuItems = []
 
@@ -25,6 +28,7 @@ class GetListed extends Component {
     super(props)
     this.state = {
       windowWidth: window.innerWidth,
+      pending: false,
       finished: false,
       stepIndex: 0,
       categories: [],
@@ -47,6 +51,7 @@ class GetListed extends Component {
   }
 
   submitList() {
+    this.setPendingOn()
     let self = this
     let categories = this.state.categories
     let data = {
@@ -72,12 +77,14 @@ class GetListed extends Component {
         }).then(function(response) {
           return response.json()
         }).then(function(json) {
+          self.setPendingOff()
           console.log(json)
           if (json.success === true) {
             self.goNextStep(3)
           }
 
         }).catch(function(ex) {
+          self.setPendingOff()
           console.log('failed', ex)
         })
       } else {
@@ -134,6 +141,93 @@ class GetListed extends Component {
     this.setState({categories: this.chipData});
   }
 
+  handleFirstNameInput = (event) => {
+    var newState = this.state
+    newState.account.firstName = event.target.value
+    this.setState({newState})
+  }
+
+  handleLastNameInput = (event) => {
+    var newState = this.state
+    newState.account.lastName = event.target.value
+    this.setState({newState})
+  }
+
+  handleEmailInput = (event) => {
+    var newState = this.state
+    newState.account.email = event.target.value
+    this.setState({newState})
+  }
+
+  handlePasswordInput = (event) => {
+    var newState = this.state
+    newState.account.password = event.target.value
+    this.setState({newState})
+  }
+
+  handleRePasswordInput = (event) => {
+    var newState = this.state
+    newState.account.repassword = event.target.value
+    this.setState({newState})
+  }
+
+  signUp() {
+    this.setPendingOn()
+    const { actions, dispatch } = this.props;
+
+    let self = this
+    var newState = this.state
+    let data = {
+      firstName: this.state.account.firstName,
+      lastName: this.state.account.lastName,
+      email: this.state.account.email,
+      password: this.state.account.password,
+      repassword: this.state.account.repassword,
+      isManager: this.state.account.isManager,
+      isIndependent: this.state.account.isIndependent,
+      affiliation: this.state.account.affiliation
+    }
+
+    fetch('/api/public/signup', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    }).then(function(response) {
+      return response.json()
+    }).then(function(json) {
+      self.setPendingOff()
+      if (json.success === true) {
+        self.setStepError('')
+        actions.setToken(json.token);
+        actions.setId(json.id);
+        actions.setName(json.name);
+        actions.setEmail(json.email);
+        actions.setRole(json.role);
+        actions.setLoginState(true);
+
+        localStore.session("token", json.token);
+        localStore.session("id", json.id);
+        localStore.session("name", json.name);
+        localStore.session("email", json.email);
+        localStore.session("role", json.role);
+        self.handleNext()
+      } else {
+        if (json.error) {
+          self.setStepError(json.error)
+        } else {
+          self.setStepError('Error')
+        }
+      }
+      self.setState(newState)
+    }).catch(function(ex) {
+      self.setPendingOff()
+      console.log('failed', ex)
+    })
+  }
+
   handleNext = () => {
     const {stepIndex} = this.state;
     if (stepIndex === 0) {
@@ -169,13 +263,33 @@ class GetListed extends Component {
           this.goNextStep(stepIndex)
         }
       } else {
-        this.goNextStep(stepIndex)
-        // create account
+        let firstName = this.state.account.firstName
+        let lastName = this.state.account.lastName
+        let email = this.state.account.email
+        let password = this.state.account.password
+        let repassword = this.state.account.repassword
+        if (firstName === "") {
+          this.setStepError('missing first name')
+        } else if (lastName === "") {
+          this.setStepError('missing last name')
+        } else if (!this.validateEmail(email)) {
+          this.setStepError('invalid email address')
+        } else if (password === "") {
+          this.setStepError('missing password')
+        } else if (repassword === "") {
+          this.setStepError('need to retype password')
+        } else if (password !== repassword) {
+          this.setStepError('passwords do not match')
+        } else {
+          this.setStepError('')
+          this.signUp()
+        }
       }
     } else if (stepIndex === 2) {
       // final step
       let acceptTerms = this.state.acceptTerms
       if (acceptTerms) {
+        this.setStepError('')
         this.submitList()
       } else {
         this.setStepError('You need to accept terms first')
@@ -183,9 +297,26 @@ class GetListed extends Component {
     }
   };
 
+  validateEmail(email) {
+    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+  }
+
   setStepError(error) {
     this.setState({
       stepError: error
+    });
+  }
+
+  setPendingOn() {
+    this.setState({
+      pending: true
+    });
+  }
+
+  setPendingOff() {
+    this.setState({
+      pending: false
     });
   }
 
@@ -319,7 +450,7 @@ class GetListed extends Component {
                 </div>
               ) : (
                 <div>
-                  <CardTitle title="Confirm your account" style={{padding: 0}}></CardTitle>
+                  <CardTitle title="Account" style={{padding: 0}}></CardTitle>
                   <div className="flex-column" style={{maxWidth: "300px",margin: "32px auto", border: "1px solid #ddd", padding: "16px"}}>
                     <div className="flex-column">
                       <span className="field-title">
@@ -344,17 +475,36 @@ class GetListed extends Component {
           ) : (
             <div className="flex-column" style={{padding: "0 32px 32px 32px"}}>
               <TextField
+                hintText="First Name"
+                floatingLabelText="First Name"
+                value={this.state.account.firstName}
+                onChange={this.handleFirstNameInput}
+                />
+              <TextField
+                hintText="Last Name"
+                floatingLabelText="Last Name"
+                value={this.state.account.lastName}
+                onChange={this.handleLastNameInput}
+                />
+              <TextField
                 hintText="Email"
                 floatingLabelText="Email"
+                value={this.state.account.email}
+                onChange={this.handleEmailInput}
                 />
               <TextField
+                type="password"
                 hintText="Password"
                 floatingLabelText="Password"
+                value={this.state.account.password}
+                onChange={this.handlePasswordInput}
                 />
               <TextField
+                type="password"
                 hintText="Confirm password"
                 floatingLabelText="Confirm password"
                 value={this.state.account.repassword}
+                onChange={this.handleRePasswordInput}
                 />
             </div>
           )}
@@ -395,13 +545,14 @@ class GetListed extends Component {
             disableTouchRipple={true}
             disableFocusRipple={true}
             primary={true}
+            disabled={this.state.pending}
             onTouchTap={this.handleNext}
             style={{marginRight: 12}}
             />
           {step > 0 && (
             <FlatButton
               label="Back"
-              disabled={stepIndex === 0}
+              disabled={stepIndex === 0 || this.state.padding}
               disableTouchRipple={true}
               disableFocusRipple={true}
               onTouchTap={this.handlePrev}
@@ -542,7 +693,8 @@ const mapStatesToProps = (states) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    dispatch
+    dispatch,
+    actions: bindActionCreators(AuthActions, dispatch)
   };
 }
 
