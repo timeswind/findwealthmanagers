@@ -250,7 +250,7 @@ class DashboardView extends Component {
                 <div className="flex-column" style={lessShadowCardStyle}>
                   <div className="flex-column">
                     { !this.state.listed ? (
-                      <div className="flex-column">
+                      <div className="flex-column" style={{padding: 16}}>
                         <div style={{marginBottom: "16px", fontSize: "22px", fontWeight: '600'}} className="raleway">
                           List Information
                         </div>
@@ -327,9 +327,9 @@ class DashboardView extends Component {
                                 <span className="field-title">
                                   Brief
                                 </span>
-                                <span className="field-content">
+                                <p>
                                   {this.state.listInfo.brief}
-                                </span>
+                                </p>
                               </div>
                               <div className="flex-column" style={{marginTop: "16px"}}>
                                 <span className="field-title">

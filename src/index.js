@@ -91,6 +91,14 @@ function requireAuth(nextState, replace) {
   }
 }
 
+function requireAuthBlogEditor(nextState, replace) {
+  if (!store.getState().auth.isLogin || !store.getState().auth.role !== 101) {
+    replace({
+      pathname: '/siteblog'
+    })
+  }
+}
+
 function requireHaveNotListed(nextState, replace, callback) {
   if (store.getState().auth.isLogin) {
     let advisor_id = store.getState().auth.id
@@ -116,7 +124,6 @@ function requireHaveNotListed(nextState, replace, callback) {
     })
   }
   callback();
-
 }
 
 const MUI = () => (
@@ -187,6 +194,26 @@ const MUI = () => (
                 cb(null, require('./views/Verifyemail/Verifyemail').default)
               })
             }}>
+          </Route>
+          <Route path="/siteblog">
+            <IndexRoute getComponent={function(location, cb){
+                require.ensure([], (require) => {
+                  cb(null, require('./views/Siteblog/Siteblog').default)
+                })
+              }}>
+            </IndexRoute>
+            <Route path="new" onEnter={requireAuthBlogEditor} getComponent={function(location, cb){
+                require.ensure([], (require) => {
+                  cb(null, require('./views/Siteblog/NewSiteblog').default)
+                })
+              }}>
+            </Route>
+            <Route path=":id" getComponent={function(location, cb){
+                require.ensure([], (require) => {
+                  cb(null, require('./views/Siteblog/SiteblogDetail').default)
+                })
+              }}>
+            </Route>
           </Route>
         </Route>
       </Router>
