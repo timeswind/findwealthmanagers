@@ -7,7 +7,7 @@ import MainFooter from '../../components/MainFooter/MainFooter';
 import FontIcon from 'material-ui/FontIcon';
 import FlatButton from 'material-ui/FlatButton';
 import TopWealthManagerCard from '../../components/TopWealthManagerCard/TopWealthManagerCard';
-import mockManagersData from '../../mockdata/managers';
+// import mockManagersData from '../../mockdata/managers';
 import * as AuthActions from '../../redux/actions/auth.js';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -24,22 +24,35 @@ const TopWealthManagerCardStyle = {
   flex: "50 1 50%"
 }
 
-mockManagersData.forEach((mockManagerData) => {
-  mockTopManagers.push(
-    <div className="flex-column" style={TopWealthManagerCardStyle} key={mockManagerData.name}>
-      <div style={{margin: "16px"}}>
-        <TopWealthManagerCard
-          managerName={mockManagerData.name}
-          description={mockManagerData.description}
-          />
-      </div>
-    </div>
-  );
-})
 
 class Home extends Component {
   state = {
-    userMenuOpen: false
+    userMenuOpen: false,
+    topManagers: []
+  }
+
+  componentWillMount() {
+    this.getTopManagers()
+  }
+
+  getTopManagers() {
+    let self = this
+    fetch('/api/public/topmanagers', {
+      method: "GET",
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+    }).then(function(response) {
+      return response.json()
+    }).then(function(json) {
+      console.log(json)
+      if (json.success && json.topmanagers) {
+        self.setState({topManagers: json.topmanagers})
+      }
+    }).catch(function(ex) {
+      console.log('failed', ex)
+    })
   }
 
   handleUserManuTouchTap = (event) => {
@@ -191,7 +204,19 @@ class Home extends Component {
             <div className="xl-wrapper flex-column">
               <p className="home-headline raleway overline">Top Wealth Managers</p>
               <div className="flex-row flex-wrap raleway" style={{padding: "16px 0"}}>
-                {mockTopManagers}
+                { this.state.topManagers.map((manager)=>{
+                  return (
+                    <div className="flex-column" style={TopWealthManagerCardStyle} key={manager._id}>
+                      <div style={{margin: "16px"}}>
+                        <TopWealthManagerCard
+                          managerName={manager.advisor.firstName + " " + manager.advisor.lastName}
+                          description={manager.brief}
+                          />
+                      </div>
+                    </div>
+                  )
+                })
+                 }
               </div>
             </div>
           </div>

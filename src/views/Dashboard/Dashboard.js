@@ -177,7 +177,7 @@ class DashboardView extends Component {
               </div>
               <div className="flex-25">
                 <div className="flex-row flex-center default-padding raleway" style={lessShadowCardStyle}>
-                  <FontIcon className="material-icons">feedback</FontIcon>
+                  <FontIcon className="material-icons">assessment</FontIcon>
                   <span style={{marginLeft: "16px"}}>Feedback Tools (coming soon)</span>
                   <FontIcon className="material-icons" style={{marginLeft: "auto"}}>keyboard_arrow_right</FontIcon>
                 </div>
