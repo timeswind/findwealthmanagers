@@ -176,7 +176,11 @@ class DashboardView extends Component {
                 </div>
               </div>
               <div className="flex-25">
-
+                <div className="flex-row flex-center default-padding raleway" style={lessShadowCardStyle}>
+                  <FontIcon className="material-icons">feedback</FontIcon>
+                  <span style={{marginLeft: "16px"}}>Feedback Tools (coming soon)</span>
+                  <FontIcon className="material-icons" style={{marginLeft: "auto"}}>keyboard_arrow_right</FontIcon>
+                </div>
               </div>
             </div>
             { this.state.emailIsVerified === false ? (
@@ -325,14 +329,6 @@ class DashboardView extends Component {
                               </div>
                               <div className="flex-column" style={{marginTop: "16px"}}>
                                 <span className="field-title">
-                                  Brief
-                                </span>
-                                <p>
-                                  {this.state.listInfo.brief}
-                                </p>
-                              </div>
-                              <div className="flex-column" style={{marginTop: "16px"}}>
-                                <span className="field-title">
                                   Categories
                                 </span>
                                 <div className="flex-row">
@@ -363,13 +359,21 @@ class DashboardView extends Component {
                               </div>
                               <div className="flex-column" style={{marginTop: "16px"}}>
                                 <span className="field-title">
+                                  Brief
+                                </span>
+                                <p style={{lineHeight: 1.8}}>
+                                  {this.state.listInfo.brief}
+                                </p>
+                              </div>
+                              <div className="flex-column" style={{marginTop: "16px"}}>
+                                <span className="field-title">
                                   Experience
                                 </span>
                                 { this.state.listInfo.experience ? this.state.listInfo.experience.map((experience, index) => {
                                   return (
                                     <div key={index} style={{margin: "8px 0 0 0", border: "1px solid #ddd", padding: "16px"}}>
                                       <span style={{fontWeight: 600, fontSize: "20px"}}>{experience.title}</span>
-                                      <p style={{margin: "8px 0 0 0", fontSize: "14px"}}>{experience.text}</p>
+                                      <p style={{margin: "8px 0 0 0", fontSize: "14px", lineHeight: 1.8}}>{experience.text}</p>
                                     </div>
                                   )
                                 }) : null}
@@ -391,7 +395,7 @@ class DashboardView extends Component {
                 <div className="flex-column" style={lessShadowCardStyle}>
                   <div className="flex-row flex-center">
                     <div className="flex-column default-padding raleway" style={{fontSize: "22px", fontWeight: '600'}}>
-                      Appointment
+                      Calendar
                     </div>
                     <FlatButton
                       label="manage"
