@@ -21,7 +21,8 @@ const headerWrapperStyle = {
 }
 
 const TopWealthManagerCardStyle = {
-  flex: "50 1 50%"
+  flex: "50 1 50%",
+  cursor: "pointer"
 }
 
 
@@ -206,7 +207,9 @@ class Home extends Component {
               <div className="flex-row flex-wrap raleway" style={{padding: "16px 0"}}>
                 { this.state.topManagers.map((manager)=>{
                   return (
-                    <div className="flex-column" style={TopWealthManagerCardStyle} key={manager._id}>
+                    <div className="flex-column" style={TopWealthManagerCardStyle} key={manager._id} onTouchTap={()=>{
+                        this.routerPush('/p/' + manager._id)
+                      }}>
                       <div style={{margin: "16px"}}>
                         <TopWealthManagerCard
                           managerName={manager.advisor.firstName + " " + manager.advisor.lastName}
