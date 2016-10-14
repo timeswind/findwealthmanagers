@@ -168,17 +168,19 @@ class DashboardView extends Component {
             <div className="flex-row">
               <div className="flex-25" style={{marginRight: "16px", cursor: 'pointer'}}>
                 <div className="flex-row flex-center default-padding raleway" style={lessShadowCardStyle} onClick={()=>{
-                    this.props.dispatch(push('/clients'))
+                    this.props.dispatch(push('/dashboard/clients'))
                   }}>
                   <FontIcon className="material-icons">book</FontIcon>
                   <span style={{marginLeft: "16px"}}>Client Book</span>
                   <FontIcon className="material-icons" style={{marginLeft: "auto"}}>keyboard_arrow_right</FontIcon>
                 </div>
               </div>
-              <div className="flex-25">
-                <div className="flex-row flex-center default-padding raleway" style={lessShadowCardStyle}>
+              <div className="flex-25" style={{cursor: 'pointer'}}>
+                <div className="flex-row flex-center default-padding raleway" style={lessShadowCardStyle} onClick={()=>{
+                    this.props.dispatch(push('/dashboard/feedback'))
+                  }}>
                   <FontIcon className="material-icons">assessment</FontIcon>
-                  <span style={{marginLeft: "16px"}}>Feedback Tools (coming soon)</span>
+                  <span style={{marginLeft: "16px"}}>Feedback Tools</span>
                   <FontIcon className="material-icons" style={{marginLeft: "auto"}}>keyboard_arrow_right</FontIcon>
                 </div>
               </div>

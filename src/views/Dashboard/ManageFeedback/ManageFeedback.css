@@ -1,0 +1,13 @@
+.feedback-form-list {
+  background: #fff;
+  min-height: 100%;
+  padding: 16px;
+  border-right: 1px solid #ddd;
+}
+
+.feedback-form-editor {
+  background: #fff;
+  min-height: 100%;
+  padding: 16px;
+  margin: 16px;
+}

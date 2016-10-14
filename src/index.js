@@ -12,7 +12,7 @@ import IndexRoute from 'react-router/lib/IndexRoute';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
-import Raven from 'raven-js';
+// import Raven from 'raven-js';
 // import { IntlProvider } from 'react-intl';
 // global.Intl = require('intl');
 import injectTapEventPlugin from 'react-tap-event-plugin';
@@ -26,7 +26,7 @@ import searchReducers from './redux/reducers/search';
 
 import './index.css';
 
-Raven.config('https://428f8ff22ea44869a1b6410cf83d7905@sentry.io/101570').install();
+// Raven.config('https://428f8ff22ea44869a1b6410cf83d7905@sentry.io/101570').install();
 
 const muiTheme = getMuiTheme({
   palette: {
@@ -174,6 +174,18 @@ const MUI = () => (
                 })
               }}>
             </Route>
+            <Route path="clients" onEnter={requireAuth} getComponent={function(location, cb){
+                require.ensure([], (require) => {
+                  cb(null, require('./views/Dashboard/Clients/Clients').default)
+                })
+              }}>
+            </Route>
+            <Route path="feedback" getComponent={function(location, cb){
+                require.ensure([], (require) => {
+                  cb(null, require('./views/Dashboard/ManageFeedback/ManageFeedback').default)
+                })
+              }}>
+            </Route>
           </Route>
           <Route path="/p/:id" getComponent={function(location, cb){
               require.ensure([], (require) => {
@@ -182,13 +194,6 @@ const MUI = () => (
             }}>
 
           </Route>
-
-          <Route path="/clients" onEnter={requireAuth} getComponent={function(location, cb){
-              require.ensure([], (require) => {
-                cb(null, require('./views/Clients/Clients').default)
-              })
-            }}>
-          </Route>/>
           <Route path="/verify-email/:token" getComponent={function(location, cb){
               require.ensure([], (require) => {
                 cb(null, require('./views/Verifyemail/Verifyemail').default)

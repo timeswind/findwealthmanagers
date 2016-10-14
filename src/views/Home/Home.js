@@ -116,11 +116,10 @@ class Home extends Component {
                         />
                       <MenuItem primaryText="Client Book"
                         onTouchTap={()=>{
-                          this.routerPush('/clients')
+                          this.routerPush('/dashboard/clients')
                           this.handleRequestClose()
                         }}
                         />
-                      <MenuItem primaryText="Help &amp; feedback"/>
                       <MenuItem primaryText="Sign out"
                         onTouchTap={()=>{
                           this.logout()

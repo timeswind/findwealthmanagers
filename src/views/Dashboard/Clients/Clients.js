@@ -15,14 +15,13 @@ import Dialog from 'material-ui/Dialog';
 import DatePicker from 'material-ui/DatePicker';
 import TimePicker from 'material-ui/TimePicker';
 import TextField from 'material-ui/TextField';
-import fetch from '../../core/fetch/fetch';
+import fetch from '../../../core/fetch/fetch';
 import { connect } from 'react-redux';
-// import { push } from 'react-router-redux';
-import AddClientSimpleForm from '../../forms/AddClientSimpleForm/AddClientSimpleForm';
+import AddClientSimpleForm from '../../../forms/AddClientSimpleForm/AddClientSimpleForm';
 import update from 'react-addons-update';
-import CategorySelector from '../../components/CategorySelector/CategorySelector';
-import categoryTypes from '../../assets/categories';
-import { TimeToIndex, IndexToTime } from '../../core/TimeToIndex';
+import CategorySelector from '../../../components/CategorySelector/CategorySelector';
+import categoryTypes from '../../../assets/categories';
+import { TimeToIndex, IndexToTime } from '../../../core/TimeToIndex';
 import moment from 'moment';
 
 import './Clients.css'

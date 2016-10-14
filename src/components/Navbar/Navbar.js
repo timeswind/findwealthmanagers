@@ -86,11 +86,10 @@ class Navbar extends Component {
                       />
                     <MenuItem primaryText="Client Book"
                       onClick={()=>{
-                        this.routerPush('/clients')
+                        this.routerPush('/dashboard/clients')
                         this.handleRequestClose()
                       }}
                       />
-                    <MenuItem primaryText="Help &amp; feedback"/>
                     <MenuItem primaryText="Sign out"
                       onClick={()=>{
                         this.logout()
