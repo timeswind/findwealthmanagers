@@ -47,7 +47,11 @@ class ManageFeedbackView extends Component {
       return response.json()
     }).then(function(json) {
       if (json.success && json.templates && json.templates.length !== 0) {
-        self.setState({templates: json.templates})
+        self.setState({
+          createForm: false,
+          templateIndex: 0,
+          templates: json.templates
+        })
       }
     }).catch(function(ex) {
       console.log('failed', ex)
@@ -55,6 +59,7 @@ class ManageFeedbackView extends Component {
   }
 
   handleFeecbackTemplateFormSubmit = (form) => {
+    var self = this
     fetch('/api/protect/feedback/template', {
       method: "POST",
       headers: {
@@ -66,7 +71,9 @@ class ManageFeedbackView extends Component {
     }).then(function(response) {
       return response.json()
     }).then(function(json) {
-      console.log(json)
+      if (json.success) {
+        self.getTemplates()
+      }
     }).catch(function(ex) {
       console.log('failed', ex)
     })
