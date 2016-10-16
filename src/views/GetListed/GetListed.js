@@ -173,7 +173,7 @@ class GetListed extends Component {
 
   signUp() {
     this.setPendingOn()
-    const { actions, dispatch } = this.props;
+    const { actions } = this.props;
 
     let self = this
     var newState = this.state

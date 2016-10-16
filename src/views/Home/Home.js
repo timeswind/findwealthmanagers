@@ -13,7 +13,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 
-const mockTopManagers = [];
+// const mockTopManagers = [];
 
 const headerWrapperStyle = {
   margin: "0 auto",

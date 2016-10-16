@@ -1,14 +1,132 @@
 import React, { Component } from 'react';
-import { Field, FieldArray, reduxForm, formValueSelector, change, reset } from 'redux-form';
-import { TextField, SelectField } from 'redux-form-material-ui';
+import { Field, FieldArray, reduxForm, formValueSelector, change } from 'redux-form';
+import { TextField } from 'redux-form-material-ui';
 import FlatButton from 'material-ui/FlatButton';
+import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 
-const renderFields = ({ fields, fieldsValue }) =>
-  <div className="flex-column">
-    {fields.map((field, index) =>
-      <div className="flex-column" key={index} style={{margin: "8px 0 0 0", border: "1px solid #ddd", padding: "0 16px 16px 16px"}}>
+const validate = values => {
+  const errors = {}
+  if (!values['title']) {
+    errors[ 'title' ] = 'Required'
+  } else if (values['fields']) {
+    const fieldsArrayErrors = []
+    values.fields.forEach((field, fieldIndex) => {
+      const fieldsErrors = {}
+      if (!field || !field.question) {
+        fieldsErrors.question = 'Required'
+      }
+      if (!field || !field.type) {
+        fieldsErrors.type = 'Select response type'
+      }
+      fieldsArrayErrors[fieldIndex] = fieldsErrors
+      // if (member && member.hobbies && member.hobbies.length) {
+      //   const hobbyArrayErrors = []
+      //   member.hobbies.forEach((hobby, hobbyIndex) => {
+      //     if (!hobby || !hobby.length) {
+      //       hobbyArrayErrors[hobbyIndex] =  'Required'
+      //     }
+      //   })
+      //   if(hobbyArrayErrors.length) {
+      //     memberErrors.hobbies = hobbyArrayErrors
+      //     membersArrayErrors[memberIndex] = memberErrors
+      //   }
+      //   if (member.hobbies.length > 5) {
+      //     if(!memberErrors.hobbies) {
+      //       memberErrors.hobbies = []
+      //     }
+      //     memberErrors.hobbies._error = 'No more than five hobbies allowed'
+      //     membersArrayErrors[memberIndex] = memberErrors
+      //   }
+      // }
+
+      return fieldsErrors
+    })
+    if(fieldsArrayErrors.length) {
+      errors.fields = fieldsArrayErrors
+    }
+  }
+  return errors
+}
+
+const changeRates = (min, max, question_index, dispatch) => {
+  var rates = []
+  for (var i = min; i <= max; i++) {
+    rates.push(i)
+  }
+  dispatch(change('newFeedbackForm', `fields[${question_index}].rates`, rates))
+}
+
+const changeMinRate = (e, question_index, dispatch, fieldsValue) => {
+  let minRate = window.parseInt(e.target.value)
+  dispatch(change('newFeedbackForm', `fields[${question_index}].min`, minRate))
+  if(_.has(fieldsValue[question_index], 'max') && _.isNumber(fieldsValue[question_index]['max'])) {
+    changeRates(minRate, fieldsValue[question_index]['max'], question_index, dispatch)
+  }
+}
+
+const changeMaxRate = (e, question_index, dispatch, fieldsValue) => {
+  let maxRate = window.parseInt(e.target.value)
+  dispatch(change('newFeedbackForm', `fields[${question_index}].max`, maxRate))
+  if(_.has(fieldsValue[question_index], 'min') && _.isNumber(fieldsValue[question_index]['min'])) {
+    changeRates(fieldsValue[question_index]['min'], maxRate, question_index, dispatch)
+  }
+}
+
+const handleQuestionTypeChange = (e, key, payload, fieldsValue, question_index, dispatch) => {
+  var newQuestion = {
+    type: payload
+  }
+  if (fieldsValue[question_index] && fieldsValue[question_index].question) {
+    newQuestion.question = fieldsValue[question_index].question
+  }
+  dispatch(change('newFeedbackForm', `fields[${question_index}]`, newQuestion))
+}
+
+
+const renderChoices = ({ fields }) =>
+<div className="flex-column">
+  {fields.map((field, index) =>
+    <div className="flex-row flex-center" key={index} style={{margin: "8px 0 8px 0", border: "1px solid #ddd", padding: "0 16px 16px 16px"}}>
+      <Field
+        floatingLabelText={`Choice #${index + 1}`}
+        hintText={`Choice #${index + 1}`}
+        name={`${field}`}
+        type="text"
+        component={TextField}
+        fullWidth={true}
+        label={`Choice #${index + 1}`}
+        style={{marginRight: 16}}/>
+
+      <FlatButton
+        label="Remove"
+        labelStyle={{color: "#FFF"}}
+        rippleColor="#B2DFDB"
+        backgroundColor="#F44336"
+        hoverColor="#E57373"
+        style={{marginTop: "16px"}}
+        onTouchTap={() => fields.remove(index)}/>
+    </div>
+  )}
+  <div className="flex-row">
+    <FlatButton
+      label="Add Choice"
+      labelStyle={{color: "#FFF"}}
+      rippleColor="#B2DFDB"
+      backgroundColor="#546E7A"
+      hoverColor="#37474F"
+      style={{marginTop: "16px"}}
+      onTouchTap={() => fields.push()}/>
+  </div>
+</div>
+
+const renderFields = ({ fields, fieldsValue, dispatch }) =>
+<div className="flex-column">
+  {fields.map((field, index) =>
+    <div className="flex-column" key={index} style={{margin: "8px 0 8px 0", border: "1px solid #ddd", padding: "0 16px 16px 16px"}}>
+      <div className="flex-row">
         <Field
           floatingLabelText="Question"
           hintText="Question"
@@ -16,81 +134,81 @@ const renderFields = ({ fields, fieldsValue }) =>
           type="text"
           component={TextField}
           fullWidth={true}
-          label={`Question #${index + 1}`}/>
-        <Field
-          name={`${field}.type`}
-          component={SelectField}
+          label={`Question #${index + 1}`}
+          style={{marginRight: 16}}
+          />
+        <SelectField
           hintText="Question type"
-          floatingLabelText="Question type">
+          floatingLabelText="Question type"
+          errorText={(!fieldsValue[index] || !fieldsValue[index].type) && "Select response type"}
+          value={(fieldsValue[index] && fieldsValue[index]['type']) || ""}
+          onChange={(e, key, payload)=>{
+            handleQuestionTypeChange(e, key, payload, fieldsValue, index, dispatch)
+          }}>
           <MenuItem value="response" primaryText="Response"/>
           <MenuItem value="mc" primaryText="Multiple Choice"/>
-        </Field>
-        { fieldsValue[index] && fieldsValue[index]['type'] && fieldsValue[index]['type'] === 'mc' ? (<FieldArray name={`${field}.choices`} component={renderHobbies}/>) : null }
-        <div className="flex-row justify-right">
-          <FlatButton
-            label="Remove"
-            labelStyle={{color: "#FFF"}}
-            rippleColor="#B2DFDB"
-            backgroundColor="#F44336"
-            hoverColor="#E57373"
-            style={{marginTop: "16px"}}
-            onClick={() => fields.remove(index)}/>
-        </div>
+          <MenuItem value="rate" primaryText="Rate (0 - 10)"/>
+        </SelectField>
       </div>
-    )}
-    <div className="flex-row">
-      <FlatButton
-        label="Add Question"
-        labelStyle={{color: "#FFF"}}
-        rippleColor="#B2DFDB"
-        backgroundColor="#546E7A"
-        hoverColor="#37474F"
-        style={{marginTop: "16px"}}
-        onClick={() => fields.push()}/>
-    </div>
-  </div>
-
-  const renderHobbies = ({ fields }) =>
-    <div className="flex-column">
-      {fields.map((field, index) =>
-        <div className="flex-column" key={index} style={{margin: "8px 0 0 0", border: "1px solid #ddd", padding: "0 16px 16px 16px"}}>
-          <Field
-            floatingLabelText="Choice"
-            hintText="Choice"
-            name={`${field}.choice`}
-            type="text"
-            component={TextField}
-            fullWidth={true}
-            label={`Choice #${index + 1}`}
-            />
-          <div className="flex-row justify-right">
-            <FlatButton
-              label="Remove"
-              labelStyle={{color: "#FFF"}}
-              rippleColor="#B2DFDB"
-              backgroundColor="#F44336"
-              hoverColor="#E57373"
-              style={{marginTop: "16px"}}
-              onClick={() => fields.remove(index)}/>
+      { fieldsValue[index] && fieldsValue[index]['type'] && fieldsValue[index]['type'] === 'mc' ? (<FieldArray name={`${field}.choices`} component={renderChoices}/>) : null }
+      { fieldsValue[index] && fieldsValue[index]['type'] && fieldsValue[index]['type'] === 'rate' ? (
+        <div className="flex-column">
+          <div className="flex-row feedback-rates-preview">
+            { fieldsValue[index] && fieldsValue[index]['rates'] && fieldsValue[index]['rates'].map((rate) =>
+              <div style={{flex: "1 1 auto"}} key={rate}><input type="radio" value={rate} disabled="true"/>{rate}</div>
+            )}
+          </div>
+          <div>
+            <TextField
+              floatingLabelText='From(min)'
+              hintText='From(min)'
+              label='From(min)'
+              style={{marginRight: 16}}
+              onChange={(e)=>{
+                changeMinRate(e, index, dispatch, fieldsValue)
+              }}
+              />
+            <TextField
+              floatingLabelText='To(max)'
+              hintText='To(max)'
+              label='To(max)'
+              type="number"
+              onChange={(e)=>{
+                changeMaxRate(e, index, dispatch, fieldsValue)
+              }}
+              />
           </div>
         </div>
-      )}
-      <div className="flex-row">
+      ) : null }
+      <div className="flex-row justify-right" style={{marginTop: 24}}>
         <FlatButton
-          label="Add Choice"
+          label="Remove"
           labelStyle={{color: "#FFF"}}
           rippleColor="#B2DFDB"
-          backgroundColor="#546E7A"
-          hoverColor="#37474F"
-          style={{marginTop: "16px"}}
-          onClick={() => fields.push()}/>
+          backgroundColor="#F44336"
+          hoverColor="#E57373"
+          onTouchTap={() => fields.remove(index)}/>
       </div>
     </div>
+  )}
+  <div className="flex-row">
+    <FlatButton
+      label="Add Question"
+      labelStyle={{color: "#FFF"}}
+      rippleColor="#B2DFDB"
+      backgroundColor="#546E7A"
+      hoverColor="#37474F"
+      onTouchTap={() => fields.push()}/>
+  </div>
+</div>
 
 
 class NewFeedbackForm extends Component {
+
+
+
   render() {
-    const { handleSubmit, fieldsValue } = this.props;
+    const { handleSubmit, fieldsValue, dispatch } = this.props;
 
     return (
       <form onSubmit={handleSubmit} className="flex-column">
@@ -102,7 +220,7 @@ class NewFeedbackForm extends Component {
             component={TextField}
             hintText="Feedback Title"
             />
-          <FieldArray name="fields" props={{fieldsValue: fieldsValue}} component={renderFields}/>
+          <FieldArray name="fields" props={{fieldsValue: fieldsValue, dispatch: dispatch}} component={renderFields}/>
 
           <FlatButton
             type="submit"
@@ -119,7 +237,8 @@ class NewFeedbackForm extends Component {
 
 // Decorate the form component
 NewFeedbackForm = reduxForm({
-  form: 'newFeedbackForm' // a unique name for this form
+  form: 'newFeedbackForm', // a unique name for this form
+  validate
 })(NewFeedbackForm);
 
 const selector = formValueSelector('newFeedbackForm') // <-- same as form name
@@ -129,6 +248,11 @@ NewFeedbackForm = connect(
     const fieldsValue = selector(state, 'fields')
     return {
       fieldsValue,
+    }
+  },
+  dispatch => {
+    return {
+      dispatch
     }
   }
 )(NewFeedbackForm)

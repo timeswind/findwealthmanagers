@@ -1,7 +1,7 @@
 .feedback-form-list {
   background: #fff;
   min-height: 100%;
-  padding: 16px;
+  /*padding: 16px;*/
   border-right: 1px solid #ddd;
 }
 
@@ -10,4 +10,28 @@
   min-height: 100%;
   padding: 16px;
   margin: 16px;
+  flex: 50
+}
+
+.feedback-form-preview {
+  background: #fff;
+  min-height: 100%;
+  padding: 16px;
+  margin: 16px;
+  flex: 50
+}
+
+.feedback-preview-title {
+  font-size: 24px;
+  padding: 0 0 8px 0
+}
+
+.feedback-preview-question {
+  padding: 8px 8px 8px 0
+}
+
+.feedback-rates-preview {
+  margin: 16px 0;
+  padding: 8px;
+  border: 1px solid #ddd
 }
