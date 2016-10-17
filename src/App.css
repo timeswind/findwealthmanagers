@@ -143,6 +143,10 @@
   align-items: center;
 }
 
+.flex-auto-with {
+  flex: 1 1 auto;
+}
+
 .align-right {
   align-items: flex-end;
 }

@@ -89,7 +89,7 @@ class ManageFeedbackView extends Component {
           {
             fields.map((field, index)=>{
               return (
-                <div key={field._id} className="flex-column">
+                <div key={field._id} className="flex-column feedback-preview-question-wrapper">
                   <div className="feedback-preview-question">
                     <span>{index + 1}. </span>
                     {field.question}
@@ -112,6 +112,7 @@ class ManageFeedbackView extends Component {
                                 value={choice}
                                 label={choice}
                                 key={choice_index}
+                                style={{margin: "8px 0"}}
                                 />
                             )
                           })
@@ -123,7 +124,10 @@ class ManageFeedbackView extends Component {
                         {
                           field.rates.map((rate, rate_index)=>{
                             return (
-                              <div style={{flex: "1 1 auto"}} key={rate_index}><input type="radio" value={rate}/>{rate}</div>
+                              <div className="flex-column align-center flex-auto-with" key={rate}>
+                                <div>{rate}</div>
+                                <input name={`rate${index}`} type="radio" value={rate}/>
+                              </div>
                             )
                           })
                         }

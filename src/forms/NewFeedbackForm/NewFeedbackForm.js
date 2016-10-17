@@ -4,6 +4,8 @@ import { TextField } from 'redux-form-material-ui';
 import FlatButton from 'material-ui/FlatButton';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
+import FontIcon from 'material-ui/FontIcon';
+import IconButton from 'material-ui/IconButton';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
@@ -89,7 +91,7 @@ const handleQuestionTypeChange = (e, key, payload, fieldsValue, question_index, 
 const renderChoices = ({ fields }) =>
 <div className="flex-column">
   {fields.map((field, index) =>
-    <div className="flex-row flex-center" key={index} style={{margin: "8px 0 8px 0", border: "1px solid #ddd", padding: "0 16px 16px 16px"}}>
+    <div className="flex-row flex-baseline" key={index} style={{margin: "8px 0 8px 0", border: "1px solid #ddd", padding: "0 16px 16px 16px"}}>
       <Field
         floatingLabelText={`Choice #${index + 1}`}
         hintText={`Choice #${index + 1}`}
@@ -100,14 +102,10 @@ const renderChoices = ({ fields }) =>
         label={`Choice #${index + 1}`}
         style={{marginRight: 16}}/>
 
-      <FlatButton
-        label="Remove"
-        labelStyle={{color: "#FFF"}}
-        rippleColor="#B2DFDB"
-        backgroundColor="#F44336"
-        hoverColor="#E57373"
-        style={{marginTop: "16px"}}
-        onTouchTap={() => fields.remove(index)}/>
+      <IconButton
+        iconClassName="material-icons"
+        iconStyle={{color: "#F44336"}}
+        onTouchTap={() => fields.remove(index)}>delete</IconButton>
     </div>
   )}
   <div className="flex-row">
@@ -118,7 +116,8 @@ const renderChoices = ({ fields }) =>
       backgroundColor="#546E7A"
       hoverColor="#37474F"
       style={{marginTop: "16px"}}
-      onTouchTap={() => fields.push()}/>
+      onTouchTap={() => fields.push()}
+      icon={<FontIcon className="material-icons" style={{color: "#fff"}}>add</FontIcon>}/>
   </div>
 </div>
 
@@ -145,9 +144,9 @@ const renderFields = ({ fields, fieldsValue, dispatch }) =>
           onChange={(e, key, payload)=>{
             handleQuestionTypeChange(e, key, payload, fieldsValue, index, dispatch)
           }}>
-          <MenuItem value="response" primaryText="Response"/>
-          <MenuItem value="mc" primaryText="Multiple Choice"/>
-          <MenuItem value="rate" primaryText="Rate (0 - 10)"/>
+          <MenuItem value="response" primaryText="Response" leftIcon={<FontIcon className="material-icons">subject</FontIcon>} />
+          <MenuItem value="mc" primaryText="Multiple Choice" leftIcon={<FontIcon className="material-icons">radio_button_checked</FontIcon>} />
+          <MenuItem value="rate" primaryText="Linear scale" leftIcon={<FontIcon className="material-icons">linear_scale</FontIcon>} />
         </SelectField>
       </div>
       { fieldsValue[index] && fieldsValue[index]['type'] && fieldsValue[index]['type'] === 'mc' ? (<FieldArray name={`${field}.choices`} component={renderChoices}/>) : null }
@@ -155,7 +154,10 @@ const renderFields = ({ fields, fieldsValue, dispatch }) =>
         <div className="flex-column">
           <div className="flex-row feedback-rates-preview">
             { fieldsValue[index] && fieldsValue[index]['rates'] && fieldsValue[index]['rates'].map((rate) =>
-              <div style={{flex: "1 1 auto"}} key={rate}><input type="radio" value={rate} disabled="true"/>{rate}</div>
+              <div className="flex-column align-center flex-auto-with" key={rate}>
+                <div>{rate}</div>
+                <input type="radio" value={rate} disabled="true"/>
+              </div>
             )}
           </div>
           <div>
@@ -182,7 +184,7 @@ const renderFields = ({ fields, fieldsValue, dispatch }) =>
       ) : null }
       <div className="flex-row justify-right" style={{marginTop: 24}}>
         <FlatButton
-          label="Remove"
+          icon={<FontIcon className="material-icons" style={{color: "#fff"}}>delete</FontIcon>}
           labelStyle={{color: "#FFF"}}
           rippleColor="#B2DFDB"
           backgroundColor="#F44336"
@@ -198,15 +200,13 @@ const renderFields = ({ fields, fieldsValue, dispatch }) =>
       rippleColor="#B2DFDB"
       backgroundColor="#546E7A"
       hoverColor="#37474F"
-      onTouchTap={() => fields.push()}/>
+      onTouchTap={() => fields.push()}
+      icon={<FontIcon className="material-icons" style={{color: "#fff"}}>add</FontIcon>}/>
   </div>
 </div>
 
 
 class NewFeedbackForm extends Component {
-
-
-
   render() {
     const { handleSubmit, fieldsValue, dispatch } = this.props;
 
@@ -224,7 +224,7 @@ class NewFeedbackForm extends Component {
 
           <FlatButton
             type="submit"
-            label="add"
+            label="Create"
             style={{width: '100%', marginTop: '8px'}}
             backgroundColor="#ddd"
             />
