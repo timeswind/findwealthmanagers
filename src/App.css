@@ -246,3 +246,51 @@
   box-shadow: 0 1px 4px rgba(0,0,0,.04);
   border: 1px solid rgba(0,0,0,.09);
 }
+
+.feedback-form-list {
+  background: #fff;
+  min-height: 100%;
+  /*padding: 16px;*/
+  border-right: 1px solid #ddd;
+}
+
+.feedback-form-editor {
+  background: #fff;
+  min-height: 100%;
+  padding: 16px;
+  margin: 16px;
+  flex: 50
+}
+
+.feedback-form-preview {
+  font-family: 'Roboto', sans-serif;
+  background: #fff;
+  min-height: 100%;
+  padding: 32px;
+  margin: 16px;
+  flex: 50
+}
+
+.feedback-preview-title {
+  font-size: 30px;
+  padding: 16px 16px 8px 16px
+}
+
+.feedback-preview-question-wrapper {
+  margin: 16px 0;
+  padding: 0 16px 0 16px
+}
+
+.feedback-preview-question {
+  font-size: 20px;
+  padding: 8px 8px 8px 0
+}
+
+.feedback-rates-preview {
+  margin: 16px 0;
+  padding: 8px;
+  background-color: #fafafa
+}
+.feedback-rates-preview input {
+  margin: 8px 0
+}

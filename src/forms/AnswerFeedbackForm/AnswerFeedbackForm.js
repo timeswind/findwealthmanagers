@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { Field, FieldArray, reduxForm } from 'redux-form';
 import { TextField, RadioButtonGroup } from 'redux-form-material-ui';
-import { RadioButton } from 'material-ui/RadioButton'
+import { RadioButton } from 'material-ui/RadioButton';
+import FlatButton from 'material-ui/FlatButton';
+import { connect } from 'react-redux';
 
 class AnswerFeedbackForm extends Component {
   render() {
@@ -18,7 +20,6 @@ class AnswerFeedbackForm extends Component {
                 return (
                   <div key={field._id} className="flex-column feedback-preview-question-wrapper">
                     <div className="feedback-preview-question">
-                      <span>{index + 1}. </span>
                       {field.question}
                     </div>
                     <div>
@@ -28,7 +29,7 @@ class AnswerFeedbackForm extends Component {
                           component={TextField}
                           hintText="Response"
                           multiLine={true}
-                          rows={2}
+                          rows={1}
                           fullWidth={true}
                           />
                       ) }
@@ -67,6 +68,23 @@ class AnswerFeedbackForm extends Component {
                 )
               })
             }
+            <div className="flex-column" style={{padding: "0 16px"}}>
+              { (!this.props.auth.email) && (
+                <Field
+                  name="email"
+                  component={TextField}
+                  hintText="Email"
+                  />
+              ) }
+              <div className="flex-row">
+                <FlatButton
+                  type="submit"
+                  label="Submit"
+                  style={{marginTop: '8px', color: '#fff'}}
+                  backgroundColor="#4285f4"
+                  />
+              </div>
+            </div>
           </div>
         }
       </form>
@@ -79,20 +97,13 @@ AnswerFeedbackForm = reduxForm({
   form: 'answerFeedbackForm', // a unique name for this form
 })(AnswerFeedbackForm);
 
-// const selector = formValueSelector('newFeedbackForm') // <-- same as form name
-// AnswerFeedbackForm = connect(
-//   state => {
-//     // can select values individually
-//     const fieldsValue = selector(state, 'fields')
-//     return {
-//       fieldsValue,
-//     }
-//   },
-//   dispatch => {
-//     return {
-//       dispatch
-//     }
-//   }
-// )(AnswerFeedbackForm)
+AnswerFeedbackForm = connect(
+  state => {
+    return {
+      auth: state.auth
+    };
+  },
+  null
+)(AnswerFeedbackForm)
 
 export default AnswerFeedbackForm;

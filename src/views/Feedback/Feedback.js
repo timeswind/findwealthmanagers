@@ -29,8 +29,29 @@ class FeedbackView extends Component {
     }).then(function(json) {
       console.log(json)
       if (json.success) {
-        self.setState({template: json.feedback})
+        self.setState({template: json.feedbackTemplate})
       }
+    }).catch(function(ex) {
+      console.log('failed', ex)
+    })
+  }
+
+  handleFeedbackSubmit = (form) => {
+    if (this.props.auth.email) {
+        form['email'] = this.props.auth.email
+    }
+    console.log(form)
+    fetch('/api/public/feedback/' + this.props.routeParams.id, {
+      method: "POST",
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(form)
+    }).then(function(response) {
+      return response.json()
+    }).then(function(json) {
+      console.log(json)
     }).catch(function(ex) {
       console.log('failed', ex)
     })
@@ -40,11 +61,17 @@ class FeedbackView extends Component {
     return (
       <div className="view-body">
         <div className="feedback-form-wrapper light-card">
-          {this.state.template !== null && (<AnswerFeedbackForm onSubmit={null} template={this.state.template}></AnswerFeedbackForm>)}
+          {this.state.template !== null && (<AnswerFeedbackForm onSubmit={this.handleFeedbackSubmit} template={this.state.template}></AnswerFeedbackForm>)}
         </div>
       </div>
     );
   }
 }
 
-export default FeedbackView;
+const mapStatesToProps = (states) => {
+  return {
+    auth: states.auth
+  };
+}
+
+export default connect(mapStatesToProps, null)(FeedbackView);
