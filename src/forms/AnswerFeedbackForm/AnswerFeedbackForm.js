@@ -70,11 +70,18 @@ class AnswerFeedbackForm extends Component {
             }
             <div className="flex-column" style={{padding: "0 16px"}}>
               { (!this.props.auth.email) && (
-                <Field
-                  name="email"
-                  component={TextField}
-                  hintText="Email"
-                  />
+                <div className="flex-column">
+                  <Field
+                    name="email"
+                    component={TextField}
+                    hintText="Email"
+                    />
+                  <Field
+                    name="name"
+                    component={TextField}
+                    hintText="Name"
+                    />
+                </div>
               ) }
               <div className="flex-row">
                 <FlatButton

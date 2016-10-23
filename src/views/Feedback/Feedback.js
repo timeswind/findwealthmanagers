@@ -14,7 +14,8 @@ import AnswerFeedbackForm from '../../forms/AnswerFeedbackForm/AnswerFeedbackFor
 
 class FeedbackView extends Component {
   state = {
-    template: null
+    template: null,
+    submit: false
   }
   componentWillMount() {
     let self = this
@@ -37,6 +38,8 @@ class FeedbackView extends Component {
   }
 
   handleFeedbackSubmit = (form) => {
+    let self = this
+
     if (this.props.auth.email) {
         form['email'] = this.props.auth.email
     }
@@ -52,6 +55,10 @@ class FeedbackView extends Component {
       return response.json()
     }).then(function(json) {
       console.log(json)
+      self.setState({submit: true})
+      if (!json.success) {
+        //handle error
+      }
     }).catch(function(ex) {
       console.log('failed', ex)
     })
@@ -61,7 +68,12 @@ class FeedbackView extends Component {
     return (
       <div className="view-body">
         <div className="feedback-form-wrapper light-card">
-          {this.state.template !== null && (<AnswerFeedbackForm onSubmit={this.handleFeedbackSubmit} template={this.state.template}></AnswerFeedbackForm>)}
+          {(this.state.template !== null && this.state.submit === false) && (<AnswerFeedbackForm onSubmit={this.handleFeedbackSubmit} template={this.state.template}></AnswerFeedbackForm>)}
+          {(this.state.submit === true) && (
+            <div>
+              Your response has been recorded.
+            </div>
+          )}
         </div>
       </div>
     );
