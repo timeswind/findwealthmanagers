@@ -259,7 +259,6 @@
   min-height: 100%;
   padding: 16px;
   margin: 16px;
-  flex: 50
 }
 
 .feedback-form-preview {
@@ -268,7 +267,6 @@
   min-height: 100%;
   padding: 32px;
   margin: 16px;
-  flex: 50
 }
 
 .feedback-preview-title {
@@ -293,4 +291,16 @@
 }
 .feedback-rates-preview input {
   margin: 8px 0
+}
+.alter-color-rows .alter-color-row {
+  font: 400 13px Roboto,RobotoDraft,Helvetica,Arial,sans-serif;
+  line-height: 135%;
+  white-space: pre-line;
+  padding: 8px 16px;
+}
+.alter-color-rows .alter-color-row:nth-child(odd) {
+  background-color: #B0BEC5;
+}
+.alter-color-rows .alter-color-row:nth-child(even) {
+  background-color: #ECEFF1;
 }

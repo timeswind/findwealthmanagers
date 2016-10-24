@@ -78,6 +78,7 @@
     "react-router-scroll": "^0.3.2",
     "react-router-transition": "0.0.6",
     "react-tap-event-plugin": "^1.0.0",
+    "recharts": "^0.15.2",
     "redux": "^3.6.0",
     "redux-form": "^6.0.5",
     "redux-form-material-ui": "^4.1.0",

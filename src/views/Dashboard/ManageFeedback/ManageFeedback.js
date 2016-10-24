@@ -1,22 +1,42 @@
 import React, { Component } from 'react';
 import FlatButton from 'material-ui/FlatButton';
 import fetch from '../../../core/fetch/fetch';
-// import { bindActionCreators } from 'redux';
+import {Tabs, Tab} from 'material-ui/Tabs';
 import { List, ListItem } from 'material-ui/List';
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 import FontIcon from 'material-ui/FontIcon';
 import TextField from 'material-ui/TextField';
 import { connect } from 'react-redux';
 // import * as AuthActions from '../../../redux/actions/auth.js';
-// import { push } from 'react-router-redux'
-import './ManageFeedback.css'
+import { push } from 'react-router-redux'
 import NewFeedbackForm from '../../../forms/NewFeedbackForm/NewFeedbackForm';
+import { PieChart, Pie, Sector, Cell, Legend } from 'recharts';
+import './ManageFeedback.css'
+
+
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+
+const RADIAN = Math.PI / 180;
+const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
+  const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+  const x  = cx + radius * Math.cos(-midAngle * RADIAN);
+  const y = cy  + radius * Math.sin(-midAngle * RADIAN);
+
+  return (
+    <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} 	dominantBaseline="central">
+      {`${(percent * 100).toFixed(0)}%`}
+    </text>
+  );
+};
 
 class ManageFeedbackView extends Component {
   state = {
     createForm: false,
     templateIndex: null,
-    templates: []
+    templates: [],
+    feedbacks: [],
+    rightPanelTab: 'questions',
+    responsesDisplay: 'summery'
   }
 
   componentWillMount() {
@@ -79,19 +99,140 @@ class ManageFeedbackView extends Component {
     })
   }
 
+  handleRightPanelTabChange = (value) => {
+    if (value === "responses") {
+      this.getResponses(this.state.templates[this.state.templateIndex]._id)
+    }
+    this.setState({
+      rightPanelTab: value,
+    });
+  };
+
+  getResponses(template_id) {
+    var self = this
+    self.setState({feedbacks: []})
+    fetch('/api/protect/feedbacks/' + template_id, {
+      method: "GET",
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + this.props.auth.token
+      }
+    }).then(function(response) {
+      return response.json()
+    }).then(function(json) {
+      if (json.success) {
+        self.setState({feedbacks: json.feedbacks})
+      }
+    }).catch(function(ex) {
+      console.log('failed', ex)
+    })
+  }
+
+  aggregateResponses(fid) {
+    if (this.state.feedbacks.length > 0) {
+      var responses = []
+      var feedbackResponses = this.state.feedbacks.map((feedback) => {
+        return feedback.responses
+      })
+      feedbackResponses.forEach((feedbackResponse)=>{
+        feedbackResponse.forEach((singleResponse)=>{
+          if (singleResponse.fid == fid) {
+            responses.push(singleResponse.data)
+          }
+        })
+      })
+      return (
+        <div className="flex-column alter-color-rows">
+          <span className="response-count">{responses.length} responses</span>
+          {
+            responses.map((response, index)=>{
+              return (
+                <div className="alter-color-row" key={index}>{response}</div>
+              )
+            })
+          }
+        </div>
+      )
+    }
+  }
+
+  reformatDatas(datas) {
+    try{
+      datas = JSON.parse(datas);
+    }catch(e){
+      return []
+    }
+    return Object.keys(datas).map(function (key) {
+      let obj = {
+        'name': key,
+        'value': datas[key]
+      }
+      return obj
+    });
+  }
+
+  renderSummary(template_index) {
+    if (template_index !== null) {
+      let fields = this.state.templates[template_index].fields
+      return (
+        <div className="flex-column">
+          {
+            fields.map((field, index)=>{
+              return (
+                <div key={field._id} className="flex-column feedback-preview-question-wrapper">
+                  <div className="feedback-preview-question">
+                    <div className="feedback-preview-question">
+                      {field.question}
+                    </div>
+                  </div>
+                  <div>
+                    { field.type === 'response' && (
+                      <div className="flex-column">
+                        {this.aggregateResponses(field._id)}
+                      </div>
+                    )}
+                    { (!!field.datas && (field.type === 'mc' || field.type === 'rate')) && (
+                      <PieChart width={800} height={400} onMouseEnter={this.onPieEnter}>
+                        <Pie
+                          data={this.reformatDatas(field.datas)}
+                          cx={300}
+                          cy={200}
+                          labelLine={false}
+                          label={renderCustomizedLabel}
+                          outerRadius={100}
+                          >
+                          {
+                            this.reformatDatas(field.datas).map((entry, index) => <Cell key={index} fill={COLORS[index % COLORS.length]}/>)
+                          }
+                        </Pie>
+                        <Legend layout="vertical" align="right" verticalAlign="top" height={36}/>
+                      </PieChart>
+                    )}
+                  </div>
+                </div>
+              )
+            })
+          }
+        </div>
+      )
+    }
+  }
+
   renderTemplate(template_index) {
     if (template_index !== null) {
+      let template_id = this.state.templates[template_index]._id
       let title = this.state.templates[template_index].title
       let fields = this.state.templates[template_index].fields
       return (
         <div className="flex-column">
+
           <div className="feedback-preview-title">{title}</div>
           {
             fields.map((field, index)=>{
               return (
                 <div key={field._id} className="flex-column feedback-preview-question-wrapper">
                   <div className="feedback-preview-question">
-                    <span>{index + 1}. </span>
                     {field.question}
                   </div>
                   <div>
@@ -101,6 +242,7 @@ class ManageFeedbackView extends Component {
                         multiLine={true}
                         rows={2}
                         fullWidth={true}
+                        disabled={true}
                         />
                     ) }
                     { field.type === "mc" && (
@@ -113,6 +255,7 @@ class ManageFeedbackView extends Component {
                                 label={choice}
                                 key={choice_index}
                                 style={{margin: "8px 0"}}
+                                disabled={true}
                                 />
                             )
                           })
@@ -126,7 +269,7 @@ class ManageFeedbackView extends Component {
                             return (
                               <div className="flex-column align-center flex-auto-with" key={rate}>
                                 <div>{rate}</div>
-                                <input name={`rate${index}`} type="radio" value={rate}/>
+                                <input name={`rate${index}`} type="radio" value={rate} disabled="true"/>
                               </div>
                             )
                           })
@@ -138,6 +281,18 @@ class ManageFeedbackView extends Component {
               )
             })
           }
+          <div className="flex-row" style={{marginLeft:16}}>
+            <FlatButton
+              label="Preview"
+              labelStyle={{color: "#fff"}}
+              rippleColor="#B2DFDB"
+              backgroundColor="#00BFA5"
+              hoverColor="#26A69A"
+              onClick={()=>{
+                this.props.dispatch(push('/feedback/' + template_id))
+              }}
+              />
+          </div>
         </div>
       )
     }
@@ -146,7 +301,7 @@ class ManageFeedbackView extends Component {
   render() {
     return (
       <div className="view-body flex-row" style={{minHeight: '100%'}}>
-        <div className="feedback-form-list flex-column" style={{flex: 50}}>
+        <div className="feedback-form-list flex-column" style={{flex: 40}}>
           <div className="flex-column default-padding">
             <FlatButton label="Create new feedback form" backgroundColor="#eee" onTouchTap={()=>{
                 this.showCreateForm()
@@ -168,15 +323,35 @@ class ManageFeedbackView extends Component {
             )
           }) }
         </div>
-        { this.state.createForm ? (
-          <div className="feedback-form-editor light-card">
-            <NewFeedbackForm onSubmit={this.handleFeecbackTemplateFormSubmit}></NewFeedbackForm>
-          </div>
-        ) : (
-          <div className="feedback-form-preview light-card">
-            {this.renderTemplate(this.state.templateIndex)}
-          </div>
-        ) }
+        <div className="feedback-form-list flex-column" style={{flex: 60, backgroundColor: "#f7f7f7"}}>
+
+          { this.state.createForm ? (
+            <div className="feedback-form-editor light-card">
+              <NewFeedbackForm onSubmit={this.handleFeecbackTemplateFormSubmit}></NewFeedbackForm>
+            </div>
+          ) : (
+            <Tabs
+              value={this.state.rightPanelTab}
+              onChange={this.handleRightPanelTabChange}
+              style={{margin: "16px"}}
+              className="light-card"
+              >
+              <Tab label="QUESTIONS" value="questions" style={{backgroundColor: "#fff", color: "#333", borderBottom: "1px solid #ddd"}}>
+
+                <div className="feedback-form-preview" style={{padding: 16, margin: 0}}>
+                  {this.renderTemplate(this.state.templateIndex)}
+                </div>
+              </Tab>
+              <Tab label="RESPONSES" value="responses" style={{backgroundColor: "#fff", color: "#333", borderBottom: "1px solid #ddd"}}>
+                <div className="feedback-form-preview" style={{padding: 16, margin: 0}}>
+                  {this.renderSummary(this.state.templateIndex)}
+                </div>
+              </Tab>
+            </Tabs>
+
+          ) }
+        </div>
+
       </div>
     );
   }
