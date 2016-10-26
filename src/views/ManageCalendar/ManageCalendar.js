@@ -100,8 +100,15 @@ class ManageCalendar extends Component {
     }).then(function(response) {
       return response.json()
     }).then(function(json) {
-      if (json.calendar.available && json.calendar.available.length > 0) {
-        self.updateCalendarData(json.calendar)
+      if ((json.calendar.available && json.calendar.available.length > 0) && (json.appointments && json.appointments.length > 0)) {
+        self.updateCalendarData(json.calendar, json.appointments)
+      } else {
+        if (json.calendar.available && json.calendar.available.length > 0) {
+          self.updateCalendarData(json.calendar, null)
+        }
+        if (json.appointments && json.appointments.length > 0) {
+          self.updateAppointmentData(null, json.appointments)
+        }
       }
     }).catch(function(ex) {
       console.log('failed', ex)
@@ -120,24 +127,63 @@ class ManageCalendar extends Component {
     }).then(function(response) {
       return response.json()
     }).then(function(json) {
-      if (json.calendar.available && json.calendar.available.length > 0) {
-        self.updateCalendarData(json.calendar)
+      if ((json.calendar.available && json.calendar.available.length > 0) && (json.appointments && json.appointments.length > 0)) {
+        self.updateCalendarData(json.calendar, json.appointments)
+      } else {
+        if (json.calendar.available && json.calendar.available.length > 0) {
+          self.updateCalendarData(json.calendar, null)
+        }
+        if (json.appointments && json.appointments.length > 0) {
+          self.updateAppointmentData(null, json.appointments)
+        }
       }
     }).catch(function(ex) {
       console.log('failed', ex)
     })
   }
 
-  updateCalendarData(calendar) {
-    var daySchedules = [null, null, null, null, null, null, null]
-    calendar.available.forEach((available)=>{
-      if (daySchedules[available['day'] - 1] === null) {
-        daySchedules[available['day'] - 1] = []
-      }
-      available['fromTime'] = IndexToTime(available['from'])
-      available['toTime'] = IndexToTime(available['to'])
-      daySchedules[available['day'] - 1].push(available)
-    })
+  updateCalendarData(calendar, appointments) {
+    var daySchedules = this.state.daySchedules
+
+    if (calendar && !appointments) {
+      daySchedules = [null, null, null, null, null, null, null]
+      calendar.available.forEach((available)=>{
+        if (daySchedules[available['day'] - 1] === null) {
+          daySchedules[available['day'] - 1] = []
+        }
+        available['fromTime'] = IndexToTime(available['from'])
+        available['toTime'] = IndexToTime(available['to'])
+        daySchedules[available['day'] - 1].push(available)
+      })
+    } else if (calendar && appointments) {
+      daySchedules = [null, null, null, null, null, null, null]
+      calendar.available.forEach((available)=>{
+        if (daySchedules[available['day'] - 1] === null) {
+          daySchedules[available['day'] - 1] = []
+        }
+        available['type'] = 'freetime'
+        available['fromTime'] = IndexToTime(available['from'])
+        available['toTime'] = IndexToTime(available['to'])
+        daySchedules[available['day'] - 1].push(available)
+      })
+      appointments.forEach((appointment)=>{
+        let appointment_date = new Date(appointment.date)
+        var day_index = appointment_date.getDay() - 1
+        if (day_index === -1) {
+          day_index = 6
+        }
+        if (daySchedules[day_index] === null) {
+          daySchedules[day_index] = []
+        }
+        appointment['type'] = 'appointment'
+        appointment['from'] = appointment['start']
+        appointment['to'] = appointment['end']
+        appointment['fromTime'] = IndexToTime(appointment['start'])
+        appointment['toTime'] = IndexToTime(appointment['end'])
+        appointment['brief'] = 'Appointment with ' + appointment['client']['name']
+        daySchedules[day_index].push(appointment)
+      })
+    }
 
     this.setState({
       calendarId: calendar._id,
@@ -169,8 +215,15 @@ class ManageCalendar extends Component {
       }).then(function(response) {
         return response.json()
       }).then(function(json) {
-        if (json.calendar.available && json.calendar.available.length > 0) {
-          self.updateCalendarData(json.calendar)
+        if ((json.calendar.available && json.calendar.available.length > 0) && (json.appointments && json.appointments.length > 0)) {
+          self.updateCalendarData(json.calendar, json.appointments)
+        } else {
+          if (json.calendar.available && json.calendar.available.length > 0) {
+            self.updateCalendarData(json.calendar, null)
+          }
+          if (json.appointments && json.appointments.length > 0) {
+            self.updateAppointmentData(null, json.appointments)
+          }
         }
       }).catch(function(ex) {
         console.log('failed', ex)
@@ -212,7 +265,6 @@ class ManageCalendar extends Component {
       eventDetailDialogOpen: true,
       detailEvent: detailEvent
     });
-    console.log(detailEvent)
   };
 
   handleEventDetailDialogClose = () => {
@@ -220,7 +272,7 @@ class ManageCalendar extends Component {
   };
 
   handleYearChange = (event, index, value) => this.setState({year: value});
-  handleMonthChange = (event, index, value) => this.setState({month: index});
+  handleMonthChange = (event, index, value) => this.setState({month: index + 1});
 
   weekCountInMonth = function (year, month_number) {
     // month_number is in the range 1..12
@@ -360,13 +412,26 @@ class ManageCalendar extends Component {
                     {this.renderDayScheduleBlock(day_index)}
                     { this.state.daySchedules[day_index] !== null ? (
                       this.state.daySchedules[day_index].map((event, event_index)=>{
-                        return (
-                          <div onTouchTap={()=>{
-                              this.handleEventDetailDialogOpen(day_index, event_index)
-                            }} className="calender-event" key={event._id} style={{top: (event.from*1.2333 + 49), height: ((event.to - event.from)*1.2333) }}>
-                            <span>{moment(event.fromTime).format('h:mm a') + " - " + moment(event.toTime).format('h:mm a')}</span>
-                          </div>
-                        )
+
+                        if (event.type && event.type === 'appointment') {
+                          return (
+                            <div onTouchTap={()=>{
+                                this.handleEventDetailDialogOpen(day_index, event_index)
+                              }} className="calender-event calender-event-appointment" key={event._id} style={{top: (event.from*1.2333 + 49), height: ((event.to - event.from)*1.2333 - 8) }}>
+                              <span>{moment(event.fromTime).format('h:mm a') + " - " + moment(event.toTime).format('h:mm a')}</span>
+                              <br></br>
+                              <span>{event.brief}</span>
+                            </div>
+                          )
+                        } else {
+                          return (
+                            <div onTouchTap={()=>{
+                                this.handleEventDetailDialogOpen(day_index, event_index)
+                              }} className="calender-event" key={event._id} style={{top: (event.from*1.2333 + 49), height: ((event.to - event.from)*1.2333) }}>
+                              <span>{moment(event.fromTime).format('h:mm a') + " - " + moment(event.toTime).format('h:mm a')}</span>
+                            </div>
+                          )
+                        }
                       })
                     ) : null}
                   </div>
@@ -385,37 +450,47 @@ class ManageCalendar extends Component {
         </Dialog>
 
         <Dialog
-          title="Edit"
+          title="Event"
           modal={false}
           open={this.state.eventDetailDialogOpen}
           onRequestClose={this.handleEventDetailDialogClose}
           >
-          {this.state.detailEvent ? (
+          {!!this.state.detailEvent && (
             <div>
-              <FlatButton label="Delete"
-                secondary={true}
-                onTouchTap={()=>{
-                  this.deleteDayScheduleEvent(this.state.calendarId, this.state.detailEvent._id)
-                }} />
-              </div>
-            ) : null}
-          </Dialog>
-        </div>
-      )
-    }
+              {
+                this.state.detailEvent.type === 'freetime' && (
+                  <FlatButton label="Delete"
+                    secondary={true}
+                    onTouchTap={()=>{
+                      this.deleteDayScheduleEvent(this.state.calendarId, this.state.detailEvent._id)
+                    }}
+                    />
+                )
+              }
+              {
+                this.state.detailEvent.type === 'appointment' && (
+                  <div>{this.state.detailEvent.brief}</div>
+                )
+              }
+            </div>
+          )}
+        </Dialog>
+      </div>
+    )
   }
+}
 
-  const mapStatesToProps = (states) => {
-    return {
-      auth: states.auth
-    };
-  }
+const mapStatesToProps = (states) => {
+  return {
+    auth: states.auth
+  };
+}
 
-  const mapDispatchToProps = (dispatch) => {
-    return {
-      dispatch
-    };
-  }
+const mapDispatchToProps = (dispatch) => {
+  return {
+    dispatch
+  };
+}
 
 
-  export default connect(mapStatesToProps, mapDispatchToProps)(ManageCalendar);
+export default connect(mapStatesToProps, mapDispatchToProps)(ManageCalendar);

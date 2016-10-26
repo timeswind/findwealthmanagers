@@ -226,7 +226,18 @@ class ManageFeedbackView extends Component {
       let fields = this.state.templates[template_index].fields
       return (
         <div className="flex-column">
-
+          <div className="flex-row justify-right" style={{marginLeft:16}}>
+            <FlatButton
+              label="Preview"
+              labelStyle={{color: "#fff"}}
+              rippleColor="#B2DFDB"
+              backgroundColor="#00BFA5"
+              hoverColor="#26A69A"
+              onClick={()=>{
+                this.props.dispatch(push('/feedback/' + template_id))
+              }}
+              />
+          </div>
           <div className="feedback-preview-title">{title}</div>
           {
             fields.map((field, index)=>{
@@ -281,18 +292,6 @@ class ManageFeedbackView extends Component {
               )
             })
           }
-          <div className="flex-row" style={{marginLeft:16}}>
-            <FlatButton
-              label="Preview"
-              labelStyle={{color: "#fff"}}
-              rippleColor="#B2DFDB"
-              backgroundColor="#00BFA5"
-              hoverColor="#26A69A"
-              onClick={()=>{
-                this.props.dispatch(push('/feedback/' + template_id))
-              }}
-              />
-          </div>
         </div>
       )
     }

@@ -50,7 +50,20 @@
   background: #32b337;
   color: #fff;
   cursor: pointer;
+  z-index: 10
 }
+
 .calender-event:hover {
   background: #2b982f;
+}
+
+.calender-event-appointment {
+  margin: 4px;
+  width: calc(100% - 8px);
+  background: #FFC107;
+  z-index: 11
+}
+
+.calender-event-appointment:hover {
+  background: #ffb300;
 }

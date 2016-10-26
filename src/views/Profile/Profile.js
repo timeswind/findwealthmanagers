@@ -139,8 +139,17 @@ class Profile extends Component {
       if (daySchedules[available['day'] - 1] === null) {
         daySchedules[available['day'] - 1] = []
       }
-      available['fromTime'] = IndexToTime(available['from'])
-      available['toTime'] = IndexToTime(available['to'])
+      if (available.exception) {
+        let dateString = this.getDateByDay(available.day - 1).toString()
+        available['fromTime'] = IndexToTime(available['exception'][dateString]['from'])
+        available['toTime'] = IndexToTime(available['exception'][dateString]['to'])
+        available['from'] = available['exception'][dateString]['from']
+        available['to'] = available['exception'][dateString]['to']
+      } else {
+        available['fromTime'] = IndexToTime(available['from'])
+        available['toTime'] = IndexToTime(available['to'])
+      }
+
       daySchedules[available['day'] - 1].push(available)
     })
 
