@@ -41,6 +41,7 @@ class Navbar extends Component {
   logout() {
     const { actions } = this.props;
     actions.logout()
+    this.routerPush('/login')
   }
 
   routerPush (path) {

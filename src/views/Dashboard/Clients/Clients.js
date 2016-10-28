@@ -442,7 +442,7 @@ class Clients extends Component {
     return (
       <div className="view-body flex-column">
         <div className="flex-row clients-panel">
-          <div className="clients-side-panel flex-column" style={{flex: 30, height: '100%'}}>
+          <div className="clients-side-panel flex-column" style={{height: '100%'}}>
             <div className="flex-row flex-center" style={{flexShrink: 0}}>
               <div className="clients-search-bar" style={{flex: 80}}>
                 <TextField
@@ -487,7 +487,7 @@ class Clients extends Component {
             }) }
 
           </div>
-          <div className="clients-detail-panel-wrapper" style={{flex: 70}}>
+          <div className="clients-detail-panel-wrapper" style={{flex: 100}}>
             { this.state.selectedClient.index !== null ? (
               <div className="clients-detail-panel flex-row" style={{height: '100%'}}>
                 <div className="clients-detail-panel-item">

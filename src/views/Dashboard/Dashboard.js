@@ -180,7 +180,7 @@ class DashboardView extends Component {
                     this.props.dispatch(push('/dashboard/feedback'))
                   }}>
                   <FontIcon className="material-icons">assessment</FontIcon>
-                  <span style={{marginLeft: "16px"}}>Feedback Tools</span>
+                  <span style={{marginLeft: "16px"}}>Customer Feedback</span>
                   <FontIcon className="material-icons" style={{marginLeft: "auto"}}>keyboard_arrow_right</FontIcon>
                 </div>
               </div>

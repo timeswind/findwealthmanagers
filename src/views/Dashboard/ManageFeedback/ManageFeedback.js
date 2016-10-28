@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 // import * as AuthActions from '../../../redux/actions/auth.js';
 import { push } from 'react-router-redux'
 import NewFeedbackForm from '../../../forms/NewFeedbackForm/NewFeedbackForm';
-import { PieChart, Pie, Sector, Cell, Legend } from 'recharts';
+import { ResponsiveContainer, PieChart, Pie, Sector, Cell, Legend } from 'recharts';
 import './ManageFeedback.css'
 
 
@@ -193,21 +193,23 @@ class ManageFeedbackView extends Component {
                       </div>
                     )}
                     { (!!field.datas && (field.type === 'mc' || field.type === 'rate')) && (
-                      <PieChart width={800} height={400} onMouseEnter={this.onPieEnter}>
-                        <Pie
-                          data={this.reformatDatas(field.datas)}
-                          cx={300}
-                          cy={200}
-                          labelLine={false}
-                          label={renderCustomizedLabel}
-                          outerRadius={100}
-                          >
-                          {
-                            this.reformatDatas(field.datas).map((entry, index) => <Cell key={index} fill={COLORS[index % COLORS.length]}/>)
-                          }
-                        </Pie>
-                        <Legend layout="vertical" align="right" verticalAlign="top" height={36}/>
-                      </PieChart>
+                      <ResponsiveContainer minWidth={400} minHeight={400}>
+                        <PieChart width={800} height={400} onMouseEnter={this.onPieEnter}>
+                          <Pie
+                            data={this.reformatDatas(field.datas)}
+                            cx={300}
+                            cy={200}
+                            labelLine={false}
+                            label={renderCustomizedLabel}
+                            outerRadius={100}
+                            >
+                            {
+                              this.reformatDatas(field.datas).map((entry, index) => <Cell key={index} fill={COLORS[index % COLORS.length]}/>)
+                            }
+                          </Pie>
+                          <Legend layout="vertical" align="right" verticalAlign="top" height={36}/>
+                        </PieChart>
+                      </ResponsiveContainer>
                     )}
                   </div>
                 </div>
@@ -300,9 +302,14 @@ class ManageFeedbackView extends Component {
   render() {
     return (
       <div className="view-body flex-row" style={{minHeight: '100%'}}>
-        <div className="feedback-form-list flex-column" style={{flex: 40}}>
+        <div className="feedback-form-list flex-column" style={{width: 400, position: 'fixed'}}>
           <div className="flex-column default-padding">
-            <FlatButton label="Create new feedback form" backgroundColor="#eee" onTouchTap={()=>{
+            <FlatButton
+              label="Create new survey"
+              backgroundColor="rgb(48, 73, 102)"
+              hoverColor="rgba(48, 73, 102, 0.8)"
+              style={{color: '#fff'}}
+              onTouchTap={()=>{
                 this.showCreateForm()
               }}
               />
@@ -322,7 +329,7 @@ class ManageFeedbackView extends Component {
             )
           }) }
         </div>
-        <div className="feedback-form-list flex-column" style={{flex: 60, backgroundColor: "#f7f7f7"}}>
+        <div className="feedback-form-list flex-column" style={{backgroundColor: "#f7f7f7", flex: 100, paddingLeft: 400}}>
 
           { this.state.createForm ? (
             <div className="feedback-form-editor light-card">

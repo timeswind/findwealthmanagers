@@ -136,21 +136,23 @@ class Profile extends Component {
   updateCalendarData(calendar) {
     var daySchedules = [null, null, null, null, null, null, null]
     calendar.available.forEach((available)=>{
-      if (daySchedules[available['day'] - 1] === null) {
-        daySchedules[available['day'] - 1] = []
-      }
-      if (available.exception) {
-        let dateString = this.getDateByDay(available.day - 1).toString()
-        available['fromTime'] = IndexToTime(available['exception'][dateString]['from'])
-        available['toTime'] = IndexToTime(available['exception'][dateString]['to'])
-        available['from'] = available['exception'][dateString]['from']
-        available['to'] = available['exception'][dateString]['to']
-      } else {
-        available['fromTime'] = IndexToTime(available['from'])
-        available['toTime'] = IndexToTime(available['to'])
-      }
+      if (available) {
+        if (daySchedules[available['day'] - 1] === null) {
+          daySchedules[available['day'] - 1] = []
+        }
+        if (available.exception) {
+          let dateString = this.getDateByDay(available.day - 1).toString()
+          available['fromTime'] = IndexToTime(available['exception'][dateString]['from'])
+          available['toTime'] = IndexToTime(available['exception'][dateString]['to'])
+          available['from'] = available['exception'][dateString]['from']
+          available['to'] = available['exception'][dateString]['to']
+        } else {
+          available['fromTime'] = IndexToTime(available['from'])
+          available['toTime'] = IndexToTime(available['to'])
+        }
 
-      daySchedules[available['day'] - 1].push(available)
+        daySchedules[available['day'] - 1].push(available)
+      }
     })
 
     this.setState({
