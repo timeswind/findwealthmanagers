@@ -1,11 +1,6 @@
 import React, { Component } from 'react';
-import FlatButton from 'material-ui/FlatButton';
 import fetch from '../../core/fetch/fetch';
 // import { bindActionCreators } from 'redux';
-import { List, ListItem } from 'material-ui/List';
-import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
-import FontIcon from 'material-ui/FontIcon';
-import TextField from 'material-ui/TextField';
 import { connect } from 'react-redux';
 // import * as AuthActions from '../../../redux/actions/auth.js';
 // import { push } from 'react-router-redux'

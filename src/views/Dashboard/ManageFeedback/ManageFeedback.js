@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import FlatButton from 'material-ui/FlatButton';
 import fetch from '../../../core/fetch/fetch';
 import {Tabs, Tab} from 'material-ui/Tabs';
-import { List, ListItem } from 'material-ui/List';
+import { ListItem } from 'material-ui/List';
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 import FontIcon from 'material-ui/FontIcon';
 import TextField from 'material-ui/TextField';
@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 // import * as AuthActions from '../../../redux/actions/auth.js';
 import { push } from 'react-router-redux'
 import NewFeedbackForm from '../../../forms/NewFeedbackForm/NewFeedbackForm';
-import { ResponsiveContainer, PieChart, Pie, Sector, Cell, Legend } from 'recharts';
+import { ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import './ManageFeedback.css'
 
 
@@ -137,7 +137,7 @@ class ManageFeedbackView extends Component {
       })
       feedbackResponses.forEach((feedbackResponse)=>{
         feedbackResponse.forEach((singleResponse)=>{
-          if (singleResponse.fid == fid) {
+          if (singleResponse.fid === fid) {
             responses.push(singleResponse.data)
           }
         })

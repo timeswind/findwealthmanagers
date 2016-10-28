@@ -143,7 +143,7 @@ class Home extends Component {
                     }}
                     />
                 </div>
-                { this.props.path !== '/getlisted' ? (
+                { (this.props.location.pathname !== '/getlisted') ? (
                   <FlatButton
                     backgroundColor="rgba(0, 0, 0, 0.5)"
                     hoverColor="rgba(0, 0, 0, 0.7)"
@@ -246,7 +246,6 @@ class Home extends Component {
 }
 const mapStatesToProps = (state) => {
   return {
-    path: state.routing.locationBeforeTransitions.pathname,
     auth: state.auth
   };
 }

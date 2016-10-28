@@ -140,15 +140,15 @@ class Profile extends Component {
         if (daySchedules[available['day'] - 1] === null) {
           daySchedules[available['day'] - 1] = []
         }
+        available['fromTime'] = IndexToTime(available['from'])
+        available['toTime'] = IndexToTime(available['to'])
         if (available.exception) {
           let dateString = this.getDateByDay(available.day - 1).toString()
-          available['fromTime'] = IndexToTime(available['exception'][dateString]['from'])
-          available['toTime'] = IndexToTime(available['exception'][dateString]['to'])
-          available['from'] = available['exception'][dateString]['from']
-          available['to'] = available['exception'][dateString]['to']
-        } else {
-          available['fromTime'] = IndexToTime(available['from'])
-          available['toTime'] = IndexToTime(available['to'])
+          available[dateString] = {}
+          available[dateString]['from'] = available['exception'][dateString]['from']
+          available[dateString]['to'] = available['exception'][dateString]['to']
+          available[dateString]['fromTime'] = IndexToTime(available['exception'][dateString]['from'])
+          available[dateString]['toTime'] = IndexToTime(available['exception'][dateString]['to'])
         }
 
         daySchedules[available['day'] - 1].push(available)
@@ -382,13 +382,24 @@ class Profile extends Component {
                               {this.renderDayScheduleBlock(day_index)}
                               { this.state.daySchedules[day_index] !== null ? (
                                 this.state.daySchedules[day_index].map((event, event_index)=>{
-                                  return (
-                                    <div onTouchTap={()=>{
-                                        this.handleEventDetailDialogOpen(day_index, event_index)
-                                      }} className="calender-event" key={event._id} style={{top: (event.from*1.2333 + 49), height: ((event.to - event.from)*1.2333) }}>
-                                      <span>{moment(event.fromTime).format('h:mm a') + " - " + moment(event.toTime).format('h:mm a')}</span>
-                                    </div>
-                                  )
+                                  let dateString = this.getDateByDay(day_index)
+                                  if (dateString && event[dateString]) {
+                                    return (
+                                      <div onTouchTap={()=>{
+                                          this.handleEventDetailDialogOpen(day_index, event_index)
+                                        }} className="calender-event" key={event._id} style={{top: (event[dateString].from*1.2333 + 49), height: ((event[dateString].to - event[dateString].from)*1.2333) }}>
+                                        <span>{moment(event[dateString].fromTime).format('h:mm a') + " - " + moment(event[dateString].toTime).format('h:mm a')}</span>
+                                      </div>
+                                    )
+                                  } else {
+                                    return (
+                                      <div onTouchTap={()=>{
+                                          this.handleEventDetailDialogOpen(day_index, event_index)
+                                        }} className="calender-event" key={event._id} style={{top: (event.from*1.2333 + 49), height: ((event.to - event.from)*1.2333) }}>
+                                        <span>{moment(event.fromTime).format('h:mm a') + " - " + moment(event.toTime).format('h:mm a')}</span>
+                                      </div>
+                                    )
+                                  }
                                 })
                               ) : null}
                             </div>

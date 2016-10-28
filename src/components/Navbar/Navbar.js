@@ -144,7 +144,6 @@ class Navbar extends Component {
 
 const mapStatesToProps = (state) => {
   return {
-    path: state.routing.locationBeforeTransitions.pathname,
     auth: state.auth,
   };
 }

@@ -7,7 +7,7 @@ class App extends Component {
   render() {
     return (
       <div>
-        {this.props.location.pathname !== '/' ? (<Navbar></Navbar>) : null}
+        {this.props.location.pathname !== '/' ? (<Navbar path={this.props.location.pathname}></Navbar>) : null}
         {this.props.children}
       </div>
     );
