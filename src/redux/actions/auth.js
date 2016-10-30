@@ -1,4 +1,16 @@
-import { SET_TOKEN, SET_ID, SET_NAME, SET_EMAIL, SET_ROLE, SET_LOGIN_STATE, LOGOUT } from '../constants'
+import { SHOW_LOGIN_MODEL, HIDE_LOGIN_MODEL, SET_TOKEN, SET_ID, SET_NAME, SET_EMAIL, SET_ROLE, SET_LOGIN_STATE, LOGOUT } from '../constants'
+
+export function showLoginModel() {
+  return {
+    type: SHOW_LOGIN_MODEL
+  }
+}
+
+export function hideLoginModel() {
+  return {
+    type: HIDE_LOGIN_MODEL,
+  }
+}
 
 export function setId(id) {
   return {

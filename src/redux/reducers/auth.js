@@ -1,4 +1,4 @@
-import { SET_TOKEN, SET_ID, SET_NAME, SET_EMAIL, SET_ROLE, SET_LOGIN_STATE, LOGOUT } from '../constants'
+import { SHOW_LOGIN_MODEL, HIDE_LOGIN_MODEL, SET_TOKEN, SET_ID, SET_NAME, SET_EMAIL, SET_ROLE, SET_LOGIN_STATE, LOGOUT } from '../constants'
 import localStore from 'store2'
 
 const initialState = {
@@ -7,7 +7,8 @@ const initialState = {
   id: "",
   name: "",
   email: "",
-  role: ""
+  role: "",
+  loginModel: false
 }
 
 export default function update(state = initialState, action) {
@@ -39,6 +40,16 @@ export default function update(state = initialState, action) {
   else if(action.type === SET_LOGIN_STATE) {
     return Object.assign({}, state, {
       isLogin: action.isLogin
+    })
+  }
+  else if(action.type === SHOW_LOGIN_MODEL) {
+    return Object.assign({}, state, {
+      loginModel: true
+    })
+  }
+  else if(action.type === HIDE_LOGIN_MODEL) {
+    return Object.assign({}, state, {
+      loginModel: false
     })
   }
   else if(action.type === LOGOUT) {

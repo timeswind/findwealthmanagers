@@ -24,7 +24,7 @@
     "css-loader": "0.25.0",
     "detect-port": "1.0.1",
     "enzyme": "^2.5.1",
-    "eslint": "3.8.1",
+    "eslint": "3.9.0",
     "eslint-loader": "1.6.0",
     "eslint-plugin-flowtype": "2.25.0",
     "eslint-plugin-import": "2.0.1",
@@ -60,6 +60,7 @@
   "dependencies": {
     "draft-js": "^0.9.1",
     "es6-promise": "^4.0.5",
+    "eslint": "3.9.0",
     "flexboxgrid": "^6.3.1",
     "intl": "^1.2.4",
     "isomorphic-fetch": "^2.2.1",
@@ -84,7 +85,7 @@
     "redux-form": "^6.1.1",
     "redux-form-material-ui": "^4.1.0",
     "store2": "^2.3.2",
-    "whatwg-fetch": "^1.0.0"
+    "whatwg-fetch": "1.0.0"
   },
   "scripts": {
     "start": "node scripts/start.js",

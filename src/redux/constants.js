@@ -1,5 +1,7 @@
 
 //auth.js
+export const SHOW_LOGIN_MODEL = 'SHOW_LOGIN_MODEL'
+export const HIDE_LOGIN_MODEL = 'HIDE_LOGIN_MODEL'
 export const SET_TOKEN = 'SET_TOKEN'
 export const SET_ID = 'SET_ID'
 export const SET_NAME = 'SET_NAME'
