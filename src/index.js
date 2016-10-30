@@ -82,8 +82,17 @@ if (localStore.session.get("token") && localStore.session.get("email") && localS
   })
 }
 
-function requireAuth(nextState, replace) {
+function requireAuthLogin(nextState, replace) {
   if (!store.getState().auth.isLogin) {
+    replace({
+      pathname: '/login',
+      state: { nextPathname: nextState.location.pathname }
+    })
+  }
+}
+
+function requireAuthAdvisor(nextState, replace) {
+  if (!store.getState().auth.isLogin || store.getState().auth.role === 1) {
     replace({
       pathname: '/login',
       state: { nextPathname: nextState.location.pathname }
@@ -161,26 +170,26 @@ const MUI = () => (
               })
             }}>
           </Route>
-          <Route path="/dashboard" onEnter={requireAuth}>
+          <Route path="/dashboard" onEnter={requireAuthLogin}>
             <IndexRoute getComponent={function(location, cb){
                 require.ensure([], (require) => {
                   cb(null, require('./views/Dashboard/Dashboard').default)
                 })
               }}>
             </IndexRoute>
-            <Route path="calendar" getComponent={function(location, cb){
+            <Route path="calendar" onEnter={requireAuthAdvisor} getComponent={function(location, cb){
                 require.ensure([], (require) => {
                   cb(null, require('./views/ManageCalendar/ManageCalendar').default)
                 })
               }}>
             </Route>
-            <Route path="clients" onEnter={requireAuth} getComponent={function(location, cb){
+            <Route path="clients" onEnter={requireAuthAdvisor} getComponent={function(location, cb){
                 require.ensure([], (require) => {
                   cb(null, require('./views/Dashboard/Clients/Clients').default)
                 })
               }}>
             </Route>
-            <Route path="feedback" getComponent={function(location, cb){
+            <Route path="feedback" onEnter={requireAuthAdvisor} getComponent={function(location, cb){
                 require.ensure([], (require) => {
                   cb(null, require('./views/Dashboard/ManageFeedback/ManageFeedback').default)
                 })

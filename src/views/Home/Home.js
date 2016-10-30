@@ -107,26 +107,45 @@ class Home extends Component {
                     targetOrigin={{horizontal: 'right', vertical: 'top'}}
                     onRequestClose={this.handleRequestClose}
                     >
-                    <Menu>
-                      <MenuItem primaryText="Dashboard"
-                        onTouchTap={()=>{
-                          this.routerPush('/dashboard')
-                          this.handleRequestClose()
-                        }}
-                        />
-                      <MenuItem primaryText="Client Book"
-                        onTouchTap={()=>{
-                          this.routerPush('/dashboard/clients')
-                          this.handleRequestClose()
-                        }}
-                        />
-                      <MenuItem primaryText="Sign out"
-                        onTouchTap={()=>{
-                          this.logout()
-                          this.handleRequestClose()
-                        }}
-                        />
-                    </Menu>
+                    {
+                      this.props.auth.role !== 1 ? (
+                        <Menu>
+                          <MenuItem primaryText="Dashboard"
+                            onClick={()=>{
+                              this.routerPush('/dashboard')
+                              this.handleRequestClose()
+                            }}
+                            />
+                          <MenuItem primaryText="Client Book"
+                            onClick={()=>{
+                              this.routerPush('/dashboard/clients')
+                              this.handleRequestClose()
+                            }}
+                            />
+                          <MenuItem primaryText="Sign out"
+                            onClick={()=>{
+                              this.logout()
+                              this.handleRequestClose()
+                            }}
+                            />
+                        </Menu>
+                      ) : (
+                        <Menu>
+                          <MenuItem primaryText="Dashboard"
+                            onClick={()=>{
+                              this.routerPush('/dashboard')
+                              this.handleRequestClose()
+                            }}
+                            />
+                          <MenuItem primaryText="Sign out"
+                            onClick={()=>{
+                              this.logout()
+                              this.handleRequestClose()
+                            }}
+                            />
+                        </Menu>
+                      )
+                    }
                   </Popover>
                 </div>
               </div>

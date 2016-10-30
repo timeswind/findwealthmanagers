@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import * as AuthActions from './redux/actions/auth.js';
 import { bindActionCreators } from 'redux';
 import Navbar from './components/Navbar/Navbar'
-
+import LoginSignupForm from './forms/LoginSignupForm/LoginSignupForm';
 import './App.css';
 
 class App extends Component {
@@ -16,12 +16,13 @@ class App extends Component {
         <Dialog
           title="Login"
           modal={false}
+          autoScrollBodyContent={true}
           open={this.props.auth.loginModel}
           onRequestClose={()=>{
             this.props.actions.hideLoginModel()
           }}
           >
-          The actions in this window were passed in as an array of React objects.
+          <LoginSignupForm></LoginSignupForm>
         </Dialog>
       </div>
     );

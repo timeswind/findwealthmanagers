@@ -165,26 +165,29 @@ class DashboardView extends Component {
       <div className="view-body flex-column">
         <div style={{padding:"36px 8px 64px 8px"}}>
           <div style={{width: '100%', maxWidth: "1080px", margin: '0 auto'}}>
-            <div className="flex-row">
-              <div className="flex-25" style={{marginRight: "16px", cursor: 'pointer'}}>
-                <div className="flex-row flex-center default-padding raleway" style={lessShadowCardStyle} onClick={()=>{
-                    this.props.dispatch(push('/dashboard/clients'))
-                  }}>
-                  <FontIcon className="material-icons">book</FontIcon>
-                  <span style={{marginLeft: "16px"}}>Client Book</span>
-                  <FontIcon className="material-icons" style={{marginLeft: "auto"}}>keyboard_arrow_right</FontIcon>
+            { this.props.auth.role !== 1 ? (
+              <div className="flex-row">
+                <div className="flex-25" style={{marginRight: "16px", cursor: 'pointer'}}>
+                  <div className="flex-row flex-center default-padding raleway" style={lessShadowCardStyle} onClick={()=>{
+                      this.props.dispatch(push('/dashboard/clients'))
+                    }}>
+                    <FontIcon className="material-icons">book</FontIcon>
+                    <span style={{marginLeft: "16px"}}>Client Book</span>
+                    <FontIcon className="material-icons" style={{marginLeft: "auto"}}>keyboard_arrow_right</FontIcon>
+                  </div>
+                </div>
+                <div className="flex-25" style={{cursor: 'pointer'}}>
+                  <div className="flex-row flex-center default-padding raleway" style={lessShadowCardStyle} onClick={()=>{
+                      this.props.dispatch(push('/dashboard/feedback'))
+                    }}>
+                    <FontIcon className="material-icons">assessment</FontIcon>
+                    <span style={{marginLeft: "16px"}}>Customer Feedback</span>
+                    <FontIcon className="material-icons" style={{marginLeft: "auto"}}>keyboard_arrow_right</FontIcon>
+                  </div>
                 </div>
               </div>
-              <div className="flex-25" style={{cursor: 'pointer'}}>
-                <div className="flex-row flex-center default-padding raleway" style={lessShadowCardStyle} onClick={()=>{
-                    this.props.dispatch(push('/dashboard/feedback'))
-                  }}>
-                  <FontIcon className="material-icons">assessment</FontIcon>
-                  <span style={{marginLeft: "16px"}}>Customer Feedback</span>
-                  <FontIcon className="material-icons" style={{marginLeft: "auto"}}>keyboard_arrow_right</FontIcon>
-                </div>
-              </div>
-            </div>
+            ) : null }
+
             { this.state.emailIsVerified === false ? (
               <div className="flex-row flex-center default-padding raleway" style={{marginBottom: "16px", backgroundColor: "#fff", border: "1px solid #FF9800", color: "#FF9800"}}>
                 <span>Your email is not varified</span>
@@ -253,205 +256,182 @@ class DashboardView extends Component {
                     ) : null}
                   </div>
                 </div>
-                <div className="flex-column" style={lessShadowCardStyle}>
-                  <div className="flex-column">
-                    { !this.state.listed ? (
-                      <div className="flex-column" style={{padding: 16}}>
-                        <div style={{marginBottom: "16px", fontSize: "22px", fontWeight: '600'}} className="raleway">
-                          List Information
-                        </div>
-                        <FlatButton
-                          label="GET LISTED NOW"
-                          labelStyle={{color: "#FFF"}}
-                          primary
-                          rippleColor="#B2DFDB"
-                          backgroundColor="#00BFA5"
-                          hoverColor="#26A69A"
-                          onClick={()=>{ this.props.dispatch(push('/getlisted'))}}/>
-                      </div>
-                    ) : (
-                      <div>
-                        { this.state.editListInfo ? (
-                          <div className="flex-column">
-                            <div className="flex-row flex-center  default-padding">
-                              <div style={{fontSize: "22px", fontWeight: '600'}} className="raleway">
-                                List Information
-                              </div>
-                            </div>
-                            <Divider />
-                            <div className="default-padding">
-                              <EditListInfoFrom handleCancle={this.handleEditListFormCancel} initialValues={this.state.listInfo} onSubmit={this.handleEditListFormSubmit}></EditListInfoFrom>
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="flex-column">
-                            <div className="flex-row flex-center  default-padding">
-                              <div style={{fontSize: "22px", fontWeight: '600'}} className="raleway">
-                                List Information
-                              </div>
-                              <div>
-                                <FlatButton
-                                  label="Edit"
-                                  labelStyle={{color: "#4285f4"}}
-                                  backgroundColor="transparent"
-                                  onClick={()=>{
-                                    this.setState({editListInfo: true})
-                                  }}
-                                  />
-                                <FlatButton
-                                  label="Preview"
-                                  labelStyle={{color: "#fff"}}
-                                  rippleColor="#B2DFDB"
-                                  backgroundColor="#00BFA5"
-                                  hoverColor="#26A69A"
-                                  onClick={()=>{
-                                    this.props.dispatch(push('/p/' + this.state.listInfo._id))
-                                  }}
-                                  />
-                              </div>
+                {
+                  this.props.auth.role !== 1 ? (
+                    <div className="flex-column" >
 
+                      <div className="flex-column" style={lessShadowCardStyle}>
+                        <div className="flex-column">
+                          { !this.state.listed ? (
+                            <div className="flex-column" style={{padding: 16}}>
+                              <div style={{marginBottom: "16px", fontSize: "22px", fontWeight: '600'}} className="raleway">
+                                List Information
+                              </div>
+                              <FlatButton
+                                label="GET LISTED NOW"
+                                labelStyle={{color: "#FFF"}}
+                                primary
+                                rippleColor="#B2DFDB"
+                                backgroundColor="#00BFA5"
+                                hoverColor="#26A69A"
+                                onClick={()=>{ this.props.dispatch(push('/getlisted'))}}/>
                             </div>
-                            <Divider />
-                            <div className="default-padding">
-                              <div className="flex-column">
-                                <span className="field-title">
-                                  Phone
-                                </span>
-                                <span className="field-content">
-                                  {this.state.listInfo.phone}
-                                </span>
-                              </div>
-                              <div className="flex-column" style={{marginTop: "16px"}}>
-                                <span className="field-title">
-                                  Email
-                                </span>
-                                <span className="field-content">
-                                  {this.state.listInfo.email}
-                                </span>
-                              </div>
-                              <div className="flex-column" style={{marginTop: "16px"}}>
-                                <span className="field-title">
-                                  Categories
-                                </span>
-                                <div className="flex-row">
-                                  { this.state.listInfo.modifiedCategories ? this.state.listInfo.modifiedCategories.map((category) => {
-                                    return (
-                                      <Chip key={category.code} style={{margin: "4px 8px 4px 0"}}>
-                                        {category.name}
-                                      </Chip>
-                                    )
-                                  }) : null}
-                                </div>
-                              </div>
-                              <div className="flex-column" style={{marginTop: "16px"}}>
-                                <span className="field-title">
-                                  Building/Suite
-                                </span>
-                                <span className="field-content">
-                                  {this.state.listInfo.room}
-                                </span>
-                              </div>
-                              <div className="flex-column" style={{marginTop: "16px"}}>
-                                <span className="field-title">
-                                  Address
-                                </span>
-                                <span className="field-content">
-                                  {this.state.listInfo.address}
-                                </span>
-                              </div>
-                              <div className="flex-column" style={{marginTop: "16px"}}>
-                                <span className="field-title">
-                                  Brief
-                                </span>
-                                <p style={{lineHeight: 1.8}}>
-                                  {this.state.listInfo.brief}
-                                </p>
-                              </div>
-                              <div className="flex-column" style={{marginTop: "16px"}}>
-                                <span className="field-title">
-                                  Experience
-                                </span>
-                                { this.state.listInfo.experience ? this.state.listInfo.experience.map((experience, index) => {
-                                  return (
-                                    <div key={index} style={{margin: "8px 0 0 0", border: "1px solid #ddd", padding: "16px"}}>
-                                      <span style={{fontWeight: 600, fontSize: "20px"}}>{experience.title}</span>
-                                      <p style={{margin: "8px 0 0 0", fontSize: "14px", lineHeight: 1.8}}>{experience.text}</p>
-                                    </div>
-                                  )
-                                }) : null}
-                              </div>
-                            </div>
-                          </div>
-                        ) }
-                      </div>
-                    )}
-                  </div>
-                </div>
-                <div style={lessShadowCardStyle}>
-                  <div className="flex-column default-padding raleway" style={{fontSize: "22px", fontWeight: '600'}}>
-                    Listing Data
-                  </div>
-                </div>
-              </div>
-              <div className="flex-column" style={{flex: 30}}>
-                <div className="flex-column" style={lessShadowCardStyle}>
-                  <div className="flex-row flex-center">
-                    <div className="flex-column default-padding raleway" style={{fontSize: "22px", fontWeight: '600'}}>
-                      Calendar
-                    </div>
-                    <FlatButton
-                      label="manage"
-                      labelStyle={{color: "rgb(66, 133, 244)"}}
-                      onClick={()=>{
-                        this.props.dispatch(push('/dashboard/calendar'))
-                      }}
-                      />
-                  </div>
-                  <Divider />
-                  <div style={{padding: 0}}>
-                    <Subheader>Today</Subheader>
-                    <Divider />
-                    { this.state.appointments.map((appointment, index) => {
-                      return (
-                        <div
-                          key={appointment._id}>
-                          { appointment.date === 'today' ? (
-                            <ListItem
-                              primaryText={
-                                <div className="flex-row">
-                                  <span>{moment(appointment.start).format('h:mm a') + " - " + moment(appointment.end).format('h:mm a')}</span>
-                                  <span style={{marginLeft: "auto", color: "#ff9800"}}>{appointment.client}</span>
-                                </div>
-                              }
-                              secondaryText={
-                                appointment.note !== "" ? (
-                                  <p>
-                                    {appointment.note}
-                                  </p>
-                                ): null
-                              }
-                              />
                           ) : (
                             <div>
-                              { index === 0 ? (
-                                <ListItem
-                                  primaryText="No appointment"
-                                  />
-                              ) : null}
-                              { index > 0 && appointments[index].day === appointments[index - 1].day ? null : (
-                                <div>
+                              { this.state.editListInfo ? (
+                                <div className="flex-column">
+                                  <div className="flex-row flex-center  default-padding">
+                                    <div style={{fontSize: "22px", fontWeight: '600'}} className="raleway">
+                                      List Information
+                                    </div>
+                                  </div>
                                   <Divider />
-                                  <Subheader>{moment(appointment.date).format('MMM DD')}</Subheader>
+                                  <div className="default-padding">
+                                    <EditListInfoFrom handleCancle={this.handleEditListFormCancel} initialValues={this.state.listInfo} onSubmit={this.handleEditListFormSubmit}></EditListInfoFrom>
+                                  </div>
+                                </div>
+                              ) : (
+                                <div className="flex-column">
+                                  <div className="flex-row flex-center  default-padding">
+                                    <div style={{fontSize: "22px", fontWeight: '600'}} className="raleway">
+                                      List Information
+                                    </div>
+                                    <div>
+                                      <FlatButton
+                                        label="Edit"
+                                        labelStyle={{color: "#4285f4"}}
+                                        backgroundColor="transparent"
+                                        onClick={()=>{
+                                          this.setState({editListInfo: true})
+                                        }}
+                                        />
+                                      <FlatButton
+                                        label="Preview"
+                                        labelStyle={{color: "#fff"}}
+                                        rippleColor="#B2DFDB"
+                                        backgroundColor="#00BFA5"
+                                        hoverColor="#26A69A"
+                                        onClick={()=>{
+                                          this.props.dispatch(push('/p/' + this.state.listInfo._id))
+                                        }}
+                                        />
+                                    </div>
+
+                                  </div>
                                   <Divider />
+                                  <div className="default-padding">
+                                    <div className="flex-column">
+                                      <span className="field-title">
+                                        Phone
+                                      </span>
+                                      <span className="field-content">
+                                        {this.state.listInfo.phone}
+                                      </span>
+                                    </div>
+                                    <div className="flex-column" style={{marginTop: "16px"}}>
+                                      <span className="field-title">
+                                        Email
+                                      </span>
+                                      <span className="field-content">
+                                        {this.state.listInfo.email}
+                                      </span>
+                                    </div>
+                                    <div className="flex-column" style={{marginTop: "16px"}}>
+                                      <span className="field-title">
+                                        Categories
+                                      </span>
+                                      <div className="flex-row">
+                                        { this.state.listInfo.modifiedCategories ? this.state.listInfo.modifiedCategories.map((category) => {
+                                          return (
+                                            <Chip key={category.code} style={{margin: "4px 8px 4px 0"}}>
+                                              {category.name}
+                                            </Chip>
+                                          )
+                                        }) : null}
+                                      </div>
+                                    </div>
+                                    <div className="flex-column" style={{marginTop: "16px"}}>
+                                      <span className="field-title">
+                                        Building/Suite
+                                      </span>
+                                      <span className="field-content">
+                                        {this.state.listInfo.room}
+                                      </span>
+                                    </div>
+                                    <div className="flex-column" style={{marginTop: "16px"}}>
+                                      <span className="field-title">
+                                        Address
+                                      </span>
+                                      <span className="field-content">
+                                        {this.state.listInfo.address}
+                                      </span>
+                                    </div>
+                                    <div className="flex-column" style={{marginTop: "16px"}}>
+                                      <span className="field-title">
+                                        Brief
+                                      </span>
+                                      <p style={{lineHeight: 1.8}}>
+                                        {this.state.listInfo.brief}
+                                      </p>
+                                    </div>
+                                    <div className="flex-column" style={{marginTop: "16px"}}>
+                                      <span className="field-title">
+                                        Experience
+                                      </span>
+                                      { this.state.listInfo.experience ? this.state.listInfo.experience.map((experience, index) => {
+                                        return (
+                                          <div key={index} style={{margin: "8px 0 0 0", border: "1px solid #ddd", padding: "16px"}}>
+                                            <span style={{fontWeight: 600, fontSize: "20px"}}>{experience.title}</span>
+                                            <p style={{margin: "8px 0 0 0", fontSize: "14px", lineHeight: 1.8}}>{experience.text}</p>
+                                          </div>
+                                        )
+                                      }) : null}
+                                    </div>
+                                  </div>
                                 </div>
                               ) }
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      <div style={lessShadowCardStyle}>
+                        <div className="flex-column default-padding raleway" style={{fontSize: "22px", fontWeight: '600'}}>
+                          Listing Data
+                        </div>
+                      </div>
+                    </div>
+                  ) : null
+                }
+              </div>
+              <div className="flex-column" style={{flex: 30}}>
+                { this.props.auth.role !== 1 && (
+                  <div className="flex-column" style={lessShadowCardStyle}>
+                    <div className="flex-row flex-center">
+                      <div className="flex-column default-padding raleway" style={{fontSize: "22px", fontWeight: '600'}}>
+                        Calendar
+                      </div>
+                      <FlatButton
+                        label="manage"
+                        labelStyle={{color: "rgb(66, 133, 244)"}}
+                        onClick={()=>{
+                          this.props.dispatch(push('/dashboard/calendar'))
+                        }}
+                        />
+                    </div>
+                    <Divider />
+                    <div style={{padding: 0}}>
+                      <Subheader>Today</Subheader>
+                      <Divider />
+                      { this.state.appointments.map((appointment, index) => {
+                        return (
+                          <div
+                            key={appointment._id}>
+                            { appointment.date === 'today' ? (
                               <ListItem
                                 primaryText={
-                                  <div className="flex-column">
-                                    <div className="flex-row">
-                                      <span>{moment(appointment.start).format('h:mm a') + " - " + moment(appointment.end).format('h:mm a')}</span>
-                                      <span style={{marginLeft: "auto", color: "#ff9800"}}>{appointment.client}</span>
-                                    </div>
+                                  <div className="flex-row">
+                                    <span>{moment(appointment.start).format('h:mm a') + " - " + moment(appointment.end).format('h:mm a')}</span>
+                                    <span style={{marginLeft: "auto", color: "#ff9800"}}>{appointment.client}</span>
                                   </div>
                                 }
                                 secondaryText={
@@ -462,15 +442,46 @@ class DashboardView extends Component {
                                   ): null
                                 }
                                 />
-                            </div>
-                          ) }
-                        </div>
-
-                      )
-                    }) }
+                            ) : (
+                              <div>
+                                { index === 0 ? (
+                                  <ListItem
+                                    primaryText="No appointment"
+                                    />
+                                ) : null}
+                                { index > 0 && appointments[index].day === appointments[index - 1].day ? null : (
+                                  <div>
+                                    <Divider />
+                                    <Subheader>{moment(appointment.date).format('MMM DD')}</Subheader>
+                                    <Divider />
+                                  </div>
+                                ) }
+                                <ListItem
+                                  primaryText={
+                                    <div className="flex-column">
+                                      <div className="flex-row">
+                                        <span>{moment(appointment.start).format('h:mm a') + " - " + moment(appointment.end).format('h:mm a')}</span>
+                                        <span style={{marginLeft: "auto", color: "#ff9800"}}>{appointment.client}</span>
+                                      </div>
+                                    </div>
+                                  }
+                                  secondaryText={
+                                    appointment.note !== "" ? (
+                                      <p>
+                                        {appointment.note}
+                                      </p>
+                                    ): null
+                                  }
+                                  />
+                              </div>
+                            ) }
+                          </div>
+                        )
+                      }) }
+                    </div>
                   </div>
+                ) }
 
-                </div>
                 <div style={lessShadowCardStyle}>
                   <div className="flex-column default-padding raleway" style={{fontSize: "22px", fontWeight: '600'}}>
                     Message
