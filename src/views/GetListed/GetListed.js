@@ -618,7 +618,6 @@ class GetListed extends Component {
                   )}
                 </div>
               </div>
-
             ) : (
               <div>
                 <Stepper activeStep={stepIndex} orientation="vertical">
@@ -649,7 +648,7 @@ class GetListed extends Component {
                   </Step>
                 </Stepper>
                 <div style={contentStyle}>
-                  {finished ? (
+                  {finished && (
                     <Card>
                       <CardTitle title="Congradualation!"/>
                       <div className="default-padding">
@@ -668,11 +667,6 @@ class GetListed extends Component {
                         <p>...</p>
                       </div>
                     </Card>
-                  ) : (
-                    <div>
-                      <div>{this.getStepContent(stepIndex)}</div>
-                      {this.renderStepActions(stepIndex)}
-                    </div>
                   )}
                 </div>
               </div>

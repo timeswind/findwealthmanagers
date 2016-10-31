@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Avatar from 'material-ui/Avatar';
 import FontIcon from 'material-ui/FontIcon';
+import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import {Tabs, Tab} from 'material-ui/Tabs';
 import { connect } from 'react-redux';
@@ -11,7 +12,7 @@ import moment from 'moment';
 import * as AuthActions from '../../redux/actions/auth.js';
 import { bindActionCreators } from 'redux';
 import categories from '../../assets/categories'
-
+import RequestAppointmentForm from '../../forms/RequestAppointmentForm/RequestAppointmentForm'
 import './Profile.css'
 
 const weekdaysName = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -45,6 +46,7 @@ class Profile extends Component {
       currentWeek: this.currentWeekIn(day, year, month_index),
       calendarId: "",
       advisorId: "",
+      appointmentToolShow: false,
       daySchedules: [null, null, null, null, null, null, null]
     }
   }
@@ -66,7 +68,6 @@ class Profile extends Component {
         json.listInfo.categories.forEach((category_code) => {
           formattedCategories.push(categories[category_code - 1])
         })
-        console.log(formattedCategories)
         self.setState({
           name: json.advisorInfo.firstName + " " + json.advisorInfo.lastName,
           advisorId: json.advisorInfo._id,
@@ -77,6 +78,7 @@ class Profile extends Component {
           brief: json.listInfo.brief,
           experience: json.listInfo.experience
         })
+        console.log(json.calendar)
         self.updateCalendarData(json.calendar)
       } else {
         // self.props.dispatch(push('/'))
@@ -145,11 +147,13 @@ class Profile extends Component {
         available['toTime'] = IndexToTime(available['to'])
         if (available.exception) {
           let dateString = this.getDateByDay(available.day - 1).toString()
-          available[dateString] = {}
-          available[dateString]['from'] = available['exception'][dateString]['from']
-          available[dateString]['to'] = available['exception'][dateString]['to']
-          available[dateString]['fromTime'] = IndexToTime(available['exception'][dateString]['from'])
-          available[dateString]['toTime'] = IndexToTime(available['exception'][dateString]['to'])
+          if (dateString !== "") {
+            available[dateString] = {}
+            available[dateString]['from'] = available['exception'][dateString]['from']
+            available[dateString]['to'] = available['exception'][dateString]['to']
+            available[dateString]['fromTime'] = IndexToTime(available['exception'][dateString]['from'])
+            available[dateString]['toTime'] = IndexToTime(available['exception'][dateString]['to'])
+          }
         }
 
         daySchedules[available['day'] - 1].push(available)
@@ -256,6 +260,8 @@ class Profile extends Component {
   showAppointmentTool (){
     if (!this.props.auth.isLogin) {
       this.props.actions.showLoginModel()
+    } else {
+      this.setState({appointmentToolShow: true})
     }
   }
 
@@ -394,16 +400,16 @@ class Profile extends Component {
                         {this.renderVerticalTimeLabel()}
                       </div>
                       {weekdaysName.map((weekdayName, day_index)=>{
+                        let dateString = this.getDateByDay(day_index)
                         return (
                           <div className="weekday" key={day_index}>
                             <div className="flex-row table-header">
                               <span>{weekdaysName[day_index]}</span>
-                              <span style={{marginLeft: "auto", fontWeight: 600}}>{this.getDateByDay(day_index)}</span>
+                              <span style={{marginLeft: "auto", fontWeight: 600}}>{dateString}</span>
                             </div>
                             {this.renderDayScheduleBlock(day_index)}
-                            { this.state.daySchedules[day_index] !== null ? (
+                            { (this.state.daySchedules[day_index] !== null && dateString !== "") ? (
                               this.state.daySchedules[day_index].map((event, event_index)=>{
-                                let dateString = this.getDateByDay(day_index)
                                 if (dateString && event[dateString]) {
                                   return (
                                     <div onTouchTap={()=>{
@@ -434,6 +440,17 @@ class Profile extends Component {
           </div>
         </div>
       </div>
+      <Dialog
+        title="Request Appointment"
+        modal={false}
+        autoScrollBodyContent={true}
+        open={this.state.appointmentToolShow}
+        onRequestClose={()=>{
+          this.setState({appointmentToolShow: false})
+        }}
+        >
+        <RequestAppointmentForm></RequestAppointmentForm>
+      </Dialog>
     </div>
   )
 }
