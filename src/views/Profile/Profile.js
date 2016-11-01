@@ -83,7 +83,9 @@ class Profile extends Component {
           brief: json.listInfo.brief,
           experience: json.listInfo.experience
         })
-        self.updateCalendarData(json.calendar)
+        if (json.calendar) {
+          self.updateCalendarData(json.calendar)
+        }
         if (self.props.auth.role === 1) {
           self.getAppointmentsWithAdvisor(json.advisorInfo._id)
         }
@@ -212,8 +214,7 @@ class Profile extends Component {
       method: "GET",
       headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.props.auth.token
+        'Content-Type': 'application/json'
       },
     }).then(function(response) {
       return response.json()
