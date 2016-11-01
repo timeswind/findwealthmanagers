@@ -212,7 +212,6 @@ class NewFeedbackForm extends Component {
 
     return (
       <form onSubmit={handleSubmit} className="flex-column">
-
         <div className="flex-column">
           <Field
             name="title"
@@ -221,7 +220,6 @@ class NewFeedbackForm extends Component {
             hintText="Feedback Title"
             />
           <FieldArray name="fields" props={{fieldsValue: fieldsValue, dispatch: dispatch}} component={renderFields}/>
-
           <FlatButton
             type="submit"
             label="Create"
@@ -229,7 +227,6 @@ class NewFeedbackForm extends Component {
             backgroundColor="#ddd"
             />
         </div>
-
       </form>
     );
   }

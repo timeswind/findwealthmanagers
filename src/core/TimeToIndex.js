@@ -11,11 +11,14 @@ export const TimeToIndex = function (time) {
 export const IndexToTime = function (index) {
   // @params
   // index - Number
-  var date = new Date()
-  var hour = parseInt(index / 60, 10)
-  var minutes = index % 60
-  date.setHours(hour)
-  date.setMinutes(minutes)
-
-  return date
+  if (typeof index === 'number') {
+    var date = new Date()
+    var hour = parseInt(index / 60, 10)
+    var minutes = index % 60
+    date.setHours(hour)
+    date.setMinutes(minutes)
+    return date
+  } else {
+    return null
+  }
 }

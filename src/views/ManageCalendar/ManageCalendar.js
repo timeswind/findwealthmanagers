@@ -370,7 +370,7 @@ class ManageCalendar extends Component {
             <FlatButton
               backgroundColor="rgb(50, 179, 55)"
               labelStyle={{color: "#FFF"}}
-              style={{position: "absolute", right: 9}}
+              style={{position: "absolute", right: 9, top: 0}}
               label="ADD OFFICE TIME" onTouchTap={this.handleNewEventDialogOpen} />
 
             <div className="flex-row flex-center light-shadow">

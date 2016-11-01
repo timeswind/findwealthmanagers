@@ -8,10 +8,13 @@ import { connect } from 'react-redux';
 import fetch from '../../core/fetch/fetch';
 import { gray400 } from 'material-ui/styles/colors';
 import { IndexToTime } from '../../core/TimeToIndex';
+import { List, ListItem } from 'material-ui/List';
+import Subheader from 'material-ui/Subheader';
 import moment from 'moment';
 import * as AuthActions from '../../redux/actions/auth.js';
 import { bindActionCreators } from 'redux';
 import categories from '../../assets/categories'
+import { TimeToIndex } from '../../core/TimeToIndex';
 import RequestAppointmentForm from '../../forms/RequestAppointmentForm/RequestAppointmentForm'
 import './Profile.css'
 
@@ -44,9 +47,11 @@ class Profile extends Component {
       month: month_index + 1,
       weeksCount: this.weekCountInMonth(year, month_index + 1),
       currentWeek: this.currentWeekIn(day, year, month_index),
+      calendar: {},
       calendarId: "",
       advisorId: "",
       appointmentToolShow: false,
+      previousAppointments: [],
       daySchedules: [null, null, null, null, null, null, null]
     }
   }
@@ -78,14 +83,17 @@ class Profile extends Component {
           brief: json.listInfo.brief,
           experience: json.listInfo.experience
         })
-        console.log(json.calendar)
         self.updateCalendarData(json.calendar)
+        if (self.props.auth.role === 1) {
+          self.getAppointmentsWithAdvisor(json.advisorInfo._id)
+        }
       } else {
         // self.props.dispatch(push('/'))
       }
     }).catch(function(ex) {
       console.log('failed', ex)
     })
+
   }
 
   navigateWeekPrivious () {
@@ -134,6 +142,7 @@ class Profile extends Component {
       weeksCount: weeks_count_in_month,
       currentWeek: week
     })
+    this.updateCalendarData(this.state.calendar)
   }
 
   updateCalendarData(calendar) {
@@ -147,7 +156,7 @@ class Profile extends Component {
         available['toTime'] = IndexToTime(available['to'])
         if (available.exception) {
           let dateString = this.getDateByDay(available.day - 1).toString()
-          if (dateString !== "") {
+          if (dateString && dateString !== "") {
             available[dateString] = {}
             available[dateString]['from'] = available['exception'][dateString]['from']
             available[dateString]['to'] = available['exception'][dateString]['to']
@@ -155,14 +164,44 @@ class Profile extends Component {
             available[dateString]['toTime'] = IndexToTime(available['exception'][dateString]['to'])
           }
         }
-
         daySchedules[available['day'] - 1].push(available)
       }
     })
 
     this.setState({
+      calendar: calendar,
       calendarId: calendar._id,
       daySchedules: daySchedules
+    })
+  }
+
+  getAppointmentsWithAdvisor (advisorId) {
+    let self = this
+    let apiURL = '/api/protect/appointments/' + advisorId
+    fetch(apiURL, {
+      method: "GET",
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + this.props.auth.token
+      },
+    }).then(function(response) {
+      return response.json()
+    }).then(function(json) {
+      if (json.appointments) {
+        json.appointments = json.appointments.map((appointment) => {
+          var obj = {}
+          obj["date"] = appointment.date
+          obj["status"] = appointment.status
+          obj["note"] = appointment.note || ""
+          obj["start"] = IndexToTime(appointment.start)
+          obj["end"] = IndexToTime(appointment.end)
+          return obj
+        })
+        self.setState({previousAppointments: json.appointments})
+      }
+    }).catch(function(ex) {
+      console.log('failed', ex)
     })
   }
 
@@ -265,6 +304,33 @@ class Profile extends Component {
     }
   }
 
+  handleRequestAppointmentSubmit = (form) => {
+    var self = this
+    form.start = TimeToIndex(form.start)
+    form.end = TimeToIndex(form.end)
+    if (!form.advisor) {
+      form.advisor = this.state.advisorId
+    }
+    fetch('/api/protect/appointment', {
+      method: "post",
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + this.props.auth.token
+      },
+      body: JSON.stringify(form)
+    }).then(function(response) {
+      return response.json()
+    }).then(function(json) {
+      if (json.success) {
+        self.setState({appointmentToolShow: false})
+      }
+      console.log(json)
+    }).catch(function(ex) {
+      console.log('failed', ex)
+    })
+  }
+
   render() {
     return (
       <div className="view-body flex-column g-background">
@@ -311,8 +377,8 @@ class Profile extends Component {
                       labelStyle={{color: "#FFF"}}
                       primary
                       rippleColor="#B2DFDB"
-                      backgroundColor="#00BFA5"
-                      hoverColor="#26A69A"/>
+                      backgroundColor="rgb(48, 73, 102)"
+                      hoverColor="rgba(48, 73, 102, 0.8)"/>
                   </div>
                 )
               }
@@ -328,131 +394,159 @@ class Profile extends Component {
           </div>
         </div>
         <div className="profile-body">
-          <div className="p-tabs-outter-wrapper">
-            <div className="p-tabs-inner-wrapper">
-              <Tabs
-                value={this.state.tab}
-                onChange={this.handleTabChange}
-                >
-                <Tab label="Brief" value="brief" style={{backgroundColor: "#fff", color: "#333"}}>
-                  <div className="flex-column" style={{maxWidth: 800, margin: "0 auto"}}>
-                    <div className="p-tab-wrapper">
-                      <h2>Brief</h2>
-                      <p>
-                        {this.state.brief}
-                      </p>
-                    </div>
-                    <div className="p-tab-wrapper">
-                      <h2>Experience</h2>
-                      { this.state.experience.map((experience, index) => {
-                        return (
-                          <div key={index} style={{margin: "16px 0 0 0", paddingTop: "16px", borderTop: "1px solid #ddd"}}>
-                            <span style={{fontWeight: 600, fontSize: "18px"}}>{experience.title}</span>
-                            <p style={{margin: "8px 0 0 0", fontSize: "14px"}}>{experience.text}</p>
+          { (this.props.auth.role === 1 && this.state.previousAppointments.length !== 0) && (
+            <div className="flex-column" style={{maxWidth: 600, margin: "0 auto"}}>
+              <Subheader>My appointments</Subheader>
+              <List>
+                { this.state.previousAppointments.map((appointment, index)=>{
+                  return (
+                    <div className="flex-column light-shadow" key={index}>
+                      <ListItem
+                        className="light-shadow"
+                        primaryText={moment(appointment.date).format('MMMM DD, YYYY')}
+                        secondaryText={<span>{moment(appointment.start).format('h:mm a') + " - " + moment(appointment.end).format('h:mm a')}</span>}
+                        rightIcon={
+                          <div>
+                            {
+                              appointment.status === 'pending' && (
+                                <span className="p-appointment-status-pending">Pending</span>
+                              )
+                            }
                           </div>
-                        )
-                      })}
+                        }
+                        />
                     </div>
+                  )
+                }
+              )}
+            </List>
+          </div>
+        )}
+        <div className="p-tabs-outter-wrapper">
+          <div className="p-tabs-inner-wrapper">
+            <Tabs
+              value={this.state.tab}
+              onChange={this.handleTabChange}
+              >
+              <Tab label="Brief" value="brief" style={{backgroundColor: "#fff", color: "#333"}}>
+                <div className="flex-column" style={{maxWidth: 800, margin: "0 auto"}}>
+                  <div className="p-tab-wrapper">
+                    <h2>Brief</h2>
+                    <p>
+                      {this.state.brief}
+                    </p>
                   </div>
+                  <div className="p-tab-wrapper">
+                    <h2>Experience</h2>
+                    { this.state.experience.map((experience, index) => {
+                      return (
+                        <div key={index} style={{margin: "16px 0 0 0", paddingTop: "16px", borderTop: "1px solid #ddd"}}>
+                          <span style={{fontWeight: 600, fontSize: "18px"}}>{experience.title}</span>
+                          <p style={{margin: "8px 0 0 0", fontSize: "14px"}}>{experience.text}</p>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
 
-                </Tab>
-                <Tab label="Calendar" value="calendar" style={{backgroundColor: "#fff", color: "#333"}}>
-                  <div className="flex-column flex-center" style={{marginTop: 16}}>
-                    <div className="flex-row flex-center light-shadow">
-                      <FlatButton
-                        label="<"
-                        onTouchTap={()=>{
-                          this.navigateWeekPrivious()
-                        }}
-                        />
-                      <FlatButton
-                        label="This Week"
-                        onTouchTap={()=>{
-                          this.navigateWeekCurrent()
-                        }}
-                        />
-                      <FlatButton
-                        label=">"
-                        onTouchTap={()=>{
-                          this.navigateWeekNext()
-                        }}
-                        />
-                    </div>
+              </Tab>
+              <Tab label="Calendar" value="calendar" style={{backgroundColor: "#fff", color: "#333"}}>
+                <div className="flex-column flex-center" style={{marginTop: 16}}>
+                  <div className="flex-row flex-center light-shadow">
                     <FlatButton
-                      label="make appointment"
-                      labelStyle={{color: "#FFF"}}
-                      primary
-                      style={{position: "absolute", right: 9}}
-                      rippleColor="#B2DFDB"
-                      backgroundColor="rgb(48, 73, 102)"
-                      hoverColor="rgba(48, 73, 102, 0.8)"
+                      label="<"
                       onTouchTap={()=>{
-                        this.showAppointmentTool()
+                        this.navigateWeekPrivious()
+                      }}
+                      />
+                    <FlatButton
+                      label="This Week"
+                      onTouchTap={()=>{
+                        this.navigateWeekCurrent()
+                      }}
+                      />
+                    <FlatButton
+                      label=">"
+                      onTouchTap={()=>{
+                        this.navigateWeekNext()
                       }}
                       />
                   </div>
-                  <div className="p-tab-wrapper" style={{padding: 0}}>
-                    <div className="flex-row">
-                      <div style={{flex: "0.5 0 0px"}} className="flex-column">
-                        <div className="flex-row table-header">
-                          <span style={{fontWeight: 600}}>Time</span>
-                        </div>
-                        {this.renderVerticalTimeLabel()}
+                  <FlatButton
+                    label="make appointment"
+                    labelStyle={{color: "#FFF"}}
+                    primary
+                    style={{position: "absolute", right: 9, top: 0}}
+                    rippleColor="#B2DFDB"
+                    backgroundColor="rgb(48, 73, 102)"
+                    hoverColor="rgba(48, 73, 102, 0.8)"
+                    onTouchTap={()=>{
+                      this.showAppointmentTool()
+                    }}
+                    />
+                </div>
+                <div className="p-tab-wrapper" style={{padding: 0}}>
+                  <div className="flex-row">
+                    <div style={{flex: "0.5 0 0px"}} className="flex-column">
+                      <div className="flex-row table-header">
+                        <span style={{fontWeight: 600}}>Time</span>
                       </div>
-                      {weekdaysName.map((weekdayName, day_index)=>{
-                        let dateString = this.getDateByDay(day_index)
-                        return (
-                          <div className="weekday" key={day_index}>
-                            <div className="flex-row table-header">
-                              <span>{weekdaysName[day_index]}</span>
-                              <span style={{marginLeft: "auto", fontWeight: 600}}>{dateString}</span>
-                            </div>
-                            {this.renderDayScheduleBlock(day_index)}
-                            { (this.state.daySchedules[day_index] !== null && dateString !== "") ? (
-                              this.state.daySchedules[day_index].map((event, event_index)=>{
-                                if (dateString && event[dateString]) {
-                                  return (
-                                    <div onTouchTap={()=>{
-                                        this.handleEventDetailDialogOpen(day_index, event_index)
-                                      }} className="calender-event" key={event._id} style={{top: (event[dateString].from*1.2333 + 49), height: ((event[dateString].to - event[dateString].from)*1.2333) }}>
-                                      <span>{moment(event[dateString].fromTime).format('h:mm a') + " - " + moment(event[dateString].toTime).format('h:mm a')}</span>
-                                    </div>
-                                  )
-                                } else {
-                                  return (
-                                    <div onTouchTap={()=>{
-                                        this.handleEventDetailDialogOpen(day_index, event_index)
-                                      }} className="calender-event" key={event._id} style={{top: (event.from*1.2333 + 49), height: ((event.to - event.from)*1.2333) }}>
-                                      <span>{moment(event.fromTime).format('h:mm a') + " - " + moment(event.toTime).format('h:mm a')}</span>
-                                    </div>
-                                  )
-                                }
-                              })
-                            ) : null}
-                          </div>
-                        )
-                      })}
+                      {this.renderVerticalTimeLabel()}
                     </div>
+                    {weekdaysName.map((weekdayName, day_index)=>{
+                      let dateString = this.getDateByDay(day_index)
+                      return (
+                        <div className="weekday" key={day_index}>
+                          <div className="flex-row table-header">
+                            <span>{weekdaysName[day_index]}</span>
+                            <span style={{marginLeft: "auto", fontWeight: 600}}>{dateString}</span>
+                          </div>
+                          {this.renderDayScheduleBlock(day_index)}
+                          { (this.state.daySchedules[day_index] !== null && dateString !== "") ? (
+                            this.state.daySchedules[day_index].map((event, event_index)=>{
+                              if (dateString && event[dateString]) {
+                                return (
+                                  <div onTouchTap={()=>{
+                                      this.handleEventDetailDialogOpen(day_index, event_index)
+                                    }} className="calender-event" key={event._id} style={{top: (event[dateString].from*1.2333 + 49), height: ((event[dateString].to - event[dateString].from)*1.2333) }}>
+                                    <span>{moment(event[dateString].fromTime).format('h:mm a') + " - " + moment(event[dateString].toTime).format('h:mm a')}</span>
+                                  </div>
+                                )
+                              } else {
+                                return (
+                                  <div onTouchTap={()=>{
+                                      this.handleEventDetailDialogOpen(day_index, event_index)
+                                    }} className="calender-event" key={event._id} style={{top: (event.from*1.2333 + 49), height: ((event.to - event.from)*1.2333) }}>
+                                    <span>{moment(event.fromTime).format('h:mm a') + " - " + moment(event.toTime).format('h:mm a')}</span>
+                                  </div>
+                                )
+                              }
+                            })
+                          ) : null}
+                        </div>
+                      )
+                    })}
                   </div>
-                </Tab>
-              </Tabs>
-            </div>
+                </div>
+              </Tab>
+            </Tabs>
           </div>
         </div>
       </div>
-      <Dialog
-        title="Request Appointment"
-        modal={false}
-        autoScrollBodyContent={true}
-        open={this.state.appointmentToolShow}
-        onRequestClose={()=>{
-          this.setState({appointmentToolShow: false})
-        }}
-        >
-        <RequestAppointmentForm></RequestAppointmentForm>
-      </Dialog>
     </div>
-  )
+    <Dialog
+      title="Request Appointment"
+      modal={false}
+      autoScrollBodyContent={true}
+      open={this.state.appointmentToolShow}
+      onRequestClose={()=>{
+        this.setState({appointmentToolShow: false})
+      }}
+      >
+      <RequestAppointmentForm advisor={this.state.name} onSubmit={this.handleRequestAppointmentSubmit}></RequestAppointmentForm>
+    </Dialog>
+  </div>
+)
 }
 }
 

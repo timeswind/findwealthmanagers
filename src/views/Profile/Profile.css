@@ -98,3 +98,21 @@
 .calender-event:hover {
   background: #2b982f;
 }
+
+.p-appointment-status-pending {
+  color: #ffc107;
+  position: absolute;
+  right: 0
+}
+
+.p-appointment-status-scheduled {
+  color: #4caf50;
+  position: absolute;
+  right: 0
+}
+
+.p-appointment-status-reject {
+  color: #ff5722;
+  position: absolute;
+  right: 0
+}

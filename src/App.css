@@ -205,6 +205,14 @@
   margin: 0 auto;
 }
 
+.field-wrapper {
+  margin: 8px 0;
+}
+
+.field-wrapper:last-child {
+  margin: 8px 0 0 0;
+}
+
 .field-title {
   font: 500 14px Roboto,RobotoDraft,Helvetica,Arial,sans-serif;
   color: rgba(0,0,0,0.54);
