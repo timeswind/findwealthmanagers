@@ -1,4 +1,17 @@
-import { SHOW_LOGIN_MODEL, HIDE_LOGIN_MODEL, SET_TOKEN, SET_ID, SET_NAME, SET_EMAIL, SET_ROLE, SET_LOGIN_STATE, LOGOUT } from '../constants'
+import {
+  SHOW_LOGIN_MODEL,
+  HIDE_LOGIN_MODEL,
+  SET_TOKEN,
+  SET_ID,
+  SET_NAME,
+  SET_EMAIL,
+  SET_ROLE,
+  SET_LOGIN_STATE,
+  LOGOUT,
+  SET_EMAIL_VERIFIED_STATUS,
+  SET_LISTED_STATUS,
+  SET_VERIFY_EMAIL_STATUS
+} from '../constants'
 
 export function showLoginModel() {
   return {
@@ -51,6 +64,27 @@ export function setLoginState(isLogin) {
   return {
     type: SET_LOGIN_STATE,
     isLogin: isLogin
+  }
+}
+
+export function setListedStatus(listed) {
+  return {
+    type: SET_LISTED_STATUS,
+    listed
+  }
+}
+
+export function setEmailVerifiedStatus(emailVerified) {
+  return {
+    type: SET_EMAIL_VERIFIED_STATUS,
+    emailVerified
+  }
+}
+
+export function setVerifyEmailStatus(verifyEmailStatus) {
+  return {
+    type: SET_VERIFY_EMAIL_STATUS,
+    verifyEmailStatus
   }
 }
 

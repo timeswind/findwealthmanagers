@@ -357,33 +357,34 @@ class Profile extends Component {
                       primary
                       rippleColor="#B2DFDB"
                       backgroundColor="rgb(48, 73, 102)"
-                      hoverColor="rgba(48, 73, 102, 0.8)"/>
-                  </div>
-                )
+                      hoverColor="rgba(48, 73, 102, 0.8)"
+                      onTouchTap={()=>{
+                        this.props.actions.setListTab('calendar')
+                      }}/>
+                    </div>
+                  )
+                }
+              </div>
+            </div>
+          </div>
+          <div className="flex-column p-categories flex-center">
+            <div className="flex-row flex-center raleway">
+              <div style={{marginRight: "16px"}}>Consulting area:</div>
+              {
+                this.props.list.listInfo.categories.map((category) => {
+                  return (<div className="p-category-label" key={category.code}>{category.name}</div>)
+                })
               }
             </div>
           </div>
-        </div>
-        <div className="flex-column p-categories flex-center">
-          <div className="flex-row flex-center raleway">
-            <div style={{marginRight: "16px"}}>Consulting area:</div>
-            {
-              this.props.list.listInfo.categories.map((category) => {
-                return (<div className="p-category-label" key={category.code}>{category.name}</div>)
-              })
-            }
-          </div>
-        </div>
-        <div className="profile-body">
-          { (this.props.auth.role === 1 && this.props.list.previousAppointment && this.props.list.previousAppointment.length > 0) && (
-            <div className="flex-column" style={{maxWidth: 600, margin: "0 auto"}}>
-              <Subheader>My appointments</Subheader>
-              <List>
-                { this.props.list.previousAppointment.map((appointment, index)=>{
-                  return (
-                    <div className="flex-column light-shadow" key={index}>
-                      <ListItem
-                        className="light-shadow"
+          <div className="profile-body">
+            { (this.props.auth.role === 1 && this.props.list.previousAppointment && this.props.list.previousAppointment.length > 0) && (
+              <div className="flex-column light-card" style={{maxWidth: 600, margin: "8px auto"}}>
+                <Subheader>My appointments</Subheader>
+                <List>
+                  { this.props.list.previousAppointment.map((appointment, index)=>{
+                    return (
+                      <ListItem  key={index}
                         primaryText={moment(appointment.date).format('MMMM DD, YYYY')}
                         secondaryText={<span>{moment(appointment.start).format('h:mm a') + " - " + moment(appointment.end).format('h:mm a')}</span>}
                         rightIcon={
@@ -396,138 +397,157 @@ class Profile extends Component {
                           </div>
                         }
                         />
+                    )
+                  }
+                )}
+              </List>
+            </div>
+          )}
+          <div className="p-tabs-outter-wrapper">
+            <div className="p-tabs-inner-wrapper">
+              <Tabs
+                value={this.props.list.tab}
+                onChange={this.handleTabChange}
+                >
+                <Tab label="Brief" value="brief" style={{backgroundColor: "#fff", color: "#333"}}>
+                  <div className="flex-column" style={{maxWidth: 800, margin: "0 auto"}}>
+                    <div className="p-tab-wrapper">
+                      <h2>Brief</h2>
+                      <p>
+                        {this.props.list.listInfo.brief}
+                      </p>
                     </div>
-                  )
-                }
-              )}
-            </List>
-          </div>
-        )}
-        <div className="p-tabs-outter-wrapper">
-          <div className="p-tabs-inner-wrapper">
-            <Tabs
-              value={this.props.list.tab}
-              onChange={this.handleTabChange}
-              >
-              <Tab label="Brief" value="brief" style={{backgroundColor: "#fff", color: "#333"}}>
-                <div className="flex-column" style={{maxWidth: 800, margin: "0 auto"}}>
-                  <div className="p-tab-wrapper">
-                    <h2>Brief</h2>
-                    <p>
-                      {this.props.list.listInfo.brief}
-                    </p>
-                  </div>
-                  <div className="p-tab-wrapper">
-                    <h2>Experience</h2>
-                    { this.props.list.listInfo.experience.map((experience, index) => {
-                      return (
-                        <div key={index} style={{margin: "16px 0 0 0", paddingTop: "16px", borderTop: "1px solid #ddd"}}>
-                          <span style={{fontWeight: 600, fontSize: "18px"}}>{experience.title}</span>
-                          <p style={{margin: "8px 0 0 0", fontSize: "14px"}}>{experience.text}</p>
-                        </div>
-                      )
-                    })}
-                  </div>
-                </div>
-
-              </Tab>
-              <Tab label="Calendar" value="calendar" style={{backgroundColor: "#fff", color: "#333"}}>
-                <div className="flex-column flex-center" style={{marginTop: 16}}>
-                  <div className="flex-row flex-center light-shadow">
-                    <FlatButton
-                      label="<"
-                      onTouchTap={()=>{
-                        this.navigateWeekPrivious()
-                      }}
-                      />
-                    <FlatButton
-                      label="This Week"
-                      onTouchTap={()=>{
-                        this.navigateWeekCurrent()
-                      }}
-                      />
-                    <FlatButton
-                      label=">"
-                      onTouchTap={()=>{
-                        this.navigateWeekNext()
-                      }}
-                      />
-                  </div>
-                  <FlatButton
-                    label="make appointment"
-                    labelStyle={{color: "#FFF"}}
-                    primary
-                    style={{position: "absolute", right: 9, top: 0}}
-                    rippleColor="#B2DFDB"
-                    backgroundColor="rgb(48, 73, 102)"
-                    hoverColor="rgba(48, 73, 102, 0.8)"
-                    onTouchTap={()=>{
-                      this.showAppointmentTool()
-                    }}
-                    />
-                </div>
-                <div className="p-tab-wrapper" style={{padding: 0}}>
-                  <div className="flex-row">
-                    <div style={{flex: "0.5 0 0px"}} className="flex-column">
-                      <div className="flex-row table-header">
-                        <span style={{fontWeight: 600}}>Time</span>
-                      </div>
-                      {this.renderVerticalTimeLabel()}
-                    </div>
-                    {weekdaysName.map((weekdayName, day_index)=>{
-                      let dateString = this.getDateByDay(day_index)
-                      return (
-                        <div className="weekday" key={day_index}>
-                          <div className="flex-row table-header">
-                            <span>{weekdaysName[day_index]}</span>
-                            <span style={{marginLeft: "auto", fontWeight: 600}}>{dateString}</span>
+                    <div className="p-tab-wrapper">
+                      <h2>Experience</h2>
+                      { this.props.list.listInfo.experience.map((experience, index) => {
+                        return (
+                          <div key={index} style={{margin: "16px 0 0 0", paddingTop: "16px", borderTop: "1px solid #ddd"}}>
+                            <span style={{fontWeight: 600, fontSize: "18px"}}>{experience.title}</span>
+                            <p style={{margin: "8px 0 0 0", fontSize: "14px"}}>{experience.text}</p>
                           </div>
-                          {this.renderDayScheduleBlock(day_index)}
-                          { (this.props.list.schedules[day_index] && dateString !== "") ? (
-                            this.props.list.schedules[day_index].map((event, event_index)=>{
-                              if (dateString && event[dateString]) {
-                                return (
-                                  <div onTouchTap={()=>{
-                                      this.handleEventDetailDialogOpen(day_index, event_index)
-                                    }} className="calender-event" key={event._id} style={{top: (event[dateString].from*1.2333 + 49), height: ((event[dateString].to - event[dateString].from)*1.2333) }}>
-                                    <span>{moment(event[dateString].fromTime).format('h:mm a') + " - " + moment(event[dateString].toTime).format('h:mm a')}</span>
-                                  </div>
-                                )
-                              } else {
-                                return (
-                                  <div onTouchTap={()=>{
-                                      this.handleEventDetailDialogOpen(day_index, event_index)
-                                    }} className="calender-event" key={event._id} style={{top: (event.from*1.2333 + 49), height: ((event.to - event.from)*1.2333) }}>
-                                    <span>{moment(event.fromTime).format('h:mm a') + " - " + moment(event.toTime).format('h:mm a')}</span>
-                                  </div>
-                                )
-                              }
-                            })
-                          ) : null}
-                        </div>
-                      )
-                    })}
+                        )
+                      })}
+                    </div>
                   </div>
-                </div>
-              </Tab>
-            </Tabs>
+
+                </Tab>
+                <Tab label="Calendar" value="calendar" style={{backgroundColor: "#fff", color: "#333"}}>
+                  <div className="flex-row" style={{margin: '16px 8px 0 8px'}}>
+                    <div className="light-shadow default-margin-right">
+                      <FlatButton
+                        label="Today"
+                        onTouchTap={()=>{
+                          this.navigateWeekCurrent()
+                        }}
+                        />
+                    </div>
+                    <div className="flex-row flex-center light-shadow default-margin-right">
+                      <FlatButton
+                        label="<"
+                        onTouchTap={()=>{
+                          this.navigateWeekPrivious()
+                        }}
+                        />
+                      <FlatButton
+                        label=">"
+                        onTouchTap={()=>{
+                          this.navigateWeekNext()
+                        }}
+                        />
+                    </div>
+                    <div className="flex-row flex-center">
+                      <FlatButton
+                        label="Day"
+                        backgroundColor={this.props.list.calendarView === 'day' ? '#e4e4e4' : '#fff'}
+                        />
+                      <FlatButton
+                        label="Week"
+                        backgroundColor={this.props.list.calendarView === 'week' ? '#e4e4e4' : '#fff'}
+                        />
+                      <FlatButton
+                        label="Month"
+                        backgroundColor={this.props.list.calendarView === 'month' ? '#e4e4e4' : '#fff'}
+                        />
+                      <FlatButton
+                        label="Agenda"
+                        backgroundColor={this.props.list.calendarView === 'agenda' ? '#e4e4e4' : '#fff'}
+                        />
+                    </div>
+                    <FlatButton
+                      className="flex-float-right"
+                      label="make appointment"
+                      labelStyle={{color: "#FFF"}}
+                      primary
+                      rippleColor="#B2DFDB"
+                      backgroundColor="rgb(48, 73, 102)"
+                      hoverColor="rgba(48, 73, 102, 0.8)"
+                      onTouchTap={()=>{
+                        this.showAppointmentTool()
+                      }}
+                      />
+                  </div>
+                  <div className="p-tab-wrapper default-margin" style={{padding: 0}}>
+                    <div className="flex-row">
+                      <div style={{flex: "0.5 0 0px"}} className="flex-column">
+                        <div className="flex-row table-header">
+                          <span style={{fontWeight: 600}}>Time</span>
+                        </div>
+                        {this.renderVerticalTimeLabel()}
+                      </div>
+                      {weekdaysName.map((weekdayName, day_index)=>{
+                        let dateString = this.getDateByDay(day_index)
+                        return (
+                          <div className="weekday" key={day_index}>
+                            <div className="flex-row table-header">
+                              <span>{weekdaysName[day_index]}</span>
+                              <span style={{marginLeft: "auto", fontWeight: 600}}>{dateString}</span>
+                            </div>
+                            {this.renderDayScheduleBlock(day_index)}
+                            { (this.props.list.schedules[day_index] && dateString !== "") ? (
+                              this.props.list.schedules[day_index].map((event, event_index)=>{
+                                if (dateString && event[dateString]) {
+                                  return (
+                                    <div onTouchTap={()=>{
+                                        this.handleEventDetailDialogOpen(day_index, event_index)
+                                      }} className="calender-event" key={event._id} style={{top: (event[dateString].from*1.2333 + 49), height: ((event[dateString].to - event[dateString].from)*1.2333) }}>
+                                      <span>{moment(event[dateString].fromTime).format('h:mm a') + " - " + moment(event[dateString].toTime).format('h:mm a')}</span>
+                                    </div>
+                                  )
+                                } else {
+                                  return (
+                                    <div onTouchTap={()=>{
+                                        this.handleEventDetailDialogOpen(day_index, event_index)
+                                      }} className="calender-event" key={event._id} style={{top: (event.from*1.2333 + 49), height: ((event.to - event.from)*1.2333) }}>
+                                      <span>{moment(event.fromTime).format('h:mm a') + " - " + moment(event.toTime).format('h:mm a')}</span>
+                                    </div>
+                                  )
+                                }
+                              })
+                            ) : null}
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                </Tab>
+              </Tabs>
+            </div>
           </div>
         </div>
       </div>
+      <Dialog
+        title="Request Appointment"
+        modal={false}
+        autoScrollBodyContent={true}
+        open={this.props.list.appointmentModalOpen}
+        onRequestClose={()=>{
+          this.props.actions.hideListAppointmentTool()
+        }}
+        >
+        <RequestAppointmentForm advisor={this.props.list.listInfo.name} onSubmit={this.handleRequestAppointmentSubmit}></RequestAppointmentForm>
+      </Dialog>
     </div>
-    <Dialog
-      title="Request Appointment"
-      modal={false}
-      autoScrollBodyContent={true}
-      open={this.props.list.appointmentModalOpen}
-      onRequestClose={()=>{
-        this.props.actions.hideListAppointmentTool()
-      }}
-      >
-      <RequestAppointmentForm advisor={this.props.list.listInfo.name} onSubmit={this.handleRequestAppointmentSubmit}></RequestAppointmentForm>
-    </Dialog>
-  </div>
-)
+  )
 }
 }
 

@@ -1,4 +1,18 @@
-import { SHOW_LOGIN_MODEL, HIDE_LOGIN_MODEL, SET_TOKEN, SET_ID, SET_NAME, SET_EMAIL, SET_ROLE, SET_LOGIN_STATE, LOGOUT } from '../constants'
+import {
+  SHOW_LOGIN_MODEL,
+  HIDE_LOGIN_MODEL,
+  SET_TOKEN,
+  SET_ID,
+  SET_NAME,
+  SET_EMAIL,
+  SET_ROLE,
+  SET_LOGIN_STATE,
+  LOGOUT,
+  SET_EMAIL_VERIFIED_STATUS,
+  SET_LISTED_STATUS,
+  SET_VERIFY_EMAIL_STATUS
+} from '../constants'
+
 import localStore from 'store2'
 
 const initialState = {
@@ -8,7 +22,10 @@ const initialState = {
   name: "",
   email: "",
   role: "",
-  loginModel: false
+  loginModel: false,
+  emailVerified: true,
+  verifyEmailStatus: "",
+  listed: false,
 }
 
 export default function update(state = initialState, action) {
@@ -50,6 +67,21 @@ export default function update(state = initialState, action) {
   else if(action.type === HIDE_LOGIN_MODEL) {
     return Object.assign({}, state, {
       loginModel: false
+    })
+  }
+  else if(action.type === SET_LISTED_STATUS) {
+    return Object.assign({}, state, {
+      listed: action.listed
+    })
+  }
+  else if(action.type === SET_EMAIL_VERIFIED_STATUS) {
+    return Object.assign({}, state, {
+      emailVerified: action.emailVerified
+    })
+  }
+  else if(action.type === SET_VERIFY_EMAIL_STATUS) {
+    return Object.assign({}, state, {
+      verifyEmailStatus: action.verifyEmailStatus
     })
   }
   else if(action.type === LOGOUT) {

@@ -69,6 +69,7 @@ class LoginSignupForm extends Component {
         localStore.session("email", json.email);
         localStore.session("role", json.role);
         if (json.role !== 1) {
+          actions.hideLoginModel();
           dispatch(push('/dashboard'))
         } else {
           actions.hideLoginModel();

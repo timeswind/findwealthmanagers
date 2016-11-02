@@ -159,12 +159,27 @@
   justify-content: center;
 }
 
+.justify-between {
+  justify-content: space-between;
+}
+
 .flex-wrap {
   flex-wrap: wrap;
+}
+.flex-float-right {
+  margin-left: auto !important;
 }
 
 .default-padding {
   padding: 16px
+}
+
+.default-margin {
+  margin: 8px
+}
+
+.default-margin-right {
+  margin-right: 8px
 }
 
 .raleway {

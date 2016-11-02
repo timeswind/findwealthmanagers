@@ -14,6 +14,9 @@ import EditListInfoFrom from '../../forms/EditListInfoForm/EditListInfoForm';
 import { IndexToTime } from '../../core/TimeToIndex';
 import moment from 'moment';
 import _ from 'lodash';
+import * as AuthActions from '../../redux/actions/auth';
+import * as DashboardActions from '../../redux/actions/dashboard';
+import { bindActionCreators } from 'redux';
 
 import './Dashboard.css'
 
@@ -26,21 +29,12 @@ const lessShadowCardStyle = {
 }
 
 class DashboardView extends Component {
-  state = {
-    emailIsVerified: true,
-    verifyEmailState: "",
-    listed: false,
-    userInfo: {},
-    listInfo: {},
-    editListInfo: false,
-    appointments: []
-  };
-
   componentWillMount() {
     this.getDashBoardData()
   }
 
   getDashBoardData() {
+    const { actions } = this.props
     let self = this
     fetch('/api/protect/dashboard', {
       method: "GET",
@@ -64,13 +58,16 @@ class DashboardView extends Component {
         json.listInfo.modifiedCategories = modifiedCategories
       }
       if (userInfo.verify === false) {
-        self.setState({emailIsVerified: false})
+        actions.setEmailVerifiedStatus(false)
+      } else {
+        actions.setEmailVerifiedStatus(true)
       }
       if (listInfo !== false) {
-        self.setState({listed: true, editListInfo: false})
-        self.setState({listInfo: listInfo})
+        actions.setDashboardListInfo(listInfo)
+        actions.endEditListInfo()
+        actions.setListedStatus(true)
       } else {
-        self.setState({listed: false})
+        actions.setListedStatus(false)
       }
 
       if (appointmentInfo !== false) {
@@ -95,11 +92,9 @@ class DashboardView extends Component {
           return obj
         })
         .value()
-        console.log(appointmentInfo)
-        self.setState({appointments: appointmentInfo})
+        actions.setDashboardAppointment(appointmentInfo)
       }
-
-      self.setState({userInfo: userInfo})
+      actions.setDashboardUserInfo(userInfo)
     }).catch(function(ex) {
       console.log('failed', ex)
     })
@@ -127,16 +122,20 @@ class DashboardView extends Component {
   }
 
   handleEditListFormCancel = () => {
-    this.setState({ editListInfo: false })
+    const { actions } = this.props
+    actions.endEditListInfo()
   }
 
   updateListInfo (listInfo) {
-    this.setState({ "listInfo": listInfo })
+    const { actions } = this.props
+    actions.setDashboardListInfo(listInfo)
   }
 
   verifyEmail() {
+    const { actions } = this.props
+
     var self = this
-    this.setState({verifyEmailState: "pending"})
+    actions.setVerifyEmailStatus("pending")
     fetch('/api/protect/verify-email', {
       method: "get",
       headers: {
@@ -149,18 +148,19 @@ class DashboardView extends Component {
     }).then(function(json) {
       console.log(json)
       if (json.success) {
-        self.setState({verifyEmailState: "sent"})
+        actions.setVerifyEmailStatus("sent")
       } else {
-        self.setState({verifyEmailState: ""})
+        actions.setVerifyEmailStatus("")
       }
     }).catch(function(ex) {
-      self.setState({verifyEmailState: ""})
+      actions.setVerifyEmailStatus("")
       console.log('failed', ex)
     })
   }
 
   render() {
-    var appointments = this.state.appointments
+    const { listed, emailVerified, verifyEmailStatus } = this.props.auth
+    const { userInfo, listInfo, appointments, editListInfo } = this.props.dashboard
     return (
       <div className="view-body flex-column">
         <div style={{padding:"36px 8px 64px 8px"}}>
@@ -188,14 +188,14 @@ class DashboardView extends Component {
               </div>
             ) : null }
 
-            { this.state.emailIsVerified === false ? (
+            { emailVerified === false ? (
               <div className="flex-row flex-center default-padding raleway" style={{marginBottom: "16px", backgroundColor: "#fff", border: "1px solid #FF9800", color: "#FF9800"}}>
                 <span>Your email is not varified</span>
-                { this.state.verifyEmailState === 'pending' ? (
+                { verifyEmailStatus === 'pending' ? (
                   <CircularProgress size={0.5}/>
                 ) : (
                   <div style={{marginLeft: "auto"}}>
-                    {this.state.verifyEmailState === 'sent' ? (
+                    {verifyEmailStatus === 'sent' ? (
                       <span>Email sent</span>
                     ) : (
                       <FlatButton
@@ -224,7 +224,7 @@ class DashboardView extends Component {
                           FirstName
                         </span>
                         <span className="field-content">
-                          {this.state.userInfo.firstName}
+                          {userInfo.firstName}
                         </span>
                       </div>
                       <div className="flex-column" style={{marginLeft: "32px"}}>
@@ -232,7 +232,7 @@ class DashboardView extends Component {
                           LastName
                         </span>
                         <span className="field-content">
-                          {this.state.userInfo.lastName}
+                          {userInfo.lastName}
                         </span>
                       </div>
                     </div>
@@ -241,16 +241,16 @@ class DashboardView extends Component {
                         Email
                       </span>
                       <span className="field-content">
-                        {this.state.userInfo.email}
+                        {userInfo.email}
                       </span>
                     </div>
-                    { this.state.userInfo.role === 2 ? (
+                    { this.props.auth.role === 2 ? (
                       <div className="flex-column" style={{marginTop: "16px"}}>
                         <span className="field-title">
                           Affiliation
                         </span>
                         <span className="field-content">
-                          {this.state.userInfo.affiliation}
+                          {userInfo.affiliation}
                         </span>
                       </div>
                     ) : null}
@@ -262,7 +262,7 @@ class DashboardView extends Component {
 
                       <div className="flex-column" style={lessShadowCardStyle}>
                         <div className="flex-column">
-                          { !this.state.listed ? (
+                          { !listed ? (
                             <div className="flex-column" style={{padding: 16}}>
                               <div style={{marginBottom: "16px", fontSize: "22px", fontWeight: '600'}} className="raleway">
                                 List Information
@@ -278,7 +278,7 @@ class DashboardView extends Component {
                             </div>
                           ) : (
                             <div>
-                              { this.state.editListInfo ? (
+                              { editListInfo ? (
                                 <div className="flex-column">
                                   <div className="flex-row flex-center  default-padding">
                                     <div style={{fontSize: "22px", fontWeight: '600'}} className="raleway">
@@ -287,7 +287,7 @@ class DashboardView extends Component {
                                   </div>
                                   <Divider />
                                   <div className="default-padding">
-                                    <EditListInfoFrom handleCancle={this.handleEditListFormCancel} initialValues={this.state.listInfo} onSubmit={this.handleEditListFormSubmit}></EditListInfoFrom>
+                                    <EditListInfoFrom handleCancle={this.handleEditListFormCancel} initialValues={listInfo} onSubmit={this.handleEditListFormSubmit}></EditListInfoFrom>
                                   </div>
                                 </div>
                               ) : (
@@ -302,7 +302,7 @@ class DashboardView extends Component {
                                         labelStyle={{color: "#4285f4"}}
                                         backgroundColor="transparent"
                                         onClick={()=>{
-                                          this.setState({editListInfo: true})
+                                          this.props.actions.startEditListInfo()
                                         }}
                                         />
                                       <FlatButton
@@ -312,7 +312,7 @@ class DashboardView extends Component {
                                         backgroundColor="#00BFA5"
                                         hoverColor="#26A69A"
                                         onClick={()=>{
-                                          this.props.dispatch(push('/p/' + this.state.listInfo._id))
+                                          this.props.dispatch(push('/p/' + listInfo._id))
                                         }}
                                         />
                                     </div>
@@ -325,7 +325,7 @@ class DashboardView extends Component {
                                         Phone
                                       </span>
                                       <span className="field-content">
-                                        {this.state.listInfo.phone}
+                                        {listInfo.phone}
                                       </span>
                                     </div>
                                     <div className="flex-column" style={{marginTop: "16px"}}>
@@ -333,7 +333,7 @@ class DashboardView extends Component {
                                         Email
                                       </span>
                                       <span className="field-content">
-                                        {this.state.listInfo.email}
+                                        {listInfo.email}
                                       </span>
                                     </div>
                                     <div className="flex-column" style={{marginTop: "16px"}}>
@@ -341,7 +341,7 @@ class DashboardView extends Component {
                                         Categories
                                       </span>
                                       <div className="flex-row">
-                                        { this.state.listInfo.modifiedCategories ? this.state.listInfo.modifiedCategories.map((category) => {
+                                        { listInfo.modifiedCategories ? listInfo.modifiedCategories.map((category) => {
                                           return (
                                             <Chip key={category.code} style={{margin: "4px 8px 4px 0"}}>
                                               {category.name}
@@ -355,7 +355,7 @@ class DashboardView extends Component {
                                         Building/Suite
                                       </span>
                                       <span className="field-content">
-                                        {this.state.listInfo.room}
+                                        {listInfo.room}
                                       </span>
                                     </div>
                                     <div className="flex-column" style={{marginTop: "16px"}}>
@@ -363,7 +363,7 @@ class DashboardView extends Component {
                                         Address
                                       </span>
                                       <span className="field-content">
-                                        {this.state.listInfo.address}
+                                        {listInfo.address}
                                       </span>
                                     </div>
                                     <div className="flex-column" style={{marginTop: "16px"}}>
@@ -371,14 +371,14 @@ class DashboardView extends Component {
                                         Brief
                                       </span>
                                       <p style={{lineHeight: 1.8}}>
-                                        {this.state.listInfo.brief}
+                                        {listInfo.brief}
                                       </p>
                                     </div>
                                     <div className="flex-column" style={{marginTop: "16px"}}>
                                       <span className="field-title">
                                         Experience
                                       </span>
-                                      { this.state.listInfo.experience ? this.state.listInfo.experience.map((experience, index) => {
+                                      { listInfo.experience ? listInfo.experience.map((experience, index) => {
                                         return (
                                           <div key={index} style={{margin: "8px 0 0 0", border: "1px solid #ddd", padding: "16px"}}>
                                             <span style={{fontWeight: 600, fontSize: "20px"}}>{experience.title}</span>
@@ -422,7 +422,7 @@ class DashboardView extends Component {
                     <div style={{padding: 0}}>
                       <Subheader>Today</Subheader>
                       <Divider />
-                      { this.state.appointments.map((appointment, index) => {
+                      { appointments.map((appointment, index) => {
                         return (
                           <div
                             key={appointment._id}>
@@ -488,7 +488,6 @@ class DashboardView extends Component {
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
         </div>
@@ -499,13 +498,15 @@ class DashboardView extends Component {
 
 const mapStatesToProps = (states) => {
   return {
-    auth: states.auth
+    auth: states.auth,
+    dashboard: states.dashboard
   };
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    dispatch
+    dispatch,
+    actions: bindActionCreators(Object.assign({}, AuthActions, DashboardActions), dispatch)
   };
 }
 

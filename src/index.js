@@ -24,6 +24,7 @@ import { reducer as formReducer } from 'redux-form'
 import authReducers from './redux/reducers/auth';
 import searchReducers from './redux/reducers/search';
 import listReducers from './redux/reducers/list';
+import dashboardReducers from './redux/reducers/dashboard';
 
 import './index.css';
 
@@ -44,6 +45,7 @@ const store = createStore(
     auth: authReducers,
     search: searchReducers,
     list: listReducers,
+    dashboard: dashboardReducers,
     routing: routerReducer
   }),
   window.devToolsExtension && window.devToolsExtension(),
