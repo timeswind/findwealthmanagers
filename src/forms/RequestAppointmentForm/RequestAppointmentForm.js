@@ -5,11 +5,9 @@ import {
 } from 'material-ui/Stepper';
 import RaisedButton from 'material-ui/RaisedButton';
 import React, { Component } from 'react';
-import { Field, reduxForm, formValueSelector, change } from 'redux-form';
-import { TextField } from 'redux-form-material-ui';
+import { reduxForm, formValueSelector, change } from 'redux-form';
 import { connect } from 'react-redux';
 import FlatButton from 'material-ui/FlatButton';
-import localStore from 'store2';
 import { bindActionCreators } from 'redux';
 import * as AuthActions from '../../redux/actions/auth.js';
 import DatePicker from 'material-ui/DatePicker';

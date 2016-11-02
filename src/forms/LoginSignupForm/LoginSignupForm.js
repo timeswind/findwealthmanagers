@@ -6,6 +6,7 @@ import FlatButton from 'material-ui/FlatButton';
 import localStore from 'store2';
 import { bindActionCreators } from 'redux';
 import './LoginSignupForm.css';
+import { push } from 'react-router-redux';
 import * as AuthActions from '../../redux/actions/auth.js';
 const validate = values => {
   const errors = {}
@@ -39,7 +40,6 @@ class LoginSignupForm extends Component {
 
   login(form) {
     const { actions, dispatch } = this.props;
-    let self = this
     let data = {
       email: form.email,
       password: form.password
