@@ -22,38 +22,15 @@ import update from 'react-addons-update';
 import CategorySelector from '../../../components/CategorySelector/CategorySelector';
 import categoryTypes from '../../../assets/categories';
 import { TimeToIndex, IndexToTime } from '../../../core/TimeToIndex';
+import * as ClientbookActions from '../../../redux/actions/clientbook';
+import { bindActionCreators } from 'redux';
 import moment from 'moment';
 
 import './Clients.css'
 
 class Clients extends Component {
   state = {
-    addClientButtonOpen: false,
-    addAppointmentModalOpen: false,
-    clients:[],
-    selectedClient:{
-      fetching: false,
-      index: null,
-      _id: "",
-      name: "",
-      email: "",
-      phone: "",
-      note: "",
-      gender: null,
-      age: null,
-      married: null,
-      job: "",
-      income: "",
-      categories: [],
-      appointments: [],
-      feedback: ""
-    },
-    newAppointment: {
-      date: null,
-      start: null,
-      end: null,
-      note: ""
-    }
+    anchorEl: null // for Popover use to locate position
   }
 
   componentWillMount() {
@@ -82,12 +59,11 @@ class Clients extends Component {
   }
 
   getClient(client_id, index) {
-    var newState = update(this.state, {
-      selectedClient: {
-        fetching: { $set: true },
-      }
-    })
-    this.setState(newState)
+    const { actions } = this.props
+    const { selectedClient } = this.props.clientbook
+    var newSelectedClient = selectedClient
+    newSelectedClient['fetching'] = true
+    actions.setClientbookSelectedClient(newSelectedClient)
     var self = this
     fetch('/api/protect/client?id=' + client_id, {
       method: "GET",
@@ -119,13 +95,16 @@ class Clients extends Component {
   }
 
   updateSelectedClient(newClient, index) {
+    const { actions } = this.props
+    const { clientbook } = this.props
+
     if (typeof (newClient.married) === 'boolean') {
       newClient.married = newClient.married.toString()
     } else {
       newClient.married = null
     }
-    this.setState({categories: newClient.categories || []})
-    var newState = update(this.state, {
+    // this.setState({categories: newClient.categories || []})
+    var newState = update(clientbook, {
       selectedClient: {
         fetching: { $set: false },
         index: { $set: index },
@@ -145,42 +124,38 @@ class Clients extends Component {
         feedback: { $set: newClient.feedback || "" }
       }
     });
-    this.setState(newState);
+    actions.setClientbookSelectedClient(newState.selectedClient)
   }
 
   updateClients(clients) {
-    this.setState({ clients: clients })
+    const { actions } = this.props
+    actions.setClientbookClients(clients)
   }
 
   updateSelectedClientAppointment = function (appointment) {
+    const { actions } = this.props
+    const { selectedClient } = this.props.clientbook
+    var newSelectedClient = selectedClient
     appointment["date"] = appointment.date
     appointment["note"] = appointment.note || ""
     appointment["start"] = IndexToTime(appointment.start)
     appointment["end"] = IndexToTime(appointment.end)
-    console.log(appointment)
-    var newState = update(this.state, {
-      selectedClient: {
-        appointments: { $push: [appointment] }
-      }
-    })
-    this.setState(newState);
-
+    newSelectedClient['appointments'].push(appointment)
+    actions.setClientbookSelectedClient(newSelectedClient)
   }
 
   handleAddClientButtonTouchTap = (event) => {
-    // This prevents ghost click.
     event.preventDefault();
-
+    const { actions } = this.props
+    actions.setClientbookAddClientButtonStatus(true)
     this.setState({
-      addClientButtonOpen: true,
-      anchorEl: event.currentTarget,
+      anchorEl: event.currentTarget
     });
   };
 
   handleAddClientRequestClose = () => {
-    this.setState({
-      addClientButtonOpen: false,
-    });
+    const { actions } = this.props
+    actions.setClientbookAddClientButtonStatus(false)
   };
 
   handleAddClientSimpleFormSubmit = (values) => {
@@ -204,51 +179,59 @@ class Clients extends Component {
   }
 
   handleClientNoteInput = (event) => {
-    var newState = this.state
-    newState.selectedClient.note = event.target.value
-    this.setState(newState)
+    const { actions } = this.props
+    var newSelectedClient = this.props.clientbook.selectedClient
+    newSelectedClient.note = event.target.value
+    actions.setClientbookSelectedClient(newSelectedClient)
   }
 
   handleClientNameInput = (event) => {
-    var newState = this.state
-    newState.selectedClient.name = event.target.value
-    this.setState(newState)
+    const { actions } = this.props
+    var newSelectedClient = this.props.clientbook.selectedClient
+    newSelectedClient.name = event.target.value
+    actions.setClientbookSelectedClient(newSelectedClient)
   }
 
   handleClientPhoneInput = (event) => {
-    var newState = this.state
-    newState.selectedClient.phone = event.target.value
-    this.setState(newState)
+    const { actions } = this.props
+    var newSelectedClient = this.props.clientbook.selectedClient
+    newSelectedClient.phone = event.target.value
+    actions.setClientbookSelectedClient(newSelectedClient)
   }
 
   handleClientEmailInput = (event) => {
-    var newState = this.state
-    newState.selectedClient.email = event.target.value
-    this.setState(newState)
+    const { actions } = this.props
+    var newSelectedClient = this.props.clientbook.selectedClient
+    newSelectedClient.email = event.target.value
+    actions.setClientbookSelectedClient(newSelectedClient)
   }
 
   handleClientAgeInput = (event) => {
-    var newState = this.state
-    newState.selectedClient.age = event.target.value
-    this.setState(newState)
+    const { actions } = this.props
+    var newSelectedClient = this.props.clientbook.selectedClient
+    newSelectedClient.age = event.target.value
+    actions.setClientbookSelectedClient(newSelectedClient)
   }
 
   handleClientChildrensInput = (event) => {
-    var newState = this.state
-    newState.selectedClient.childrens = event.target.value
-    this.setState(newState)
+    const { actions } = this.props
+    var newSelectedClient = this.props.clientbook.selectedClient
+    newSelectedClient.childrens = event.target.value
+    actions.setClientbookSelectedClient(newSelectedClient)
   }
 
   handleClientJobInput = (event) => {
-    var newState = this.state
-    newState.selectedClient.job = event.target.value
-    this.setState(newState)
+    const { actions } = this.props
+    var newSelectedClient = this.props.clientbook.selectedClient
+    newSelectedClient.job = event.target.value
+    actions.setClientbookSelectedClient(newSelectedClient)
   }
 
   handleClientIncomeInput = (event) => {
-    var newState = this.state
-    newState.selectedClient.income = event.target.value
-    this.setState(newState)
+    const { actions } = this.props
+    var newSelectedClient = this.props.clientbook.selectedClient
+    newSelectedClient.income = event.target.value
+    actions.setClientbookSelectedClient(newSelectedClient)
   }
 
   updateClientNote = (value) => {
@@ -282,48 +265,39 @@ class Clients extends Component {
     this.patchClientInfo('income', value)
   }
   updateClientCategories = (categories) => {
+    const { actions } = this.props
+    const { clients, selectedClient } = this.props.clientbook
     let modifiedCategories = categories.map((category) => {
       return category.code
     })
-    let clientIndex = this.state.selectedClient.index
-    var newState = update(this.state, {
-      clients: {
-        [clientIndex] : {
-          categories : { $set: modifiedCategories }
-        }
-      },
-      selectedClient: {
-        categories: { $set: modifiedCategories}
-      }
-    });
-    this.setState(newState);
+    let clientIndex = this.props.clientbook.selectedClient.index
+    var newClients = clients
+    var newSelectedClient = selectedClient
+    newClients[clientIndex]['categories'] = modifiedCategories
+    newSelectedClient['categories'] = modifiedCategories
+    actions.setClientbookClients(newClients)
+    actions.setClientbookSelectedClient(newSelectedClient)
     this.patchClientInfo('categories', modifiedCategories)
   }
 
   patchClientInfo (patchField, data) {
-    let clientIndex = this.state.selectedClient.index
+    const { actions } = this.props
+    const { clients, selectedClient } = this.props.clientbook
+    var newClients = clients
+    var newSelectedClient = selectedClient
+    let clientIndex = selectedClient.index
     if (patchField !== 'categories') {
-      var newState = update(this.state, {
-        clients: {
-          [clientIndex] : {
-            [patchField] : { $set: data }
-          }
-        }
-      });
-      this.setState(newState);
+      newClients[clientIndex][patchField] = data
+      actions.setClientbookClients(newClients)
     }
 
     if (patchField === 'gender' || patchField === 'married') {
-      var newState2 = update(this.state, {
-        selectedClient: {
-          [patchField]: { $set: data }
-        }
-      });
-      this.setState(newState2);
+      newSelectedClient[patchField] = data
+      actions.setClientbookSelectedClient(newSelectedClient)
     }
 
     var patch = {
-      id: this.state.selectedClient._id,
+      id: selectedClient._id,
       field: patchField,
       data: data
     }
@@ -346,58 +320,53 @@ class Clients extends Component {
   }
 
   handleAddAppointmentModalOpen = () => {
-    this.setState({addAppointmentModalOpen: true});
+    const { actions } = this.props
+    actions.setClientbookAddAppointmentModalStatus(true)
   };
 
   handleAddAppointmentModalClose = () => {
-    this.setState({addAppointmentModalOpen: false});
+    const { actions } = this.props
+    actions.setClientbookAddAppointmentModalStatus(false)
   };
 
   handleChangeDatePicker = (event, date) => {
-    var newState = update(this.state, {
-      newAppointment: {
-        date: { $set: date }
-      }
-    });
-    this.setState(newState);
+    const { actions } = this.props
+    var newNewAppointment = this.props.clientbook.newAppointment
+    newNewAppointment.date = date
+    actions.setClientbookNewAppointment(newNewAppointment)
   };
 
   handleChangeStartTimePicker = (event, date) => {
-    var newState = update(this.state, {
-      newAppointment: {
-        start: { $set: date }
-      }
-    });
-    this.setState(newState);
+    const { actions } = this.props
+    var newNewAppointment = this.props.clientbook.newAppointment
+    newNewAppointment.start = date
+    actions.setClientbookNewAppointment(newNewAppointment)
   };
 
   handleChangeEndTimePicker = (event, date) => {
-    var newState = update(this.state, {
-      newAppointment: {
-        end: { $set: date }
-      }
-    });
-    this.setState(newState);
+    const { actions } = this.props
+    var newNewAppointment = this.props.clientbook.newAppointment
+    newNewAppointment.end = date
+    actions.setClientbookNewAppointment(newNewAppointment)
   };
 
   handleAppointmentNoteInput = (event) => {
-    var newState = update(this.state, {
-      newAppointment: {
-        note: { $set: event.target.value }
-      }
-    });
-    this.setState(newState);
+    const { actions } = this.props
+    var newNewAppointment = this.props.clientbook.newAppointment
+    newNewAppointment.note = date
+    actions.setClientbookNewAppointment(newNewAppointment)
   }
 
   addNewAppointment() {
+    const { newAppointment, selectedClient } = this.props.clientbook
     var self = this
-    if (this.state.newAppointment.date && this.state.newAppointment.start && this.state.newAppointment.end) {
+    if (newAppointment.date && newAppointment.start && newAppointment.end) {
 
-      const client = this.state.selectedClient._id
-      const date = this.state.newAppointment.date
-      const start = TimeToIndex(this.state.newAppointment.start)
-      const end = TimeToIndex(this.state.newAppointment.end)
-      const note = this.state.newAppointment.note
+      const client = selectedClient._id
+      const date = newAppointment.date
+      const start = TimeToIndex(newAppointment.start)
+      const end = TimeToIndex(newAppointment.end)
+      const note = newAppointment.note
       const data = {
         client,
         date,
@@ -429,6 +398,7 @@ class Clients extends Component {
   }
 
   render() {
+    const { clients, newAppointment, addClientButtonOpen, addAppointmentModalOpen } = this.props.clientbook
     const addAppointmentActions = [
       <FlatButton
         label="Add"
@@ -459,7 +429,7 @@ class Clients extends Component {
                 </IconButton>
                 <Popover
                   style={{padding: '16px', width: '256px'}}
-                  open={this.state.addClientButtonOpen}
+                  open={addClientButtonOpen}
                   anchorEl={this.state.anchorEl}
                   anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
                   targetOrigin={{horizontal: 'left', vertical: 'top'}}
@@ -469,7 +439,7 @@ class Clients extends Component {
                 </Popover>
               </div>
             </div>
-            { this.state.clients.map((client, index)=>{
+            { clients.map((client, index)=>{
               return (
                 <ListItem
                   key={client._id}
@@ -488,7 +458,7 @@ class Clients extends Component {
 
           </div>
           <div className="clients-detail-panel-wrapper" style={{flex: 100}}>
-            { this.state.selectedClient.index !== null ? (
+            { this.props.clientbook.selectedClient.index !== null ? (
               <div className="clients-detail-panel flex-row" style={{height: '100%'}}>
                 <div className="clients-detail-panel-item">
                   <Subheader>Contact</Subheader>
@@ -499,7 +469,7 @@ class Clients extends Component {
                       primaryText={
                         <TextField
                           hintText="Name"
-                          value={this.state.selectedClient.name}
+                          value={this.props.clientbook.selectedClient.name}
                           onChange={this.handleClientNameInput}
                           onBlur={(e)=>{
                             this.updateClientName(e.target.value)
@@ -512,7 +482,7 @@ class Clients extends Component {
                       primaryText={
                         <TextField
                           hintText="Phone"
-                          value={this.state.selectedClient.phone}
+                          value={this.props.clientbook.selectedClient.phone}
                           onChange={this.handleClientPhoneInput}
                           onBlur={(e)=>{
                             this.updateClientPhone(e.target.value)
@@ -525,7 +495,7 @@ class Clients extends Component {
                       primaryText={
                         <TextField
                           hintText="Email"
-                          value={this.state.selectedClient.email}
+                          value={this.props.clientbook.selectedClient.email}
                           onChange={this.handleClientEmailInput}
                           onBlur={(e)=>{
                             this.updateClientEmail(e.target.value)
@@ -536,7 +506,7 @@ class Clients extends Component {
                     <ListItem
                       leftIcon={<span style={{top: '8px'}}>Gender</span>}
                       primaryText={
-                        <RadioButtonGroup name="gender" valueSelected={this.state.selectedClient.gender} className="flex-row" onChange={this.updateClientGender} style={{marginLeft: 16}}>
+                        <RadioButtonGroup name="gender" valueSelected={this.props.clientbook.selectedClient.gender} className="flex-row" onChange={this.updateClientGender} style={{marginLeft: 16}}>
                           <RadioButton
                             value={1}
                             label="Male"
@@ -553,7 +523,7 @@ class Clients extends Component {
                     <ListItem
                       leftIcon={<span style={{top: '8px'}}>Married</span>}
                       primaryText={
-                        <RadioButtonGroup name="gender" valueSelected={this.state.selectedClient.married} className="flex-row" onChange={this.updateClientMarriageStatus} style={{marginLeft: 16}}>
+                        <RadioButtonGroup name="gender" valueSelected={this.props.clientbook.selectedClient.married} className="flex-row" onChange={this.updateClientMarriageStatus} style={{marginLeft: 16}}>
                           <RadioButton
                             value="true"
                             label="Yes"
@@ -573,7 +543,7 @@ class Clients extends Component {
                           hintText="Age"
                           floatingLabelText="Age"
                           floatingLabelFocusStyle={{fontSize: 22}}
-                          value={this.state.selectedClient.age}
+                          value={this.props.clientbook.selectedClient.age}
                           onChange={this.handleClientAgeInput}
                           onBlur={(e)=>{
                             this.updateClientAge(e.target.value)
@@ -587,7 +557,7 @@ class Clients extends Component {
                           hintText="Childrens"
                           floatingLabelText="Childrens"
                           floatingLabelFocusStyle={{fontSize: 22}}
-                          value={this.state.selectedClient.childrens}
+                          value={this.props.clientbook.selectedClient.childrens}
                           onChange={this.handleClientChildrensInput}
                           onBlur={(e)=>{
                             this.updateClientChildrens(e.target.value)
@@ -601,7 +571,7 @@ class Clients extends Component {
                           hintText="Job"
                           floatingLabelText="Job"
                           floatingLabelFocusStyle={{fontSize: 22}}
-                          value={this.state.selectedClient.job}
+                          value={this.props.clientbook.selectedClient.job}
                           onChange={this.handleClientJobInput}
                           onBlur={(e)=>{
                             this.updateClientJob(e.target.value)
@@ -615,7 +585,7 @@ class Clients extends Component {
                           hintText="Income"
                           floatingLabelText="Income"
                           floatingLabelFocusStyle={{fontSize: 22}}
-                          value={this.state.selectedClient.income}
+                          value={this.props.clientbook.selectedClient.income}
                           onChange={this.handleClientIncomeInput}
                           onBlur={(e)=>{
                             this.updateClientIncome(e.target.value)
@@ -629,7 +599,7 @@ class Clients extends Component {
                       onSelect={(values)=>{
                         this.updateClientCategories(values)
                       }}
-                      initialValues={this.state.selectedClient.categories}
+                      initialValues={this.props.clientbook.selectedClient.categories}
                       />
                   </div>
                 </div>
@@ -640,7 +610,7 @@ class Clients extends Component {
                       multiLine={true}
                       rows={3}
                       hintText="Note"
-                      value={this.state.selectedClient.note}
+                      value={this.props.clientbook.selectedClient.note}
                       style={{padding: '0 16px', width: "calc(100% - 64px)"}}
                       onChange={this.handleClientNoteInput}
                       onBlur={(e)=>{
@@ -652,7 +622,7 @@ class Clients extends Component {
 
                   <div className="flex-column">
                     <List>
-                      {this.state.selectedClient.appointments.map((appointment, index)=>{
+                      {this.props.clientbook.selectedClient.appointments.map((appointment, index)=>{
                         return (
                           <ListItem
                             key={index}
@@ -661,13 +631,13 @@ class Clients extends Component {
                                 <span style={{backgroundColor: "#304966", height: 31, width: 36, padding: 8, color: "#fff", borderRadius: 3}}>{moment(appointment.date).format('MMM DD')} </span>
                                 <div style={{marginLeft: "auto"}} className="flex-column align-right">
                                   <span>{moment(appointment.start).format('h:mm a') + " - " + moment(appointment.end).format('h:mm a')}</span>
-                                    {
-                                      appointment.note !== "" ? (
-                                        <p style={{color:"#666"}}>
-                                          {appointment.note}
-                                        </p>
-                                      ): null
-                                    }
+                                  {
+                                    appointment.note !== "" ? (
+                                      <p style={{color:"#666"}}>
+                                        {appointment.note}
+                                      </p>
+                                    ): null
+                                  }
                                 </div>
                               </div>
                             }
@@ -688,30 +658,30 @@ class Clients extends Component {
           title="New Appointment"
           actions={addAppointmentActions}
           modal={false}
-          open={this.state.addAppointmentModalOpen}
+          open={addAppointmentModalOpen}
           onRequestClose={this.handleAddAppointmentModalClose}
           >
           <DatePicker
             hintText="Pick Date"
             floatingLabelText="Date"
-            value={this.state.newAppointment.date}
+            value={newAppointment.date}
             onChange={this.handleChangeDatePicker}/>
           <TimePicker
             hintText="Pick Time"
             floatingLabelText="Start Time"
-            value={this.state.newAppointment.start}
+            value={newAppointment.start}
             onChange={this.handleChangeStartTimePicker}/>
           <TimePicker
             hintText="Pick Time"
             floatingLabelText="End Time"
-            value={this.state.newAppointment.end}
+            value={newAppointment.end}
             onChange={this.handleChangeEndTimePicker}/>
           <TextField
             multiLine={true}
             rows={2}
             hintText="Note"
             floatingLabelText="Note"
-            value={this.state.newAppointment.note}
+            value={newAppointment.note}
             onChange={this.handleAppointmentNoteInput}
             />
         </Dialog>
@@ -722,13 +692,15 @@ class Clients extends Component {
 
 const mapStatesToProps = (states) => {
   return {
-    auth: states.auth
+    auth: states.auth,
+    clientbook: states.clientbook
   };
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    dispatch
+    dispatch,
+    actions: bindActionCreators(ClientbookActions, dispatch)
   };
 }
 

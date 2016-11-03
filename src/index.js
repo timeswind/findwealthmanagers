@@ -25,6 +25,7 @@ import authReducers from './redux/reducers/auth';
 import searchReducers from './redux/reducers/search';
 import listReducers from './redux/reducers/list';
 import dashboardReducers from './redux/reducers/dashboard';
+import clientbookReducers from './redux/reducers/clientbook';
 
 import './index.css';
 
@@ -46,6 +47,7 @@ const store = createStore(
     search: searchReducers,
     list: listReducers,
     dashboard: dashboardReducers,
+    clientbook: clientbookReducers,
     routing: routerReducer
   }),
   window.devToolsExtension && window.devToolsExtension(),
