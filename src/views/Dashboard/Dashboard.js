@@ -4,7 +4,7 @@ import FontIcon from 'material-ui/FontIcon';
 import Chip from 'material-ui/Chip';
 import Divider from 'material-ui/Divider';
 import CircularProgress from 'material-ui/CircularProgress';
-import fetch from '../../core/fetch/fetch';
+import axios from 'axios';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 import categoryTypes from '../../assets/categories';
@@ -35,17 +35,9 @@ class DashboardView extends Component {
 
   getDashBoardData() {
     const { actions } = this.props
-    let self = this
-    fetch('/api/protect/dashboard', {
-      method: "GET",
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.props.auth.token
-      },
-    }).then(function(response) {
-      return response.json()
-    }).then(function(json) {
+    axios.get('/api/protect/dashboard')
+    .then(function (response) {
+      var json = response.data
       console.log(json)
       let userInfo = json.userInfo
       let listInfo = json.listInfo
@@ -95,25 +87,16 @@ class DashboardView extends Component {
         actions.setDashboardAppointment(appointmentInfo)
       }
       actions.setDashboardUserInfo(userInfo)
-    }).catch(function(ex) {
-      console.log('failed', ex)
+    }).catch(function(error) {
+      console.log(error)
     })
   }
 
   handleEditListFormSubmit = (values) => {
     let self = this
-    fetch('/api/protect/list', {
-      method: "PUT",
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.props.auth.token
-      },
-      body: JSON.stringify(values)
-    }).then(function(response) {
-      return response.json()
-    }).then(function(json) {
-      if (json.success) {
+    axios.put('/api/protect/list', values)
+    .then(function(response) {
+      if (response.data.success) {
         self.getDashBoardData()
       }
     }).catch(function(ex) {
@@ -136,18 +119,9 @@ class DashboardView extends Component {
 
     var self = this
     actions.setVerifyEmailStatus("pending")
-    fetch('/api/protect/verify-email', {
-      method: "get",
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.props.auth.token
-      }
-    }).then(function(response) {
-      return response.json()
-    }).then(function(json) {
-      console.log(json)
-      if (json.success) {
+    axios.get('/api/protect/verify-email')
+    .then(function(response) {
+      if (response.data.success) {
         actions.setVerifyEmailStatus("sent")
       } else {
         actions.setVerifyEmailStatus("")

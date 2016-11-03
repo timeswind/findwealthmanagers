@@ -12,7 +12,7 @@ import IndexRoute from 'react-router/lib/IndexRoute';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
-// import Raven from 'raven-js';
+import Raven from 'raven-js';
 // import { IntlProvider } from 'react-intl';
 // global.Intl = require('intl');
 import injectTapEventPlugin from 'react-tap-event-plugin';
@@ -29,7 +29,9 @@ import clientbookReducers from './redux/reducers/clientbook';
 
 import './index.css';
 
-// Raven.config('https://428f8ff22ea44869a1b6410cf83d7905@sentry.io/101570').install();
+import axios from 'axios'
+
+Raven.config('https://428f8ff22ea44869a1b6410cf83d7905@sentry.io/101570').install();
 
 const muiTheme = getMuiTheme({
   palette: {
@@ -54,6 +56,23 @@ const store = createStore(
   applyMiddleware(reactRouterMiddleware)
 )
 const history = syncHistoryWithStore(browserHistory, store)
+
+axios.interceptors.request.use(function (config) {
+  let urlArray = config.url.split('/')
+  if (urlArray && urlArray[1] === 'api' && urlArray[2] !== 'public') {
+    if (store.getState().auth.token) {
+      config.headers["Authorization"] = "Bearer " + store.getState().auth.token
+    } else {
+      Promise.reject({
+        message: "Need Authorization Token"
+      })
+    }
+  }
+  return config;
+}, function (error) {
+  // Do something with request error
+  return Promise.reject(error);
+});
 
 if (localStore.session.get("token") && localStore.session.get("email") && localStore.session.get("id")) {
   store.dispatch({

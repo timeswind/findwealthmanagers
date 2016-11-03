@@ -15,7 +15,7 @@ import Dialog from 'material-ui/Dialog';
 import DatePicker from 'material-ui/DatePicker';
 import TimePicker from 'material-ui/TimePicker';
 import TextField from 'material-ui/TextField';
-import fetch from '../../../core/fetch/fetch';
+import axios from 'axios';
 import { connect } from 'react-redux';
 import AddClientSimpleForm from '../../../forms/AddClientSimpleForm/AddClientSimpleForm';
 import update from 'react-addons-update';
@@ -39,16 +39,9 @@ class Clients extends Component {
 
   getClients() {
     var self = this
-    fetch('/api/protect/clients', {
-      method: "GET",
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.props.auth.token
-      },
-    }).then(function(response) {
-      return response.json()
-    }).then(function(json) {
+    axios.get('/api/protect/clients')
+    .then(function(response) {
+      var json = response.data
       if (json.success) {
         self.updateClients(json.clients)
       }
@@ -65,16 +58,9 @@ class Clients extends Component {
     newSelectedClient['fetching'] = true
     actions.setClientbookSelectedClient(newSelectedClient)
     var self = this
-    fetch('/api/protect/client?id=' + client_id, {
-      method: "GET",
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.props.auth.token
-      },
-    }).then(function(response) {
-      return response.json()
-    }).then(function(json) {
+    axios.get('/api/protect/client?id=' + client_id)
+    .then(function(response) {
+      var json = response.data
       if (json.success) {
         if (json.appointments) {
           console.log(json.appointments)
@@ -160,17 +146,8 @@ class Clients extends Component {
 
   handleAddClientSimpleFormSubmit = (values) => {
     var self = this
-    fetch('/api/protect/client', {
-      method: "POST",
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.props.auth.token
-      },
-      body: JSON.stringify(values)
-    }).then(function(response) {
-      return response.json()
-    }).then(function(json) {
+    axios.post('/api/protect/client', values)
+    .then(function(response) {
       self.handleAddClientRequestClose()
       self.getClients()
     }).catch(function(ex) {
@@ -302,18 +279,9 @@ class Clients extends Component {
       data: data
     }
     // var self = this
-    fetch('/api/protect/client', {
-      method: "PATCH",
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.props.auth.token
-      },
-      body: JSON.stringify(patch)
-    }).then(function(response) {
-      return response.json()
-    }).then(function(json) {
-      console.log(json)
+    axios.patch('/api/protect/client', patch)
+    .then(function(response) {
+      console.log(response.data)
     }).catch(function(ex) {
       console.log('failed', ex)
     })
@@ -353,7 +321,7 @@ class Clients extends Component {
   handleAppointmentNoteInput = (event) => {
     const { actions } = this.props
     var newNewAppointment = this.props.clientbook.newAppointment
-    newNewAppointment.note = date
+    newNewAppointment.note = event.target.value
     actions.setClientbookNewAppointment(newNewAppointment)
   }
 
@@ -361,7 +329,6 @@ class Clients extends Component {
     const { newAppointment, selectedClient } = this.props.clientbook
     var self = this
     if (newAppointment.date && newAppointment.start && newAppointment.end) {
-
       const client = selectedClient._id
       const date = newAppointment.date
       const start = TimeToIndex(newAppointment.start)
@@ -375,17 +342,9 @@ class Clients extends Component {
         note
       }
 
-      fetch('/api/protect/appointment', {
-        method: "post",
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + this.props.auth.token
-        },
-        body: JSON.stringify(data)
-      }).then(function(response) {
-        return response.json()
-      }).then(function(json) {
+      axios.post('/api/protect/appointment', data)
+      .then(function(response) {
+        var json = response.data
         if (json.success) {
           self.updateSelectedClientAppointment(json.newAppointment)
           self.handleAddAppointmentModalClose()

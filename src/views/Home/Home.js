@@ -7,7 +7,7 @@ import MainFooter from '../../components/MainFooter/MainFooter';
 import FontIcon from 'material-ui/FontIcon';
 import FlatButton from 'material-ui/FlatButton';
 import TopWealthManagerCard from '../../components/TopWealthManagerCard/TopWealthManagerCard';
-// import mockManagersData from '../../mockdata/managers';
+import axios from 'axios';
 import * as AuthActions from '../../redux/actions/auth.js';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -38,18 +38,10 @@ class Home extends Component {
 
   getTopManagers() {
     let self = this
-    fetch('/api/public/topmanagers', {
-      method: "GET",
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-    }).then(function(response) {
-      return response.json()
-    }).then(function(json) {
-      console.log(json)
-      if (json.success && json.topmanagers) {
-        self.setState({topManagers: json.topmanagers})
+    axios.get('/api/public/topmanagers')
+    .then(function(response) {
+      if (response.data.success && response.data.topmanagers) {
+        self.setState({topManagers: response.data.topmanagers})
       }
     }).catch(function(ex) {
       console.log('failed', ex)
@@ -179,7 +171,7 @@ class Home extends Component {
             )}
           </div>
           <div style={headerWrapperStyle} className="home-search-field">
-            <h2 className="header-promot">Easily Find Wealth Managers Near You.</h2>
+            <h2 className="header-promot">Professional financial service for everyone, everywhere</h2>
             <SearchCard path="home"></SearchCard>
           </div>
         </div>

@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import FlatButton from 'material-ui/FlatButton';
-import fetch from '../../../core/fetch/fetch';
+import axios from 'axios';
 import {Tabs, Tab} from 'material-ui/Tabs';
 import { ListItem } from 'material-ui/List';
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 import FontIcon from 'material-ui/FontIcon';
 import TextField from 'material-ui/TextField';
 import { connect } from 'react-redux';
-// import * as AuthActions from '../../../redux/actions/auth.js';
 import { push } from 'react-router-redux'
 import NewFeedbackForm from '../../../forms/NewFeedbackForm/NewFeedbackForm';
 import { ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
@@ -56,16 +55,9 @@ class ManageFeedbackView extends Component {
 
   getTemplates() {
     var self = this
-    fetch('/api/protect/feedback/templates', {
-      method: "GET",
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.props.auth.token
-      }
-    }).then(function(response) {
-      return response.json()
-    }).then(function(json) {
+    axios.get('/api/protect/feedback/templates')
+    .then(function(response) {
+      var json = response.data
       if (json.success && json.templates && json.templates.length !== 0) {
         self.setState({
           createForm: false,
@@ -80,18 +72,9 @@ class ManageFeedbackView extends Component {
 
   handleFeecbackTemplateFormSubmit = (form) => {
     var self = this
-    fetch('/api/protect/feedback/template', {
-      method: "POST",
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.props.auth.token
-      },
-      body: JSON.stringify(form)
-    }).then(function(response) {
-      return response.json()
-    }).then(function(json) {
-      if (json.success) {
+    axios.post('/api/protect/feedback/template', form)
+    .then(function(response) {
+      if (response.data.success) {
         self.getTemplates()
       }
     }).catch(function(ex) {
@@ -111,17 +94,10 @@ class ManageFeedbackView extends Component {
   getResponses(template_id) {
     var self = this
     self.setState({feedbacks: []})
-    fetch('/api/protect/feedbacks/' + template_id, {
-      method: "GET",
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.props.auth.token
-      }
-    }).then(function(response) {
-      return response.json()
-    }).then(function(json) {
-      if (json.success) {
+    axios.get('/api/protect/feedbacks/' + template_id)
+    .then(function(response) {
+      var json = response.data
+      if (response.data.success) {
         self.setState({feedbacks: json.feedbacks})
       }
     }).catch(function(ex) {

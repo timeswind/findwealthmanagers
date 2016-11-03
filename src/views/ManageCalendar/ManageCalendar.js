@@ -4,7 +4,7 @@ import FlatButton from 'material-ui/FlatButton';
 import DropDownMenu from 'material-ui/DropDownMenu';
 import MenuItem from 'material-ui/MenuItem';
 import { connect } from 'react-redux';
-import fetch from '../../core/fetch/fetch';
+import axios from 'axios';
 import AddAvailableTimeForm from '../../forms/AddAvailableTimeForm/AddAvailableTimeForm';
 import './ManageCalendar.css';
 import moment from 'moment';
@@ -90,16 +90,9 @@ class ManageCalendar extends Component {
   getMonthCalendar (year, month) {
     let self = this
     let apiURL = '/api/protect/calendar?year=' + year + '&month=' + month
-    fetch(apiURL, {
-      method: "GET",
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.props.auth.token
-      },
-    }).then(function(response) {
-      return response.json()
-    }).then(function(json) {
+    axios.get(apiURL)
+    .then(function(response) {
+      var json = response.data
       if ((json.calendar.available && json.calendar.available.length > 0) && (json.appointments && json.appointments.length > 0)) {
         self.updateCalendarData(json.calendar, json.appointments)
       } else {
@@ -117,16 +110,9 @@ class ManageCalendar extends Component {
 
   getCurrentMonthCalendar() {
     let self = this
-    fetch('/api/protect/calendar', {
-      method: "GET",
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.props.auth.token
-      },
-    }).then(function(response) {
-      return response.json()
-    }).then(function(json) {
+    axios.get('/api/protect/calendar')
+    .then(function(response) {
+      var json = response.data
       if ((json.calendar.available && json.calendar.available.length > 0) && (json.appointments && json.appointments.length > 0)) {
         self.updateCalendarData(json.calendar, json.appointments)
       } else {
@@ -192,7 +178,6 @@ class ManageCalendar extends Component {
   }
 
   handleAddAvailableTimeFormSubmit = (values) => {
-    console.log('good to submit')
     if (!values.from) {
       window.alert('missing the from time')
     } else if (!values.to) {
@@ -204,17 +189,9 @@ class ManageCalendar extends Component {
       values['month'] = this.state.month
       this.handleNewEventDialogClose()
       var self = this
-      fetch('/api/protect/calendar', {
-        method: "POST",
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + this.props.auth.token
-        },
-        body: JSON.stringify(values)
-      }).then(function(response) {
-        return response.json()
-      }).then(function(json) {
+      axios.post('/api/protect/calendar', values)
+      .then(function(response) {
+        var json = response.data
         if ((json.calendar.available && json.calendar.available.length > 0) && (json.appointments && json.appointments.length > 0)) {
           self.updateCalendarData(json.calendar, json.appointments)
         } else {
@@ -234,18 +211,12 @@ class ManageCalendar extends Component {
   deleteDayScheduleEvent = (calendar_id, event_id) => {
     var self = this
     let data = 'type=event&calendar_id=' + calendar_id + '&event_id=' + event_id
-    fetch('/api/protect/calendar?' + data, {
-      method: "DELETE",
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': 'Bearer ' + this.props.auth.token
-      },
-      body: JSON.stringify(data)
-    }).then(function(response) {
-      return response.json()
-    }).then(function(json) {
-      self.setState({ eventDetailDialogOpen: false })
-      self.updateCalendarData(json.calendar)
+    axios.delete('/api/protect/calendar?' + data)
+    .then(function(response) {
+      if (response.data.success && response.data.calendar) {
+        self.setState({ eventDetailDialogOpen: false })
+        self.updateCalendarData(response.data.calendar)
+      }
     }).catch(function(ex) {
       console.log('failed', ex)
     })

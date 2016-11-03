@@ -5,7 +5,7 @@ import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import {Tabs, Tab} from 'material-ui/Tabs';
 import { connect } from 'react-redux';
-import fetch from '../../core/fetch/fetch';
+import axios from 'axios';
 import { gray400 } from 'material-ui/styles/colors';
 import { IndexToTime } from '../../core/TimeToIndex';
 import { List, ListItem } from 'material-ui/List';
@@ -18,6 +18,7 @@ import categories from '../../assets/categories'
 import { TimeToIndex } from '../../core/TimeToIndex';
 import RequestAppointmentForm from '../../forms/RequestAppointmentForm/RequestAppointmentForm';
 import './Profile.css';
+import _ from 'lodash';
 
 const weekdaysName = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -27,9 +28,7 @@ const iconStyles = {
 };
 
 class Profile extends Component {
-
-  constructor(props) {
-    super(props)
+  componentWillMount() {
     const { actions } = this.props
     let today = new Date()
     let year = today.getFullYear()
@@ -38,20 +37,10 @@ class Profile extends Component {
     let weekCount = this.weekCountInMonth(year, month_index + 1)
     let currentWeek = this.currentWeekIn(day, year, month_index)
     actions.setListCalendarControl(year, month_index + 1, weekCount, currentWeek)
-  }
-
-  componentWillMount() {
-    const { actions } = this.props
     let self = this
-    fetch('/api/public/list?id=' + this.props.routeParams.id, {
-      method: "GET",
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-    }).then(function(response) {
-      return response.json()
-    }).then(function(json) {
+    axios.get('/api/public/list?id=' + this.props.routeParams.id)
+    .then(function (response) {
+      var json = response.data
       console.log(json)
       if (json.success === true) {
         if (json.listInfo) {
@@ -71,24 +60,23 @@ class Profile extends Component {
         if (self.props.auth.role === 1) {
           self.getAppointmentsWithAdvisor(json.advisorInfo._id)
         }
-      } else {
-        // self.props.dispatch(push('/'))
       }
-    }).catch(function(ex) {
-      console.log('failed', ex)
     })
-
+    .catch(function (error) {
+      console.log(error);
+    });
   }
 
   navigateWeekPrivious () {
-    let currentMonth = this.props.list.month
-    let currentWeek = this.props.list.currentWeek
+    const { list } = this.props
+    let currentMonth = list.month
+    let currentWeek = list.currentWeek
     if (currentMonth === 1 && currentWeek === 1) {
-      this.updateCalendar( this.props.list.year - 1, 12, this.weekCountInMonth(this.props.list.year - 1, 12), this.weekCountInMonth(this.props.list.year - 1, 12))
+      this.updateCalendar( list.year - 1, 12, this.weekCountInMonth(list.year - 1, 12), this.weekCountInMonth(list.year - 1, 12))
     } else if (currentWeek === 1) {
-      this.updateCalendar( this.props.list.year, this.props.list.month - 1, this.weekCountInMonth(this.props.list.year, this.props.list.month - 1), this.weekCountInMonth(this.props.list.year, this.props.list.month - 1))
+      this.updateCalendar( list.year, list.month - 1, this.weekCountInMonth(list.year, list.month - 1), this.weekCountInMonth(list.year, list.month - 1))
     } else {
-      this.updateCalendar( this.props.list.year, this.props.list.month, this.props.list.weeksCount, this.props.list.currentWeek - 1)
+      this.updateCalendar( list.year, list.month, list.weeksCount, list.currentWeek - 1)
     }
   }
 
@@ -104,25 +92,27 @@ class Profile extends Component {
 
 
   navigateWeekNext () {
-    let currentMonth = this.props.list.month
-    let currentWeek = this.props.list.currentWeek
-    let currentMonthWeekCount = this.props.list.weeksCount
+    const { list } = this.props
+    let currentMonth = list.month
+    let currentWeek = list.currentWeek
+    let currentMonthWeekCount = list.weeksCount
     if (currentMonth === 12 && currentWeek === currentMonthWeekCount) {
-      this.updateCalendar( this.props.list.year + 1, 1, this.weekCountInMonth(this.props.list.year + 1, 1), 1)
+      this.updateCalendar( list.year + 1, 1, this.weekCountInMonth(list.year + 1, 1), 1)
     } else if (currentWeek === currentMonthWeekCount) {
-      this.updateCalendar( this.props.list.year, this.props.list.month + 1, this.weekCountInMonth(this.props.list.year, this.props.list.month + 1), 1)
+      this.updateCalendar( list.year, list.month + 1, this.weekCountInMonth(list.year, list.month + 1), 1)
     } else {
-      this.updateCalendar( this.props.list.year, this.props.list.month, this.props.list.weeksCount, this.props.list.currentWeek + 1)
+      this.updateCalendar( list.year, list.month, list.weeksCount, list.currentWeek + 1)
     }
   }
 
   updateCalendar (year, month, weekCount, week) {
     const { actions } = this.props
-    if (year !== this.props.list.year || month !== this.props.list.month) {
+    const { list } = this.props
+    if (year !== list.year || month !== list.month) {
       this.getMonthCalendar(year, month)
     }
     actions.setListCalendarControl(year, month, weekCount, week)
-    this.updateCalendarData(this.props.list.calendar)
+    this.updateCalendarData(list.calendar)
   }
 
   updateCalendarData(calendar) {
@@ -154,18 +144,10 @@ class Profile extends Component {
 
   getAppointmentsWithAdvisor (advisor_id) {
     const { actions } = this.props
-    let self = this
     let apiURL = '/api/protect/appointments/' + advisor_id
-    fetch(apiURL, {
-      method: "GET",
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.props.auth.token
-      },
-    }).then(function(response) {
-      return response.json()
-    }).then(function(json) {
+    axios.get(apiURL)
+    .then(function(response) {
+      var json = response.data
       if (json.appointments) {
         json.appointments = json.appointments.map((appointment) => {
           var obj = {}
@@ -185,17 +167,13 @@ class Profile extends Component {
   }
 
   getMonthCalendar (year, month) {
+    const { listInfo } = this.props.list
     let self = this
-    let apiURL = '/api/public/calendar?year=' + year + '&month=' + month + '&advisor_id=' + this.props.list.listInfo.advisor
-    fetch(apiURL, {
-      method: "GET",
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-    }).then(function(response) {
-      return response.json()
-    }).then(function(json) {
+    let apiURL = '/api/public/calendar?year=' + year + '&month=' + month + '&advisor_id=' + listInfo.advisor
+
+    axios.get(apiURL)
+    .then(function(response) {
+      var json = response.data
       if (json.success && json.calendar.available && json.calendar.available.length > 0) {
         self.updateCalendarData(json.calendar)
       }
@@ -210,9 +188,10 @@ class Profile extends Component {
   };
 
   getDateByDay = function (day_index) {
-    let year = this.props.list.year
-    let week = this.props.list.currentWeek
-    let month_index = this.props.list.month - 1
+    const { list } = this.props
+    let year = list.year
+    let week = list.currentWeek
+    let month_index = list.month - 1
     let thisMonth = month_index + 1
     var lastMonthDaysLeft = new Date(year, month_index, 0).getDay();
     let lastDateOfThisMonth = new Date(year, thisMonth, 0).getDate();
@@ -233,19 +212,42 @@ class Profile extends Component {
   }
 
   currentWeekIn = function (day, year, month_index) {
+    const { list } = this.props
     var lastmonth;
 
     if (arguments.length === 3) {
       lastmonth = month_index
     } else {
-      year = this.props.list.year
-      lastmonth = this.props.list.month - 1
+      year = list.year
+      lastmonth = list.month - 1
     }
 
     var lastOflastMonth = new Date(year, lastmonth, 0);
     var used = lastOflastMonth.getDay() + day;
     return Math.ceil(used / 7);
   }
+
+  changeCalendarView(newCalendarView) {
+    const { actions } = this.props
+    const { calendar, calendarView } = this.props.list
+    var newSchedule
+    if (newCalendarView !== calendarView) {
+      if (newCalendarView === 'agenda') {
+        if (calendar && calendar.available) {
+          var result = _.chain(calendar.available)
+          .groupBy("day")
+          .toPairs()
+          .map(function(currentItem) {
+            return _.zipObject(['day', 'agendas'], currentItem);
+          })
+          .value();
+          console.log(result)
+        }
+      }
+    }
+  }
+
+
 
   renderVerticalTimeLabel () {
     var labels = []
@@ -284,33 +286,24 @@ class Profile extends Component {
 
   handleRequestAppointmentSubmit = (form) => {
     const { actions } = this.props
-    var self = this
+    const { listInfo } = this.props.list
     form.start = TimeToIndex(form.start)
     form.end = TimeToIndex(form.end)
     if (!form.advisor) {
-      form.advisor = this.props.list.listInfo.advisor
+      form.advisor = listInfo.advisor
     }
-    fetch('/api/protect/appointment', {
-      method: "post",
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.props.auth.token
-      },
-      body: JSON.stringify(form)
-    }).then(function(response) {
-      return response.json()
-    }).then(function(json) {
-      if (json.success) {
+    axios.post('/api/protect/appointment', form)
+    .then(function(response) {
+      if (response.data.success) {
         actions.hideListAppointmentTool()
       }
-      console.log(json)
     }).catch(function(ex) {
       console.log('failed', ex)
     })
   }
 
   render() {
+    const { listInfo, tab, previousAppointment, calendarView, schedules, appointmentModalOpen } = this.props.list
     return (
       <div className="view-body flex-column g-background">
         <div className="g-background">
@@ -326,19 +319,19 @@ class Profile extends Component {
               </div>
               <div className="flex align-center justify-center">
                 <div className="flex-column" style={{marginLeft: "32px"}}>
-                  <span style={{marginBottom: "8px", fontSize: "24px", fontWeight: 600}}>{this.props.list.listInfo.name}</span>
+                  <span style={{marginBottom: "8px", fontSize: "24px", fontWeight: 600}}>{listInfo.name}</span>
                   <div className="flex-row flex-center" style={{marginBottom: "8px"}}>
                     <FontIcon className="material-icons" style={iconStyles}>location_on</FontIcon>
-                    <span>{this.props.list.listInfo.address}</span>
+                    <span>{listInfo.address}</span>
                   </div>
                   <div className="flex-row flex-center" style={{marginBottom: "8px"}}>
                     <FontIcon className="material-icons" style={iconStyles} color={gray400}>email</FontIcon>
-                    <span>{this.props.list.listInfo.email}</span>
+                    <span>{listInfo.email}</span>
                   </div>
-                  { this.props.list.listInfo.affiliation && this.props.list.listInfo.affiliation !== "" ? (
+                  { listInfo.affiliation && listInfo.affiliation !== "" ? (
                     <div className="flex-row flex-center">
                       <FontIcon className="material-icons" style={iconStyles} color={gray400}>work</FontIcon>
-                      <span>{this.props.list.listInfo.affiliation}</span>
+                      <span>{listInfo.affiliation}</span>
                     </div>
                   ) : (
                     <div className="flex-row flex-center">
@@ -349,7 +342,7 @@ class Profile extends Component {
                 </div>
               </div>
               <div className="flex align-center justify-center" style={{marginLeft: "auto"}}>
-                {this.props.list.tab !== 'calendar' && (
+                {tab !== 'calendar' && (
                   <div>
                     <FlatButton
                       label="make appointment"
@@ -371,18 +364,18 @@ class Profile extends Component {
             <div className="flex-row flex-center raleway">
               <div style={{marginRight: "16px"}}>Consulting area:</div>
               {
-                this.props.list.listInfo.categories.map((category) => {
+                listInfo.categories.map((category) => {
                   return (<div className="p-category-label" key={category.code}>{category.name}</div>)
                 })
               }
             </div>
           </div>
           <div className="profile-body">
-            { (this.props.auth.role === 1 && this.props.list.previousAppointment && this.props.list.previousAppointment.length > 0) && (
+            { (this.props.auth.role === 1 && previousAppointment && previousAppointment.length > 0) && (
               <div className="flex-column light-card" style={{maxWidth: 600, margin: "8px auto"}}>
                 <Subheader>My appointments</Subheader>
                 <List>
-                  { this.props.list.previousAppointment.map((appointment, index)=>{
+                  { previousAppointment.map((appointment, index)=>{
                     return (
                       <ListItem  key={index}
                         primaryText={moment(appointment.date).format('MMMM DD, YYYY')}
@@ -392,6 +385,11 @@ class Profile extends Component {
                             {
                               appointment.status === 'pending' && (
                                 <span className="p-appointment-status-pending">Pending</span>
+                              )
+                            }
+                            {
+                              appointment.status === 'scheduled' && (
+                                <span className="p-appointment-status-scheduled">Scheduled</span>
                               )
                             }
                           </div>
@@ -406,7 +404,7 @@ class Profile extends Component {
           <div className="p-tabs-outter-wrapper">
             <div className="p-tabs-inner-wrapper">
               <Tabs
-                value={this.props.list.tab}
+                value={tab}
                 onChange={this.handleTabChange}
                 >
                 <Tab label="Brief" value="brief" style={{backgroundColor: "#fff", color: "#333"}}>
@@ -414,12 +412,12 @@ class Profile extends Component {
                     <div className="p-tab-wrapper">
                       <h2>Brief</h2>
                       <p>
-                        {this.props.list.listInfo.brief}
+                        {listInfo.brief}
                       </p>
                     </div>
                     <div className="p-tab-wrapper">
                       <h2>Experience</h2>
-                      { this.props.list.listInfo.experience.map((experience, index) => {
+                      { listInfo.experience.map((experience, index) => {
                         return (
                           <div key={index} style={{margin: "16px 0 0 0", paddingTop: "16px", borderTop: "1px solid #ddd"}}>
                             <span style={{fontWeight: 600, fontSize: "18px"}}>{experience.title}</span>
@@ -429,10 +427,9 @@ class Profile extends Component {
                       })}
                     </div>
                   </div>
-
                 </Tab>
                 <Tab label="Calendar" value="calendar" style={{backgroundColor: "#fff", color: "#333"}}>
-                  <div className="flex-row" style={{margin: '16px 8px 0 8px'}}>
+                  <div className="flex-row flex-baseline" style={{margin: '8px 8px 0 8px'}}>
                     <div className="light-shadow default-margin-right">
                       <FlatButton
                         label="Today"
@@ -455,22 +452,25 @@ class Profile extends Component {
                         }}
                         />
                     </div>
-                    <div className="flex-row flex-center">
+                    <div className="flex-row flex-center light-card">
                       <FlatButton
                         label="Day"
-                        backgroundColor={this.props.list.calendarView === 'day' ? '#e4e4e4' : '#fff'}
+                        backgroundColor={calendarView === 'day' ? '#e4e4e4' : '#fff'}
                         />
                       <FlatButton
                         label="Week"
-                        backgroundColor={this.props.list.calendarView === 'week' ? '#e4e4e4' : '#fff'}
+                        backgroundColor={calendarView === 'week' ? '#e4e4e4' : '#fff'}
                         />
                       <FlatButton
                         label="Month"
-                        backgroundColor={this.props.list.calendarView === 'month' ? '#e4e4e4' : '#fff'}
+                        backgroundColor={calendarView === 'month' ? '#e4e4e4' : '#fff'}
                         />
                       <FlatButton
                         label="Agenda"
-                        backgroundColor={this.props.list.calendarView === 'agenda' ? '#e4e4e4' : '#fff'}
+                        backgroundColor={calendarView === 'agenda' ? '#e4e4e4' : '#fff'}
+                        onTouchTap={()=>{
+                          this.changeCalendarView('agenda')
+                        }}
                         />
                     </div>
                     <FlatButton
@@ -503,8 +503,8 @@ class Profile extends Component {
                               <span style={{marginLeft: "auto", fontWeight: 600}}>{dateString}</span>
                             </div>
                             {this.renderDayScheduleBlock(day_index)}
-                            { (this.props.list.schedules[day_index] && dateString !== "") ? (
-                              this.props.list.schedules[day_index].map((event, event_index)=>{
+                            { (schedules[day_index] && dateString !== "") ? (
+                              schedules[day_index].map((event, event_index)=>{
                                 if (dateString && event[dateString]) {
                                   return (
                                     <div onTouchTap={()=>{
@@ -539,12 +539,12 @@ class Profile extends Component {
         title="Request Appointment"
         modal={false}
         autoScrollBodyContent={true}
-        open={this.props.list.appointmentModalOpen}
+        open={appointmentModalOpen}
         onRequestClose={()=>{
           this.props.actions.hideListAppointmentTool()
         }}
         >
-        <RequestAppointmentForm advisor={this.props.list.listInfo.name} onSubmit={this.handleRequestAppointmentSubmit}></RequestAppointmentForm>
+        <RequestAppointmentForm advisor={listInfo.name} onSubmit={this.handleRequestAppointmentSubmit}></RequestAppointmentForm>
       </Dialog>
     </div>
   )
