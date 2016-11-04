@@ -178,6 +178,7 @@ class ManageCalendar extends Component {
   }
 
   handleAddAvailableTimeFormSubmit = (values) => {
+    console.log(values)
     if (!values.from) {
       window.alert('missing the from time')
     } else if (!values.to) {
