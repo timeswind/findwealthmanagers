@@ -5,7 +5,6 @@ import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
 import AutoComplete from 'material-ui/AutoComplete';
 import FlatButton from 'material-ui/FlatButton';
-// import us_states from '../../assets/us_states.js';
 import categories from '../../assets/categories.js'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -37,15 +36,9 @@ class SearchCard extends Component {
     this.initGoolePlaceAutocomplete()
   }
 
-  // selectUsState = (event, index, usState) => {
-  //   const { actions } = this.props
-  //   actions.setSearchUSSTATE(usState)
-  // }
-
   selectCategory = (event, index, category_code) => {
     const { actions } = this.props
     actions.setSearchCategories([category_code])
-    // this.setState({ "category": category_code });
   }
   selectAddress = (chosenAddress, index) => {
     const { actions } = this.props
@@ -139,12 +132,6 @@ class SearchCard extends Component {
               style={{flex: 50, marginRight: "8px"}}>
               {managerCategories}
             </SelectField>
-            <TextField
-              floatingLabelText="Company Name(optional)"
-              value={this.props.search.companyName}
-              onChange={this.handleCompanyNameInput}
-              style={{flex: 50, marginLeft: "8px"}}>
-            </TextField>
           </div>
           <FlatButton
             label="Find Your Advisors"

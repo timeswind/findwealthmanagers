@@ -5,14 +5,6 @@
   border-bottom: 1px solid #ddd;
 }
 
-.p-h-wrapper {
-  max-width: 800px;
-  padding: 0 16px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: row
-}
-
 .profile-body {
   padding: 0 0 32px 0
 }
@@ -115,4 +107,105 @@
   color: #ff5722;
   position: absolute;
   right: 0
+}
+
+.panel-header {
+  font-family: 'Raleway';
+  flex-direction: row;
+  align-items: center;
+  font-size: 22px;
+  font-weight: 600;
+  padding: 16px;
+}
+
+.panel-body {
+  padding: 16px
+}
+
+.panel-top-entries {
+  display: flex;
+}
+
+.panel-top-entry {
+  cursor: pointer;
+}
+
+.dashboard-body-wrapper {
+  display: flex;
+}
+
+.dashboard-left-panels-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-right-panel-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+/*==========  Mobile First Method  ==========*/
+
+/* Custom, iPhone Retina */
+@media only screen and (min-width : 320px) {
+  .p-h-wrapper {
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .p-h-avatar {
+    margin-bottom: 16px
+  }
+}
+
+/* Extra Small Devices, Phones */
+@media only screen and (min-width : 480px) {
+  .p-h-wrapper {
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .p-h-avatar {
+    margin-bottom: 16px
+  }
+}
+
+/* Small Devices, Tablets */
+@media only screen and (min-width : 768px) {
+  .p-h-wrapper {
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .p-h-avatar {
+    margin-bottom: 16px
+  }
+}
+
+/* Medium Devices, Desktops */
+@media only screen and (min-width : 992px) {
+  .p-h-wrapper {
+    max-width: 800px;
+    padding: 0 16px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: row
+  }
+}
+
+/* Large Devices, Wide Screens */
+@media only screen and (min-width : 1200px) {
+  .p-h-wrapper {
+    max-width: 800px;
+    padding: 0 16px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: row
+  }
 }

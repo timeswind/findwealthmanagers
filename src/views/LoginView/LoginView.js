@@ -3,7 +3,7 @@ import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
 import { Card } from 'material-ui/Card';
 import MainFooter from '../../components/MainFooter/MainFooter'
-import fetch from '../../core/fetch/fetch';
+import axios from 'axios';
 import localStore from 'store2';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -49,17 +49,10 @@ class LoginView extends Component {
       email: this.state.email,
       password: this.state.password
     }
-    fetch('/api/public/login', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    }).then(function(response) {
-      return response.json()
-    }).then(function(json) {
-      console.log(json)
+    axios.post('/api/public/login', data)
+    .then(function(response) {
+      console.log(response)
+      var json = response.data
       if (json.success === true) {
         newState.errorText.result = "";
         actions.setToken(json.token);
@@ -79,17 +72,11 @@ class LoginView extends Component {
         } else {
           dispatch(push('/'))
         }
-      } else {
-        if (json.error) {
-          newState.errorText.result = json.error;
-          self.setState(newState)
-        } else {
-          newState.errorText.result = "ERROR";
-          self.setState(newState)
-        }
       }
-    }).catch(function(ex) {
-      console.log('failed', ex)
+    })
+    .catch(function(error) {
+      newState.errorText.result = error.response.data.error;
+      self.setState(newState)
     })
   }
 

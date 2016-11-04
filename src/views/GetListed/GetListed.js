@@ -12,7 +12,7 @@ import MainFooter from '../../components/MainFooter/MainFooter';
 import categories from '../../assets/categories.js';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
-import fetch from '../../core/fetch/fetch';
+import axios from 'axios';
 import localStore from 'store2';
 import { bindActionCreators } from 'redux';
 import * as AuthActions from '../../redux/actions/auth.js';
@@ -47,7 +47,6 @@ class GetListed extends Component {
       },
       stepError: ""
     };
-
   }
 
   submitList() {
@@ -66,23 +65,12 @@ class GetListed extends Component {
         this.state.categories.forEach((categories) => {
           data['categories'].push(categories.code)
         })
-        fetch('/api/protect/list', {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + this.props.auth.token
-          },
-          body: JSON.stringify(data)
-        }).then(function(response) {
-          return response.json()
-        }).then(function(json) {
+        axios.post('/api/protect/list', data)
+        .then(function(response) {
           self.setPendingOff()
-          console.log(json)
-          if (json.success === true) {
+          if (response.data.success === true) {
             self.goNextStep(3)
           }
-
         }).catch(function(ex) {
           self.setPendingOff()
           console.log('failed', ex)
@@ -188,16 +176,9 @@ class GetListed extends Component {
       affiliation: this.state.account.affiliation
     }
 
-    fetch('/api/public/signup', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    }).then(function(response) {
-      return response.json()
-    }).then(function(json) {
+    axios.post('/api/public/signup', data)
+    .then(function(response) {
+      var json = response.data
       self.setPendingOff()
       if (json.success === true) {
         self.setStepError('')

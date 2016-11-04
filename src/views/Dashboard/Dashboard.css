@@ -10,3 +10,137 @@
 .panel-body {
   padding: 16px
 }
+
+.panel-top-entries {
+  display: flex;
+}
+
+.panel-top-entry {
+  cursor: pointer;
+}
+
+.dashboard-body-wrapper {
+  display: flex;
+}
+
+.dashboard-left-panels-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-right-panel-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+/*==========  Mobile First Method  ==========*/
+
+/* Custom, iPhone Retina */
+@media only screen and (min-width : 320px) {
+  .dashboard-body-wrapper {
+    flex-direction: column;
+  }
+  .dashboard-left-panels-wrapper {
+    flex: 100 1 0%
+  }
+  .dashboard-right-panel-wrapper {
+    flex: 100 1 0%
+  }
+  .panel-top-entries {
+    flex-direction: column;
+  }
+  .panel-top-entries .panel-top-entry {
+    flex-grow: 1;
+    flex-basis: 0;
+  }
+}
+
+/* Extra Small Devices, Phones */
+@media only screen and (min-width : 480px) {
+  .dashboard-body-wrapper {
+    flex-direction: column;
+  }
+  .dashboard-left-panels-wrapper {
+    flex: 100 1 0%
+  }
+  .dashboard-right-panel-wrapper {
+    flex: 100 1 0%
+  }
+  .panel-top-entries {
+    flex-direction: column;
+  }
+  .panel-top-entries .panel-top-entry {
+    flex-grow: 1;
+    flex-basis: 0;
+  }
+}
+
+/* Small Devices, Tablets */
+@media only screen and (min-width : 768px) {
+  .dashboard-body-wrapper {
+    flex-direction: column;
+  }
+  .dashboard-left-panels-wrapper {
+    flex: 100 1 0%
+  }
+  .dashboard-right-panel-wrapper {
+    flex: 100 1 0%
+  }
+  .panel-top-entries {
+    flex-direction: column;
+  }
+  .panel-top-entries .panel-top-entry {
+    flex-grow: 1;
+    flex-basis: 0;
+  }
+}
+
+/* Medium Devices, Desktops */
+@media only screen and (min-width : 992px) {
+  .dashboard-body-wrapper {
+    flex-direction: row;
+  }
+  .dashboard-left-panels-wrapper {
+    flex: 60 1 0%;
+    margin-left: 16px;
+  }
+  .dashboard-right-panel-wrapper {
+    flex: 40 1 0%
+  }
+  .panel-top-entries {
+    flex-direction: row;
+  }
+  .panel-top-entries .panel-top-entry {
+    flex-grow: 1;
+    flex-basis: 0;
+    margin-right: 8px
+  }
+  .panel-top-entries .panel-top-entry:last-child {
+    margin: 0
+  }
+}
+
+/* Large Devices, Wide Screens */
+@media only screen and (min-width : 1200px) {
+  .dashboard-body-wrapper {
+    flex-direction: row;
+  }
+  .dashboard-left-panels-wrapper {
+    flex: 60 1 0%;
+    margin-left: 16px;
+  }
+  .dashboard-right-panel-wrapper {
+    flex: 40 1 0%
+  }
+  .panel-top-entries {
+    flex-direction: row;
+  }
+  .panel-top-entries .panel-top-entry {
+    flex-grow: 1;
+    flex-basis: 0;
+    margin-right: 8px
+  }
+  .panel-top-entries .panel-top-entry:last-child {
+    margin: 0
+  }
+}

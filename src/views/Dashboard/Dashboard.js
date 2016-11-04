@@ -140,8 +140,8 @@ class DashboardView extends Component {
         <div style={{padding:"36px 8px 64px 8px"}}>
           <div style={{width: '100%', maxWidth: "1080px", margin: '0 auto'}}>
             { this.props.auth.role !== 1 ? (
-              <div className="flex-row">
-                <div className="flex-25" style={{marginRight: "16px", cursor: 'pointer'}}>
+              <div className="panel-top-entries">
+                <div className="panel-top-entry">
                   <div className="flex-row flex-center default-padding raleway" style={lessShadowCardStyle} onClick={()=>{
                       this.props.dispatch(push('/dashboard/clients'))
                     }}>
@@ -150,7 +150,7 @@ class DashboardView extends Component {
                     <FontIcon className="material-icons" style={{marginLeft: "auto"}}>keyboard_arrow_right</FontIcon>
                   </div>
                 </div>
-                <div className="flex-25" style={{cursor: 'pointer'}}>
+                <div className="panel-top-entry">
                   <div className="flex-row flex-center default-padding raleway" style={lessShadowCardStyle} onClick={()=>{
                       this.props.dispatch(push('/dashboard/feedback'))
                     }}>
@@ -184,8 +184,93 @@ class DashboardView extends Component {
                 ) }
               </div>
             ) : null }
-            <div className="flex-row">
-              <div className="flex-column" style={{flex: 70, marginRight: "16px"}}>
+            <div className="dashboard-body-wrapper">
+              <div className="dashboard-right-panels-wrapper">
+                { this.props.auth.role !== 1 && (
+                  <div className="flex-column" style={lessShadowCardStyle}>
+                    <div className="flex-row flex-center">
+                      <div className="flex-column default-padding raleway" style={{fontSize: "22px", fontWeight: '600'}}>
+                        Calendar
+                      </div>
+                      <FlatButton
+                        label="manage"
+                        labelStyle={{color: "rgb(66, 133, 244)"}}
+                        onClick={()=>{
+                          this.props.dispatch(push('/dashboard/calendar'))
+                        }}
+                        />
+                    </div>
+                    <Divider />
+                    <div style={{padding: 0}}>
+                      <Subheader>Today</Subheader>
+                      <Divider />
+                      { appointments.map((appointment, index) => {
+                        return (
+                          <div
+                            key={appointment._id}>
+                            { appointment.date === 'today' ? (
+                              <ListItem
+                                primaryText={
+                                  <div className="flex-row">
+                                    <span>{moment(appointment.start).format('h:mm a') + " - " + moment(appointment.end).format('h:mm a')}</span>
+                                    <span style={{marginLeft: "auto", color: "#ff9800"}}>{appointment.client}</span>
+                                  </div>
+                                }
+                                secondaryText={
+                                  appointment.note !== "" ? (
+                                    <p>
+                                      {appointment.note}
+                                    </p>
+                                  ): null
+                                }
+                                />
+                            ) : (
+                              <div>
+                                { index === 0 ? (
+                                  <ListItem
+                                    primaryText="No appointment"
+                                    />
+                                ) : null}
+                                { index > 0 && appointments[index].day === appointments[index - 1].day ? null : (
+                                  <div>
+                                    <Divider />
+                                    <Subheader>{moment(appointment.date).format('MMM DD')}</Subheader>
+                                    <Divider />
+                                  </div>
+                                ) }
+                                <ListItem
+                                  primaryText={
+                                    <div className="flex-column">
+                                      <div className="flex-row">
+                                        <span>{moment(appointment.start).format('h:mm a') + " - " + moment(appointment.end).format('h:mm a')}</span>
+                                        <span style={{marginLeft: "auto", color: "#ff9800"}}>{appointment.client}</span>
+                                      </div>
+                                    </div>
+                                  }
+                                  secondaryText={
+                                    appointment.note !== "" ? (
+                                      <p>
+                                        {appointment.note}
+                                      </p>
+                                    ): null
+                                  }
+                                  />
+                              </div>
+                            ) }
+                          </div>
+                        )
+                      }) }
+                    </div>
+                  </div>
+                ) }
+
+                <div style={lessShadowCardStyle}>
+                  <div className="flex-column default-padding raleway" style={{fontSize: "22px", fontWeight: '600'}}>
+                    Message
+                  </div>
+                </div>
+              </div>
+              <div className="dashboard-left-panels-wrapper">
                 <div className="flex-column" style={lessShadowCardStyle}>
                   <div className="panel-header">
                     Account info
@@ -376,91 +461,6 @@ class DashboardView extends Component {
                     </div>
                   ) : null
                 }
-              </div>
-              <div className="flex-column" style={{flex: 30}}>
-                { this.props.auth.role !== 1 && (
-                  <div className="flex-column" style={lessShadowCardStyle}>
-                    <div className="flex-row flex-center">
-                      <div className="flex-column default-padding raleway" style={{fontSize: "22px", fontWeight: '600'}}>
-                        Calendar
-                      </div>
-                      <FlatButton
-                        label="manage"
-                        labelStyle={{color: "rgb(66, 133, 244)"}}
-                        onClick={()=>{
-                          this.props.dispatch(push('/dashboard/calendar'))
-                        }}
-                        />
-                    </div>
-                    <Divider />
-                    <div style={{padding: 0}}>
-                      <Subheader>Today</Subheader>
-                      <Divider />
-                      { appointments.map((appointment, index) => {
-                        return (
-                          <div
-                            key={appointment._id}>
-                            { appointment.date === 'today' ? (
-                              <ListItem
-                                primaryText={
-                                  <div className="flex-row">
-                                    <span>{moment(appointment.start).format('h:mm a') + " - " + moment(appointment.end).format('h:mm a')}</span>
-                                    <span style={{marginLeft: "auto", color: "#ff9800"}}>{appointment.client}</span>
-                                  </div>
-                                }
-                                secondaryText={
-                                  appointment.note !== "" ? (
-                                    <p>
-                                      {appointment.note}
-                                    </p>
-                                  ): null
-                                }
-                                />
-                            ) : (
-                              <div>
-                                { index === 0 ? (
-                                  <ListItem
-                                    primaryText="No appointment"
-                                    />
-                                ) : null}
-                                { index > 0 && appointments[index].day === appointments[index - 1].day ? null : (
-                                  <div>
-                                    <Divider />
-                                    <Subheader>{moment(appointment.date).format('MMM DD')}</Subheader>
-                                    <Divider />
-                                  </div>
-                                ) }
-                                <ListItem
-                                  primaryText={
-                                    <div className="flex-column">
-                                      <div className="flex-row">
-                                        <span>{moment(appointment.start).format('h:mm a') + " - " + moment(appointment.end).format('h:mm a')}</span>
-                                        <span style={{marginLeft: "auto", color: "#ff9800"}}>{appointment.client}</span>
-                                      </div>
-                                    </div>
-                                  }
-                                  secondaryText={
-                                    appointment.note !== "" ? (
-                                      <p>
-                                        {appointment.note}
-                                      </p>
-                                    ): null
-                                  }
-                                  />
-                              </div>
-                            ) }
-                          </div>
-                        )
-                      }) }
-                    </div>
-                  </div>
-                ) }
-
-                <div style={lessShadowCardStyle}>
-                  <div className="flex-column default-padding raleway" style={{fontSize: "22px", fontWeight: '600'}}>
-                    Message
-                  </div>
-                </div>
               </div>
             </div>
           </div>

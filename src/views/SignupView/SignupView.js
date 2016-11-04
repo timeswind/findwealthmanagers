@@ -5,7 +5,7 @@ import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 import FlatButton from 'material-ui/FlatButton';
 import { Card } from 'material-ui/Card';
 import MainFooter from '../../components/MainFooter/MainFooter'
-import fetch from '../../core/fetch/fetch';
+import axios from 'axios';
 import localStore from 'store2';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -91,16 +91,9 @@ class SignupView extends Component {
       affiliation: this.state.affiliation
     }
 
-    fetch('/api/public/signup', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    }).then(function(response) {
-      return response.json()
-    }).then(function(json) {
+    axios.post('/api/public/signup', data)
+    .then(function(response) {
+      var json = response.data
       if (json.success === true) {
         newState.errorText.result = "";
         actions.setToken(json.token);
@@ -109,7 +102,7 @@ class SignupView extends Component {
         actions.setEmail(json.email);
         actions.setRole(json.role);
         actions.setLoginState(true);
-        
+
         localStore.session("token", json.token);
         localStore.session("id", json.id);
         localStore.session("name", json.name);

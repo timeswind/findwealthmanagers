@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import fetch from '../../core/fetch/fetch';
+import axios from 'axios';
 // import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 // import * as AuthActions from '../../../redux/actions/auth.js';
@@ -14,18 +14,10 @@ class FeedbackView extends Component {
   }
   componentWillMount() {
     let self = this
-    fetch('/api/public/feedback/' + this.props.routeParams.id, {
-      method: "GET",
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-    }).then(function(response) {
-      return response.json()
-    }).then(function(json) {
-      console.log(json)
-      if (json.success) {
-        self.setState({template: json.feedbackTemplate})
+    axios.get('/api/public/feedback/' + this.props.routeParams.id)
+    .then(function(response) {
+      if (response.data.success && response.feedbackTemplate) {
+        self.setState({template: response.data.feedbackTemplate})
       }
     }).catch(function(ex) {
       console.log('failed', ex)
@@ -39,20 +31,12 @@ class FeedbackView extends Component {
         form['email'] = this.props.auth.email
     }
     console.log(form)
-    fetch('/api/public/feedback/' + this.props.routeParams.id, {
-      method: "POST",
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(form)
-    }).then(function(response) {
-      return response.json()
-    }).then(function(json) {
-      console.log(json)
-      self.setState({submit: true})
-      if (!json.success) {
-        //handle error
+    axios.post('/api/public/feedback/' + this.props.routeParams.id, form)
+    .then(function(response) {
+      if (response.data.success) {
+        self.setState({submit: true})
+      } else {
+        // handle error
       }
     }).catch(function(ex) {
       console.log('failed', ex)

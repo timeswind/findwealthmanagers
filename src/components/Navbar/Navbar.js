@@ -17,7 +17,6 @@ class Navbar extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      windowWidth: window.innerWidth,
       userMenuOpen: false
     };
   }

@@ -13,8 +13,6 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 
-// const mockTopManagers = [];
-
 const headerWrapperStyle = {
   margin: "0 auto",
   maxWidth: "600px"
@@ -154,19 +152,16 @@ class Home extends Component {
                     }}
                     />
                 </div>
-                { (this.props.location.pathname !== '/getlisted') ? (
-                  <FlatButton
-                    backgroundColor="rgba(0, 0, 0, 0.5)"
-                    hoverColor="rgba(0, 0, 0, 0.7)"
-                    rippleColor="rgba(0, 0, 0, 0.9)"
-                    style={{color: "#fff"}}
-                    label="GET LISTED TODAY"
-                    onTouchTap={() => {
-                      this.routerPush('/getlisted')
-                    }}
-                    />
-                ) : null}
-
+                <FlatButton
+                  backgroundColor="rgba(0, 0, 0, 0.5)"
+                  hoverColor="rgba(0, 0, 0, 0.7)"
+                  rippleColor="rgba(0, 0, 0, 0.9)"
+                  style={{color: "#fff"}}
+                  label="GET LISTED TODAY"
+                  onTouchTap={() => {
+                    this.routerPush('/getlisted')
+                  }}
+                  />
               </div>
             )}
           </div>

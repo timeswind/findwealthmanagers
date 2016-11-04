@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Card } from 'material-ui/Card';
 import MainFooter from '../../components/MainFooter/MainFooter'
-import fetch from '../../core/fetch/fetch';
+import axios from 'axios';
 
 class VerifyemailView extends Component {
   state = {
@@ -11,18 +11,11 @@ class VerifyemailView extends Component {
   componentWillMount() {
     var self = this
     if (this.props.routeParams.token) {
-      fetch('/api/public/verify-email', {
-        method: "POST",
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          token: this.props.routeParams.token
-        })
-      }).then(function(response) {
-        return response.json()
-      }).then(function(json) {
+      axios.post('/api/public/verify-email', {
+        token: this.props.routeParams.token
+      })
+      .then(function(response) {
+        var json = response.data
         console.log(json)
         if (json.success) {
           self.setState({success: true})

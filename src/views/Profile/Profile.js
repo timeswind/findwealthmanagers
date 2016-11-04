@@ -309,14 +309,12 @@ class Profile extends Component {
         <div className="g-background">
           <div className="profile-header raleway">
             <div className="p-h-wrapper">
-              <div className="flex-column">
                 <div className="p-h-avatar">
                   <Avatar
                     src="http://www.lovemarks.com/wp-content/uploads/profile-avatars/default-avatar-tech-guy.png"
                     size={120}
                     />
                 </div>
-              </div>
               <div className="flex align-center justify-center">
                 <div className="flex-column" style={{marginLeft: "32px"}}>
                   <span style={{marginBottom: "8px", fontSize: "24px", fontWeight: 600}}>{listInfo.name}</span>
@@ -341,23 +339,23 @@ class Profile extends Component {
                   ) }
                 </div>
               </div>
-              <div className="flex align-center justify-center" style={{marginLeft: "auto"}}>
-                {tab !== 'calendar' && (
-                  <div>
-                    <FlatButton
-                      label="make appointment"
-                      labelStyle={{color: "#FFF"}}
-                      primary
-                      rippleColor="#B2DFDB"
-                      backgroundColor="rgb(48, 73, 102)"
-                      hoverColor="rgba(48, 73, 102, 0.8)"
-                      onTouchTap={()=>{
-                        this.props.actions.setListTab('calendar')
-                      }}/>
-                    </div>
-                  )
-                }
-              </div>
+            </div>
+            <div className="flex align-center justify-center" style={{marginTop: 16}}>
+              {tab !== 'calendar' && (
+                <div>
+                  <FlatButton
+                    label="make appointment"
+                    labelStyle={{color: "#FFF"}}
+                    primary
+                    rippleColor="#B2DFDB"
+                    backgroundColor="rgb(48, 73, 102)"
+                    hoverColor="rgba(48, 73, 102, 0.8)"
+                    onTouchTap={()=>{
+                      this.props.actions.setListTab('calendar')
+                    }}/>
+                  </div>
+                )
+              }
             </div>
           </div>
           <div className="flex-column p-categories flex-center">
