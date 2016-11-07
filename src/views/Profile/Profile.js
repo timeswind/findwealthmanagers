@@ -309,35 +309,33 @@ class Profile extends Component {
         <div className="g-background">
           <div className="profile-header raleway">
             <div className="p-h-wrapper">
-                <div className="p-h-avatar">
-                  <Avatar
-                    src="http://www.lovemarks.com/wp-content/uploads/profile-avatars/default-avatar-tech-guy.png"
-                    size={120}
-                    />
+              <div className="p-h-avatar">
+                <Avatar
+                  src="http://www.lovemarks.com/wp-content/uploads/profile-avatars/default-avatar-tech-guy.png"
+                  size={120}
+                  />
+              </div>
+              <div className="p-h-info align-center justify-center">
+                <p className="name">{listInfo.name}</p>
+                <div className="flex-row flex-center" style={{marginBottom: "8px"}}>
+                  <FontIcon className="material-icons" style={iconStyles}>location_on</FontIcon>
+                  <span>{listInfo.address}</span>
                 </div>
-              <div className="flex align-center justify-center">
-                <div className="flex-column" style={{marginLeft: "32px"}}>
-                  <span style={{marginBottom: "8px", fontSize: "24px", fontWeight: 600}}>{listInfo.name}</span>
-                  <div className="flex-row flex-center" style={{marginBottom: "8px"}}>
-                    <FontIcon className="material-icons" style={iconStyles}>location_on</FontIcon>
-                    <span>{listInfo.address}</span>
-                  </div>
-                  <div className="flex-row flex-center" style={{marginBottom: "8px"}}>
-                    <FontIcon className="material-icons" style={iconStyles} color={gray400}>email</FontIcon>
-                    <span>{listInfo.email}</span>
-                  </div>
-                  { listInfo.affiliation && listInfo.affiliation !== "" ? (
-                    <div className="flex-row flex-center">
-                      <FontIcon className="material-icons" style={iconStyles} color={gray400}>work</FontIcon>
-                      <span>{listInfo.affiliation}</span>
-                    </div>
-                  ) : (
-                    <div className="flex-row flex-center">
-                      <FontIcon className="material-icons" style={iconStyles} color={gray400}>work</FontIcon>
-                      <span>Independent</span>
-                    </div>
-                  ) }
+                <div className="flex-row flex-center" style={{marginBottom: "8px"}}>
+                  <FontIcon className="material-icons" style={iconStyles} color={gray400}>email</FontIcon>
+                  <span>{listInfo.email}</span>
                 </div>
+                { listInfo.affiliation && listInfo.affiliation !== "" ? (
+                  <div className="flex-row flex-center">
+                    <FontIcon className="material-icons" style={iconStyles} color={gray400}>work</FontIcon>
+                    <span>{listInfo.affiliation}</span>
+                  </div>
+                ) : (
+                  <div className="flex-row flex-center">
+                    <FontIcon className="material-icons" style={iconStyles} color={gray400}>work</FontIcon>
+                    <span>Independent</span>
+                  </div>
+                ) }
               </div>
             </div>
             <div className="flex align-center justify-center" style={{marginTop: 16}}>
@@ -359,8 +357,7 @@ class Profile extends Component {
             </div>
           </div>
           <div className="flex-column p-categories flex-center">
-            <div className="flex-row flex-center raleway">
-              <div style={{marginRight: "16px"}}>Consulting area:</div>
+            <div className="flex-wrap flex-row flex-center raleway">
               {
                 listInfo.categories.map((category) => {
                   return (<div className="p-category-label" key={category.code}>{category.name}</div>)
@@ -409,7 +406,7 @@ class Profile extends Component {
                   <div className="flex-column" style={{maxWidth: 800, margin: "0 auto"}}>
                     <div className="p-tab-wrapper">
                       <h2>Brief</h2>
-                      <p>
+                      <p className="default-paragraph">
                         {listInfo.brief}
                       </p>
                     </div>
@@ -419,7 +416,7 @@ class Profile extends Component {
                         return (
                           <div key={index} style={{margin: "16px 0 0 0", paddingTop: "16px", borderTop: "1px solid #ddd"}}>
                             <span style={{fontWeight: 600, fontSize: "18px"}}>{experience.title}</span>
-                            <p style={{margin: "8px 0 0 0", fontSize: "14px"}}>{experience.text}</p>
+                            <p className="default-paragraph">{experience.text}</p>
                           </div>
                         )
                       })}

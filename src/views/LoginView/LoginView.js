@@ -102,7 +102,7 @@ class LoginView extends Component {
                   onChange={this.handlePasswordEnter}
                   type="password"
                   />
-                { <div><span style={{color: "#F44336"}}>{this.state.errorText.result}</span></div> }
+                <div><span style={{color: "#F44336"}}>{this.state.errorText.result}</span></div>
                 <FlatButton
                   backgroundColor="#304966"
                   hoverColor="#495767"

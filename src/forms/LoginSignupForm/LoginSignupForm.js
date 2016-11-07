@@ -7,6 +7,7 @@ import localStore from 'store2';
 import { bindActionCreators } from 'redux';
 import './LoginSignupForm.css';
 import { push } from 'react-router-redux';
+import axios from 'axios';
 import * as AuthActions from '../../redux/actions/auth.js';
 const validate = values => {
   const errors = {}
@@ -26,7 +27,9 @@ const validate = values => {
 
 class LoginSignupForm extends Component {
   state = {
-    signup: false
+    signup: false,
+    error: false,
+    errorMessage: ""
   }
 
   handleFormSubmit = (form) => {
@@ -39,22 +42,19 @@ class LoginSignupForm extends Component {
   }
 
   login(form) {
+    var self = this
     const { actions, dispatch } = this.props;
     let data = {
       email: form.email,
       password: form.password
     }
-    fetch('/api/public/login', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    }).then(function(response) {
-      return response.json()
-    }).then(function(json) {
-      console.log(json)
+    axios.post('/api/public/login', data)
+    .then(function(response) {
+      self.setState({
+        error: false,
+        errorMessage: ""
+      })
+      var json = response.data
       if (json.success === true) {
         actions.setToken(json.token);
         actions.setId(json.id);
@@ -74,21 +74,21 @@ class LoginSignupForm extends Component {
         } else {
           actions.hideLoginModel();
         }
-      } else {
-        if (json.error) {
-
-        }
       }
-    }).catch(function(ex) {
-      console.log('failed', ex)
+    }).catch(function(error) {
+      self.setState({
+        error: true,
+        errorMessage: error.response.data.error
+      })
     })
   }
 
   render() {
     const { handleSubmit } = this.props
-
+    const { errorMessage, error } = this.state
     return (
       <form onSubmit={handleSubmit(this.handleFormSubmit)} className="flex-column model-signup-wrapper">
+        { error && (<div><span style={{color: "#F44336"}}>{errorMessage}</span></div>) }
         { this.state.signup ? (
           <div className="flex-column">
             <FlatButton
@@ -98,7 +98,11 @@ class LoginSignupForm extends Component {
               backgroundColor="rgba(255, 255, 255, 0)"
               hoverColor="rgba(0, 0, 0, 0.1)"
               onTouchTap={()=>{
-                this.setState({signup: false})
+                this.setState({
+                  signup: false,
+                  error: false,
+                  errorMessage: ""
+                })
               }}
               />
             <Field
@@ -178,7 +182,11 @@ class LoginSignupForm extends Component {
               backgroundColor="rgba(255, 255, 255, 0)"
               hoverColor="rgba(0, 0, 0, 0.1)"
               onTouchTap={()=>{
-                this.setState({signup: true})
+                this.setState({
+                  signup: true,
+                  error: false,
+                  errorMessage: ""
+                })
               }}
               />
           </div>

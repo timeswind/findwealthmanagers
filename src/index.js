@@ -12,7 +12,7 @@ import IndexRoute from 'react-router/lib/IndexRoute';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
-import Raven from 'raven-js';
+// import Raven from 'raven-js';
 // import { IntlProvider } from 'react-intl';
 // global.Intl = require('intl');
 import injectTapEventPlugin from 'react-tap-event-plugin';
@@ -21,6 +21,7 @@ import localStore from 'store2';
 import App from './App';
 
 import { reducer as formReducer } from 'redux-form'
+import viewReducers from './redux/reducers/view';
 import authReducers from './redux/reducers/auth';
 import searchReducers from './redux/reducers/search';
 import listReducers from './redux/reducers/list';
@@ -31,7 +32,7 @@ import './index.css';
 
 import axios from 'axios'
 
-Raven.config('https://428f8ff22ea44869a1b6410cf83d7905@sentry.io/101570').install();
+// Raven.config('https://428f8ff22ea44869a1b6410cf83d7905@sentry.io/101570').install();
 
 const muiTheme = getMuiTheme({
   palette: {
@@ -44,6 +45,7 @@ const reactRouterMiddleware = routerMiddleware(browserHistory)
 
 const store = createStore(
   combineReducers({
+    view: viewReducers,
     form: formReducer,
     auth: authReducers,
     search: searchReducers,

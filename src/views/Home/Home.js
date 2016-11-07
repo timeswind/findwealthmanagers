@@ -1,18 +1,21 @@
 import React, { Component } from 'react';
 import Menu from 'material-ui/Menu';
+import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
 import Popover from 'material-ui/Popover';
 import SearchCard from '../../components/SearchCard/SearchCard';
 import MainFooter from '../../components/MainFooter/MainFooter';
 import FontIcon from 'material-ui/FontIcon';
+import IconButton from 'material-ui/IconButton';
 import FlatButton from 'material-ui/FlatButton';
 import TopWealthManagerCard from '../../components/TopWealthManagerCard/TopWealthManagerCard';
 import axios from 'axios';
-import * as AuthActions from '../../redux/actions/auth.js';
+import * as AuthActions from '../../redux/actions/auth';
+import * as ViewActions from '../../redux/actions/view';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
-
+import './Home.css'
 const headerWrapperStyle = {
   margin: "0 auto",
   maxWidth: "600px"
@@ -27,7 +30,7 @@ const TopWealthManagerCardStyle = {
 class Home extends Component {
   state = {
     userMenuOpen: false,
-    topManagers: []
+    topManagers: [],
   }
 
   componentWillMount() {
@@ -72,89 +75,103 @@ class Home extends Component {
     this.props.dispatch(push(path))
   }
   render() {
+    const { isLogin, listed } = this.props.auth
+    const { drawer } = this.props.view
+    const { actions } = this.props
     return (
       <div className="home">
         <div className="Home-App-header">
           <div className="home-navbar">
             <a className="nav-brand-text-white">WEALTHIE</a>
-            { this.props.auth.isLogin ? (
-              <div className="flex-row flex-center" style={{marginLeft: "auto"}}>
-                <div className="raleway">
-                  <div className="flex-row flex-center"
-                    onTouchTap={this.handleUserManuTouchTap}
-                    style={{cursor: "pointer", backgroundColor:"rgba(0, 0, 0, 0.5)", padding: "8px 16px", borderRadius: "3px"}}>
-                    <span>{this.props.auth.name}</span>
-                    <FontIcon
-                      className="material-icons"
-                      style={{fontSize: "20px", color: "#fff"}}>
-                      keyboard_arrow_down
-                    </FontIcon>
+            <span className="nav-item-home" onTouchTap={()=>{
+                window.location.replace("https://blog.wealthie.co");
+              }}>Blog</span>
+              { this.props.auth.isLogin ? (
+                <div className="flex-row flex-center" style={{marginLeft: "auto"}}>
+                  <div className="raleway">
+                    <div className="flex-row flex-center"
+                      onTouchTap={this.handleUserManuTouchTap}
+                      style={{cursor: "pointer", backgroundColor:"rgba(0, 0, 0, 0.5)", padding: "8px 16px", borderRadius: "3px"}}>
+                      <span>{this.props.auth.name}</span>
+                      <FontIcon
+                        className="material-icons"
+                        style={{fontSize: "20px", color: "#fff"}}>
+                        keyboard_arrow_down
+                      </FontIcon>
+                    </div>
+                    <Popover
+                      open={this.state.userMenuOpen}
+                      anchorEl={this.state.anchorEl}
+                      anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+                      targetOrigin={{horizontal: 'right', vertical: 'top'}}
+                      onRequestClose={this.handleRequestClose}
+                      >
+                      {
+                        this.props.auth.role !== 1 ? (
+                          <Menu>
+                            <MenuItem primaryText="Dashboard"
+                              onClick={()=>{
+                                this.routerPush('/dashboard')
+                                this.handleRequestClose()
+                              }}
+                              />
+                            <MenuItem primaryText="Client Book"
+                              onClick={()=>{
+                                this.routerPush('/dashboard/clients')
+                                this.handleRequestClose()
+                              }}
+                              />
+                            <MenuItem primaryText="Sign out"
+                              onClick={()=>{
+                                this.logout()
+                                this.handleRequestClose()
+                              }}
+                              />
+                          </Menu>
+                        ) : (
+                          <Menu>
+                            <MenuItem primaryText="Dashboard"
+                              onClick={()=>{
+                                this.routerPush('/dashboard')
+                                this.handleRequestClose()
+                              }}
+                              />
+                            <MenuItem primaryText="Sign out"
+                              onClick={()=>{
+                                this.logout()
+                                this.handleRequestClose()
+                              }}
+                              />
+                          </Menu>
+                        )
+                      }
+                    </Popover>
                   </div>
-                  <Popover
-                    open={this.state.userMenuOpen}
-                    anchorEl={this.state.anchorEl}
-                    anchorOrigin={{horizontal: 'right', vertical: 'top'}}
-                    targetOrigin={{horizontal: 'right', vertical: 'top'}}
-                    onRequestClose={this.handleRequestClose}
-                    >
-                    {
-                      this.props.auth.role !== 1 ? (
-                        <Menu>
-                          <MenuItem primaryText="Dashboard"
-                            onClick={()=>{
-                              this.routerPush('/dashboard')
-                              this.handleRequestClose()
-                            }}
-                            />
-                          <MenuItem primaryText="Client Book"
-                            onClick={()=>{
-                              this.routerPush('/dashboard/clients')
-                              this.handleRequestClose()
-                            }}
-                            />
-                          <MenuItem primaryText="Sign out"
-                            onClick={()=>{
-                              this.logout()
-                              this.handleRequestClose()
-                            }}
-                            />
-                        </Menu>
-                      ) : (
-                        <Menu>
-                          <MenuItem primaryText="Dashboard"
-                            onClick={()=>{
-                              this.routerPush('/dashboard')
-                              this.handleRequestClose()
-                            }}
-                            />
-                          <MenuItem primaryText="Sign out"
-                            onClick={()=>{
-                              this.logout()
-                              this.handleRequestClose()
-                            }}
-                            />
-                        </Menu>
-                      )
-                    }
-                  </Popover>
                 </div>
-              </div>
-            ) : (
-              <div className="flex-row" style={{marginLeft: "auto"}}>
-                <div className="flex-row flex-center login-signup-wrapper" style={{marginRight: "16px"}}>
+              ) : (
+                <div className="flex-row flex-center login-signup-wrapper" style={{marginRight: "16px", marginLeft: "auto"}}>
                   <FlatButton
                     label="Login/Signup"
-                    hoverColor="#2a8a2d"
-                    backgroundColor="#32b337"
+                    backgroundColor="#4CAF50"
+                    hoverColor="#388E3C"
                     style={{color: "#fff"}}
                     onTouchTap={() => {
                       this.routerPush('/login')
                     }}
                     />
                 </div>
+              )}
+              <IconButton className="home-nav-menu" onTouchTap={()=>{
+                  actions.setViewDrawerStatus(!drawer)
+                }}>
+                <FontIcon className="material-icons" color="#fff">menu</FontIcon>
+              </IconButton>
+            </div>
+            <div style={headerWrapperStyle} className="home-search-field">
+              { (!isLogin || !listed) && (
                 <FlatButton
-                  backgroundColor="rgba(0, 0, 0, 0.5)"
-                  hoverColor="rgba(0, 0, 0, 0.7)"
+                  backgroundColor="rgba(33, 150, 243, 1)"
+                  hoverColor="#1976d2"
                   rippleColor="rgba(0, 0, 0, 0.9)"
                   style={{color: "#fff"}}
                   label="GET LISTED TODAY"
@@ -162,69 +179,65 @@ class Home extends Component {
                     this.routerPush('/getlisted')
                   }}
                   />
-              </div>
-            )}
+              ) }
+              <h2 className="header-promot">Professional financial service for everyone, everywhere</h2>
+              <SearchCard path="home"></SearchCard>
+            </div>
           </div>
-          <div style={headerWrapperStyle} className="home-search-field">
-            <h2 className="header-promot">Professional financial service for everyone, everywhere</h2>
-            <SearchCard path="home"></SearchCard>
-          </div>
-        </div>
-        <div className="App-body">
-          <div className="g-background">
+          <div className="App-body">
+            <div className="g-background">
 
-            <div className="main-wrapper flex-column">
-
-              <div className="flex-row flex-wrap raleway" style={{padding: "16px 0"}}>
-                <div className="flex-column flex-33-d flex-center home-feature-card">
-                  <FontIcon
-                    className="material-icons"
-                    style={{fontSize: "50px"}}>
-                    search
-                  </FontIcon>
-                  <span style={{fontWeight: 600, fontSize: "26px"}}>Search</span>
-                  <p>Find Wealth Managers</p>
-                </div>
-                <div className="flex-column flex-33-d flex-center home-feature-card">
-                  <FontIcon
-                    className="material-icons"
-                    style={{fontSize: "50px"}}>
-                    check_circle
-                  </FontIcon>
-                  <span style={{fontWeight: 600, fontSize: "26px"}}>Review</span>
-                  <p>Compare Wealth Managers</p>
-                </div>
-                <div className="flex-column flex-33-d flex-center home-feature-card">
-                  <FontIcon
-                    className="material-icons"
-                    style={{fontSize: "50px"}}>
-                    message
-                  </FontIcon>
-                  <span style={{fontWeight: 600, fontSize: "26px"}}>Connect</span>
-                  <p>Contact Managers You Like</p>
+              <div className="main-wrapper flex-column">
+                <div className="flex-row flex-wrap raleway" style={{padding: "16px 0"}}>
+                  <div className="flex-column flex-33-d flex-center home-feature-card">
+                    <FontIcon
+                      className="material-icons"
+                      style={{fontSize: "50px"}}>
+                      search
+                    </FontIcon>
+                    <span style={{fontWeight: 600, fontSize: "26px"}}>Search</span>
+                    <p>Find Wealth Managers</p>
+                  </div>
+                  <div className="flex-column flex-33-d flex-center home-feature-card">
+                    <FontIcon
+                      className="material-icons"
+                      style={{fontSize: "50px"}}>
+                      check_circle
+                    </FontIcon>
+                    <span style={{fontWeight: 600, fontSize: "26px"}}>Review</span>
+                    <p>Compare Wealth Managers</p>
+                  </div>
+                  <div className="flex-column flex-33-d flex-center home-feature-card">
+                    <FontIcon
+                      className="material-icons"
+                      style={{fontSize: "50px"}}>
+                      message
+                    </FontIcon>
+                    <span style={{fontWeight: 600, fontSize: "26px"}}>Connect</span>
+                    <p>Contact Managers You Like</p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div style={{backgroundColor: "#fff"}}>
-            <div className="xl-wrapper flex-column">
-              <p className="home-headline raleway overline">Top Wealth Managers</p>
-              <div className="flex-row flex-wrap raleway" style={{padding: "16px 0"}}>
-                { this.state.topManagers.map((manager)=>{
-                  return (
-                    <div className="flex-column" style={TopWealthManagerCardStyle} key={manager._id} onTouchTap={()=>{
-                        this.routerPush('/p/' + manager._id)
-                      }}>
-                      <div style={{margin: "16px"}}>
-                        <TopWealthManagerCard
-                          managerName={manager.advisor.firstName + " " + manager.advisor.lastName}
-                          description={manager.brief}
-                          />
+            <div style={{backgroundColor: "#fff"}}>
+              <div className="xl-wrapper flex-column">
+                <p className="home-headline raleway overline">Top Wealth Managers</p>
+                <div className="flex-row flex-wrap raleway" style={{padding: "16px 0"}}>
+                  { this.state.topManagers.map((manager)=>{
+                    return (
+                      <div className="flex-column" style={TopWealthManagerCardStyle} key={manager._id} onTouchTap={()=>{
+                          this.routerPush('/p/' + manager._id)
+                        }}>
+                        <div style={{margin: "16px"}}>
+                          <TopWealthManagerCard
+                            managerName={manager.advisor.firstName + " " + manager.advisor.lastName}
+                            description={manager.brief}
+                            />
+                        </div>
                       </div>
-                    </div>
-                  )
-                })
-                 }
+                    )
+                  })
+                }
               </div>
             </div>
           </div>
@@ -250,16 +263,17 @@ class Home extends Component {
     );
   }
 }
-const mapStatesToProps = (state) => {
+const mapStatesToProps = (states) => {
   return {
-    auth: state.auth
+    auth: states.auth,
+    view: states.view
   };
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
     dispatch,
-    actions: bindActionCreators(AuthActions, dispatch)
+    actions: bindActionCreators(Object.assign({}, AuthActions, ViewActions), dispatch)
   };
 }
 
