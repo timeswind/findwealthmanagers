@@ -6,10 +6,9 @@ import { connect } from 'react-redux';
 import FlatButton from 'material-ui/FlatButton';
 import CategorySelector from '../../components/CategorySelector/CategorySelector';
 
-
 const validate = values => {
   const errors = {}
-  const requiredFields = [ 'name', 'phone', 'brief', 'email', 'categories' ]
+  const requiredFields = [ 'name', 'phone', 'brief', 'categories' ]
   requiredFields.forEach(field => {
     if (!values[ field ]) {
       errors[ field ] = 'Required'

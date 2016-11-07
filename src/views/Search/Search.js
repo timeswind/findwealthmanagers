@@ -96,7 +96,12 @@ class Search extends Component {
                           src="http://www.lovemarks.com/wp-content/uploads/profile-avatars/default-avatar-tech-guy.png"
                           size={100}
                           />
-                        <span style={{margin: "8px 0", fontSize: "20px", fontWeight: 600}}>{list.advisor.firstName + " " + list.advisor.lastName}</span>
+                        <span style={{margin: "8px 0", fontSize: "20px", fontWeight: 600}}>
+                          {
+                            !!list.name && list.name ||
+                            list.advisor.firstName + " " + list.advisor.lastName
+                          }
+                        </span>
                       </div>
                       <div className="flex-column" style={{flex: 70, borderLeft: "1px solid #ddd"}}>
                         <div className="flex-row flex-center raleway default-padding" style={{borderBottom: "1px solid #ddd"}}>
