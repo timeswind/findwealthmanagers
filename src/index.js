@@ -12,7 +12,8 @@ import IndexRoute from 'react-router/lib/IndexRoute';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
-// import Raven from 'raven-js';
+import Raven from 'raven-js';
+Raven.config('https://428f8ff22ea44869a1b6410cf83d7905@sentry.io/101570').install();
 // import { IntlProvider } from 'react-intl';
 // global.Intl = require('intl');
 import injectTapEventPlugin from 'react-tap-event-plugin';
@@ -21,6 +22,7 @@ import localStore from 'store2';
 import App from './App';
 
 import { reducer as formReducer } from 'redux-form'
+import internalReducers from './redux/reducers/internal';
 import viewReducers from './redux/reducers/view';
 import authReducers from './redux/reducers/auth';
 import searchReducers from './redux/reducers/search';
@@ -31,8 +33,6 @@ import clientbookReducers from './redux/reducers/clientbook';
 import './index.css';
 
 import axios from 'axios'
-
-// Raven.config('https://428f8ff22ea44869a1b6410cf83d7905@sentry.io/101570').install();
 
 const muiTheme = getMuiTheme({
   palette: {
@@ -45,14 +45,15 @@ const reactRouterMiddleware = routerMiddleware(browserHistory)
 
 const store = createStore(
   combineReducers({
-    view: viewReducers,
     form: formReducer,
+    routing: routerReducer,
+    internal: internalReducers,
+    view: viewReducers,
     auth: authReducers,
     search: searchReducers,
     list: listReducers,
     dashboard: dashboardReducers,
-    clientbook: clientbookReducers,
-    routing: routerReducer
+    clientbook: clientbookReducers
   }),
   window.devToolsExtension && window.devToolsExtension(),
   applyMiddleware(reactRouterMiddleware)
@@ -72,7 +73,6 @@ axios.interceptors.request.use(function (config) {
   }
   return config;
 }, function (error) {
-  // Do something with request error
   return Promise.reject(error);
 });
 
@@ -101,6 +101,11 @@ if (localStore.session.get("token") && localStore.session.get("email") && localS
     type: "SET_LOGIN_STATE",
     isLogin: true
   })
+  Raven.setUserContext({
+    name: localStore.session.get("name"),
+    email: localStore.session.get("email"),
+    id: localStore.session.get("id")
+  })
 } else {
   localStore.session(false);
   store.dispatch({
@@ -118,6 +123,23 @@ function requireAuthLogin(nextState, replace) {
   }
 }
 
+function requireAuthDashboard(nextState, replace) {
+  if (!store.getState().auth.isLogin || !store.getState().auth.role <= 3) {
+    if (store.getState().auth.role > 100) {
+      replace({
+        pathname: '/internal',
+        state: { nextPathname: nextState.location.pathname }
+      })
+    } else {
+      replace({
+        pathname: '/login',
+        state: { nextPathname: nextState.location.pathname }
+      })
+    }
+  }
+}
+
+
 function requireAuthAdvisor(nextState, replace) {
   if (!store.getState().auth.isLogin || store.getState().auth.role === 1) {
     replace({
@@ -127,10 +149,10 @@ function requireAuthAdvisor(nextState, replace) {
   }
 }
 
-function requireAuthBlogEditor(nextState, replace) {
-  if (!store.getState().auth.isLogin || !store.getState().auth.role !== 101) {
+function requireAuthInternal(nextState, replace) {
+  if (!store.getState().auth.isLogin || store.getState().auth.role !== 101) {
     replace({
-      pathname: '/siteblog'
+      pathname: '/login'
     })
   }
 }
@@ -197,7 +219,7 @@ const MUI = () => (
               })
             }}>
           </Route>
-          <Route path="/dashboard" onEnter={requireAuthLogin}>
+          <Route path="/dashboard" onEnter={requireAuthDashboard}>
             <IndexRoute getComponent={function(location, cb){
                 require.ensure([], (require) => {
                   cb(null, require('./views/Dashboard/Dashboard').default)
@@ -241,26 +263,15 @@ const MUI = () => (
               })
             }}>
           </Route>
-          <Route path="/siteblog">
+          <Route path="/internal" onEnter={requireAuthInternal}>
             <IndexRoute getComponent={function(location, cb){
                 require.ensure([], (require) => {
-                  cb(null, require('./views/Siteblog/Siteblog').default)
+                  cb(null, require('./views/Internal/ManagePublicInfo/ManagePublicInfoView').default)
                 })
               }}>
             </IndexRoute>
-            <Route path="new" onEnter={requireAuthBlogEditor} getComponent={function(location, cb){
-                require.ensure([], (require) => {
-                  cb(null, require('./views/Siteblog/NewSiteblog').default)
-                })
-              }}>
-            </Route>
-            <Route path=":id" getComponent={function(location, cb){
-                require.ensure([], (require) => {
-                  cb(null, require('./views/Siteblog/SiteblogDetail').default)
-                })
-              }}>
-            </Route>
           </Route>
+
         </Route>
       </Router>
     </Provider>

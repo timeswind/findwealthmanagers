@@ -15,9 +15,10 @@ class App extends Component {
     const { loginModel, isLogin } = this.props.auth
     const { drawer } = this.props.view
     const { actions } = this.props
+    const showNavBar = this.props.location.pathname !== '/' && this.props.location.pathname !== '/internal'
     return (
       <div>
-        {this.props.location.pathname !== '/' && (<Navbar path={this.props.location.pathname}></Navbar>)}
+        {showNavBar && (<Navbar path={this.props.location.pathname}></Navbar>)}
         {this.props.children}
         <Dialog
           title="Login"
@@ -38,17 +39,17 @@ class App extends Component {
           onRequestChange={(status) => actions.setViewDrawerStatus(status) }
           >
           { !isLogin && (
-            <MenuItem
-              onTouchTap={() => {
+            <MenuItem onTouchTap={() => {
                 this.routerPush('/login')
-              }}
-              >Login/Sign up</MenuItem>
+              }}>
+              Login/Sign up
+            </MenuItem>
           ) }
-          <MenuItem
-            onTouchTap={()=>{
+          <MenuItem onTouchTap={()=>{
               window.location.replace("https://blog.wealthie.co");
-            }}
-            >Blog</MenuItem>
+            }}>
+            Blog
+          </MenuItem>
         </Drawer>
       </div>
     );

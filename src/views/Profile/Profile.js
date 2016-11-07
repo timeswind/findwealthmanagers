@@ -41,7 +41,6 @@ class Profile extends Component {
     axios.get('/api/public/list?id=' + this.props.routeParams.id)
     .then(function (response) {
       var json = response.data
-      console.log(json)
       if (json.success === true) {
         if (json.listInfo) {
           if (json.listInfo.categories && json.listInfo.categories.length !== 0) {
@@ -52,13 +51,16 @@ class Profile extends Component {
             json.listInfo.categories = formattedCategories
           }
           actions.setListInfo(json.listInfo)
+
         }
         if (json.calendar) {
           actions.setListCalendar(json.calendar)
           self.updateCalendarData(json.calendar)
         }
-        if (self.props.auth.role === 1) {
-          self.getAppointmentsWithAdvisor(json.advisorInfo._id)
+        if (json.advisorInfo) {
+          if (self.props.auth.role === 1) {
+            self.getAppointmentsWithAdvisor(json.advisorInfo._id)
+          }
         }
       }
     })

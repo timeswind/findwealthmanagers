@@ -116,8 +116,6 @@ class DashboardView extends Component {
 
   verifyEmail() {
     const { actions } = this.props
-
-    var self = this
     actions.setVerifyEmailStatus("pending")
     axios.get('/api/protect/verify-email')
     .then(function(response) {

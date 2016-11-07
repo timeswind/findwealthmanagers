@@ -9,7 +9,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as AuthActions from '../../redux/actions/auth.js';
 import { push } from 'react-router-redux'
-
+import Raven from 'raven-js';
 class LoginView extends Component {
   state = {
     email: "",
@@ -67,8 +67,15 @@ class LoginView extends Component {
         localStore.session("name", json.name);
         localStore.session("email", json.email);
         localStore.session("role", json.role);
+        Raven.setUserContext({
+          name: json.name,
+          email: json.email,
+          id: json.id
+        })
         if (json.role !== 1) {
           dispatch(push('/dashboard'))
+        } else if (json.role === 101) {
+          dispatch(push('/internal'))
         } else {
           dispatch(push('/'))
         }
