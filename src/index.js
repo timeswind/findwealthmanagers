@@ -124,7 +124,7 @@ function requireAuthLogin(nextState, replace) {
 }
 
 function requireAuthDashboard(nextState, replace) {
-  if (!store.getState().auth.isLogin || !store.getState().auth.role <= 3) {
+  if (!store.getState().auth.isLogin || store.getState().auth.role > 3) {
     if (store.getState().auth.role > 100) {
       replace({
         pathname: '/internal',

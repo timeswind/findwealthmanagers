@@ -230,7 +230,10 @@ class Home extends Component {
                         }}>
                         <div style={{margin: "16px"}}>
                           <TopWealthManagerCard
-                            managerName={manager.advisor.firstName + " " + manager.advisor.lastName}
+                            managerName={
+                              !!manager.name && manager.name ||
+                              manager.advisor.firstName + " " + manager.advisor.lastName
+                            }
                             description={manager.brief}
                             />
                         </div>
