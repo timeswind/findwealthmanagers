@@ -1,17 +1,17 @@
 import React, { Component, PropTypes } from 'react';
-import { Card, CardTitle, CardText } from 'material-ui/Card';
+import { Card, CardTitle } from 'material-ui/Card';
 
 class TopWealthManagerCard extends Component {
   render() {
     return (
       <Card>
-        <div className="flex-row" style={{height: "200px"}}>
+        <div className="flex-row" style={{height: "200px", overflow: "hidden"}}>
           <img src={this.props.image} style={{width: "150px"}} alt=""></img>
-          <div>
+          <div style={{overflow: "hidden", marginBottom: 16}}>
             <CardTitle title={this.props.managerName} />
-            <CardText>
+            <p className="default-paragraph" style={{margin: "0 16px"}}>
               {this.props.description}
-            </CardText>
+            </p>
           </div>
 
         </div>
