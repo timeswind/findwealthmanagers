@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
+import { bindActionCreators } from 'redux';
+import axios from 'axios';
+import * as AuthActions from '../../redux/actions/auth';
 import { Field, FieldArray, reduxForm, change } from 'redux-form';
 import { TextField } from 'redux-form-material-ui';
 import AutoComplete from 'material-ui/AutoComplete';
 import { connect } from 'react-redux';
 import FlatButton from 'material-ui/FlatButton';
 import CategorySelector from '../../components/CategorySelector/CategorySelector';
+// var Dropzone = require('react-dropzone');
 
 const validate = values => {
   const errors = {}
@@ -44,6 +48,96 @@ class NewPublicAdvisorForm extends Component {
       this.setState({ selectCategories: nextProps.initialValues.categories });
     } else {
       this.setState({ selectCategories: [] });
+    }
+  }
+
+  onDrop (files) {
+    console.log(files)
+    console.log(this.state)
+    this.setState({
+      listPicFile: files[0]
+    })
+  }
+
+  uploadListPicFile () {
+    var listPicFile = this.state.listPicFile
+    console.log(listPicFile)
+    if (listPicFile) {
+      const { actions } = this.props
+      axios.get('/api/public/pic-token')
+      .then(function(response){
+        if (response.data.success && response.data.credentials) {
+          actions.setAliyunSTS(response.data.credentials)
+          axios.get('https://wealthie.oss-us-east-1.aliyuncs.com', {
+            headers: {
+              'accessKeyId': response.data.credentials.AccessKeyId,
+              'accessKeySecret': response.data.credentials.AccessKeySecret,
+              'securityToken': response.data.credentials.SecurityToken
+            }
+          }).then(function(response){
+            console.log(response)
+          })
+          // <Dropzone onDrop={(e) => {
+          //     this.onDrop(e)
+          //   }}>
+          //   <div>Try dropping some files here, or click to select files to upload.</div>
+          // </Dropzone>
+          // <FlatButton
+          //   label="UPLOAD PIC"
+          //   labelStyle={{color: "#FFF"}}
+          //   rippleColor="#B2DFDB"
+          //   backgroundColor="#FFC107"
+          //   hoverColor="#F57C00"
+          //   style={{marginTop: "16px", marginLeft: "16px"}}
+          //   onTouchTap={()=>{
+          //     this.uploadListPicFile()
+          //   }}
+          //   />
+          // var client = window.OSS.Wrapper({
+          //   accessKeyId: response.data.credentials.AccessKeyId,
+          //   accessKeySecret: response.data.credentials.AccessKeySecret,
+          //   securityToken: response.data.credentials.SecurityToken,
+          //   bucket: 'wealthie',
+          //   region: 'oss-us-east-1'
+          // });
+          // client.list().then(function (result) {
+          //   console.log('objects: %j', result.objects);
+          // })
+          // var oss = new ALY.OSS({
+          //   region: 'oss-us-east-1',
+          //   accessKeyId: response.data.credentials.AccessKeyId,
+          //   secretAccessKey: response.data.credentials.AccessKeySecret,
+          //   securityToken: response.data.credentials.SecurityToken,
+          //   bucket: 'wealthie',
+          //   app
+          // });
+          // console.log(oss)
+          // oss.putObject({
+          //   Bucket: 'wealthie',
+          //   Key: 'test',                 // 注意, Key 的值不能以 / 开头, 否则会返回错误.
+          //   Body: listPicFile,
+          //   AccessControlAllowOrigin: '',
+          //   ContentType: listPicFile.type,
+          //   CacheControl: 'no-cache',         // 参考: http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.9
+          //   ContentDisposition: '',           // 参考: http://www.w3.org/Protocols/rfc2616/rfc2616-sec19.html#sec19.5.1
+          //   ContentEncoding: 'utf-8',         // 参考: http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.11
+          //   ServerSideEncryption: 'AES256',
+          //   Expires: null                     // 参考: http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.21
+          // },
+          // function (err, data) {
+          //
+          //   if (err) {
+          //     console.log('error:', err);
+          //     return;
+          //   }
+          //
+          //   console.log('success:', data);
+          //
+          // });
+        } else {
+          window.alert('get pic-token fail')
+        }
+      })
     }
   }
 
@@ -176,61 +270,64 @@ class NewPublicAdvisorForm extends Component {
       </div>
     )
     return (
-      <form onSubmit={handleSubmit} className="flex-column">
-        <Field name="name" component={TextField} hintText="Name" floatingLabelText="Name"/>
-        <Field name="phone" component={TextField} hintText="Phone" floatingLabelText="Phone"/>
-        <Field name="email" component={TextField} hintText="Email for bussiness" floatingLabelText="Email for bussiness"/>
-        <Field name="affiliation" component={TextField} hintText="Affiliation" floatingLabelText="Affiliation"/>
-        <Field name="categories"component={renderCategorySelector}/>
-        <Field
-          name="brief"
-          multiLine={true}
-          fullWidth={true}
-          rows={3}
-          component={TextField}
-          hintText="Brief"
-          floatingLabelText="Brief"
-          />
-        <Field name="room" component={TextField} hintText="Room" floatingLabelText="Room"/>
-        <AutoComplete
-          hintText="Address"
-          floatingLabelText="Address"
-          openOnFocus={true}
-          fullWidth={true}
-          filter={(address)=> {
-            return address
-          }}
-          searchText={initialValues.address || ""}
-          dataSource={this.state.addressPredictions}
-          onUpdateInput={this.handleAddressUpdateInput}
-          onNewRequest={this.selectAddress}
-          ref="Address"
-          />
-        <FieldArray name="experience" component={renderExperience}/>
-        <div className="flex-row justify-right">
-          <FlatButton
-            label="RESET"
-            labelStyle={{color: "#FFF"}}
-            rippleColor="#B2DFDB"
-            backgroundColor="#FFC107"
-            hoverColor="#F57C00"
-            style={{marginTop: "16px", marginLeft: "16px"}}
-            onClick={()=>{
-              this.reset()
-            }}
-            />
-          <FlatButton
-            label="submit"
-            type="submit"
-            labelStyle={{color: "#FFF"}}
-            rippleColor="#B2DFDB"
-            backgroundColor="#2196F3"
-            hoverColor="#64B5F6"
-            style={{marginTop: "16px", marginLeft: "16px"}}
-            />
-        </div>
+      <div className="flex-column">
 
-      </form>
+        <form onSubmit={handleSubmit} className="flex-column">
+          <Field name="name" component={TextField} hintText="Name" floatingLabelText="Name"/>
+          <Field name="phone" component={TextField} hintText="Phone" floatingLabelText="Phone"/>
+          <Field name="email" component={TextField} hintText="Email for bussiness" floatingLabelText="Email for bussiness"/>
+          <Field name="affiliation" component={TextField} hintText="Affiliation" floatingLabelText="Affiliation"/>
+          <Field name="categories"component={renderCategorySelector}/>
+          <Field
+            name="brief"
+            multiLine={true}
+            fullWidth={true}
+            rows={3}
+            component={TextField}
+            hintText="Brief"
+            floatingLabelText="Brief"
+            />
+          <Field name="room" component={TextField} hintText="Room" floatingLabelText="Room"/>
+          <AutoComplete
+            hintText="Address"
+            floatingLabelText="Address"
+            openOnFocus={true}
+            fullWidth={true}
+            filter={(address)=> {
+              return address
+            }}
+            searchText={initialValues.address || ""}
+            dataSource={this.state.addressPredictions}
+            onUpdateInput={this.handleAddressUpdateInput}
+            onNewRequest={this.selectAddress}
+            ref="Address"
+            />
+          <FieldArray name="experience" component={renderExperience}/>
+          <div className="flex-row justify-right">
+            <FlatButton
+              label="RESET"
+              labelStyle={{color: "#FFF"}}
+              rippleColor="#B2DFDB"
+              backgroundColor="#FFC107"
+              hoverColor="#F57C00"
+              style={{marginTop: "16px", marginLeft: "16px"}}
+              onTouchTap={()=>{
+                this.reset()
+              }}
+              />
+            <FlatButton
+              label="submit"
+              type="submit"
+              labelStyle={{color: "#FFF"}}
+              rippleColor="#B2DFDB"
+              backgroundColor="#2196F3"
+              hoverColor="#64B5F6"
+              style={{marginTop: "16px", marginLeft: "16px"}}
+              />
+          </div>
+
+        </form>
+      </div>
     );
   }
 }
@@ -243,7 +340,8 @@ NewPublicAdvisorForm = reduxForm({
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    dispatch
+    dispatch,
+    actions: bindActionCreators(AuthActions, dispatch)
   };
 }
 

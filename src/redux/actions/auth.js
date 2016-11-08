@@ -10,7 +10,8 @@ import {
   LOGOUT,
   SET_EMAIL_VERIFIED_STATUS,
   SET_LISTED_STATUS,
-  SET_VERIFY_EMAIL_STATUS
+  SET_VERIFY_EMAIL_STATUS,
+  SET_ALIYUN_STS
 } from '../constants'
 
 export function showLoginModel() {
@@ -85,6 +86,13 @@ export function setVerifyEmailStatus(verifyEmailStatus) {
   return {
     type: SET_VERIFY_EMAIL_STATUS,
     verifyEmailStatus
+  }
+}
+
+export function setAliyunSTS(credentials) {
+  return {
+    type: SET_ALIYUN_STS,
+    credentials
   }
 }
 

@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
+import * as InternalActions from '../../../redux/actions/internal';
 import axios from 'axios';
 import { connect } from 'react-redux';
-import * as InternalActions from '../../../redux/actions/internal';
 import {List, ListItem} from 'material-ui/List';
 import FlatButton from 'material-ui/FlatButton';
 import NewPublicAdvisorForm from '../../../forms/NewPublicAdvisorForm/NewPublicAdvisorForm';
@@ -46,8 +46,8 @@ class ManagePublicInfoView extends Component {
     const { actions } = this.props
     const { publicAdvisors } = this.props.internal
     return (
-      <div className="flex-column">
-        <div className="left-panel-fix flex-column">
+      <div>
+        <div className="left-panel-fix">
           <div className="flex-column default-padding">
             <FlatButton
               label="List new advisor"
