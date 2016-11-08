@@ -559,7 +559,7 @@ class GetListed extends Component {
               <div>
                 <Stepper activeStep={stepIndex}>
                   <Step>
-                    <StepLabel>Collect information</StepLabel>
+                    <StepLabel>Information</StepLabel>
                   </Step>
                   <Step>
                     { this.props.auth.isLogin ? (
