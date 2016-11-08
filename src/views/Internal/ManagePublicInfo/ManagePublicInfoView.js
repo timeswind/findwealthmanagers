@@ -17,7 +17,6 @@ class ManagePublicInfoView extends Component {
 
   initAdvisorsData() {
     const { actions } = this.props
-    const { publicAdvisors } = this.props.internal
     axios.get('/api/internal/lists/unclaimed')
     .then((response) => {
       if (response.data && response.data.success && response.data.listInfo) {

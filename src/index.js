@@ -114,14 +114,14 @@ if (localStore.session.get("token") && localStore.session.get("email") && localS
   })
 }
 
-function requireAuthLogin(nextState, replace) {
-  if (!store.getState().auth.isLogin) {
-    replace({
-      pathname: '/login',
-      state: { nextPathname: nextState.location.pathname }
-    })
-  }
-}
+// function requireAuthLogin(nextState, replace) {
+//   if (!store.getState().auth.isLogin) {
+//     replace({
+//       pathname: '/login',
+//       state: { nextPathname: nextState.location.pathname }
+//     })
+//   }
+// }
 
 function requireAuthDashboard(nextState, replace) {
   if (!store.getState().auth.isLogin || store.getState().auth.role > 3) {

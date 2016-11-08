@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Field, FieldArray, reduxForm, change, reset } from 'redux-form';
+import { Field, FieldArray, reduxForm, change } from 'redux-form';
 import { TextField } from 'redux-form-material-ui';
 import AutoComplete from 'material-ui/AutoComplete';
 import { connect } from 'react-redux';
@@ -110,9 +110,16 @@ class NewPublicAdvisorForm extends Component {
     this.props.dispatch(change('newPublicAdvisor', 'categories', formattedCategories))
   }
 
+  reset() {
+    const { reset, dispatch } = this.props
+    reset()
+    dispatch(change('newPublicAdvisor', 'address', ''))
+    dispatch(change('newPublicAdvisor', 'loc', []))
+    this.props.initialValues.categories = []
+  }
+
   render() {
-    const { initialValues } = this.props
-    const { handleSubmit } = this.props
+    const { initialValues, handleSubmit } = this.props
     const renderCategorySelector = ({ input, label, type, meta: { touched, error } }) => (
       <div>
         <CategorySelector onSelect={this.onCategorySelect} initialValues={this.state.selectCategories}></CategorySelector>
@@ -197,17 +204,10 @@ class NewPublicAdvisorForm extends Component {
           dataSource={this.state.addressPredictions}
           onUpdateInput={this.handleAddressUpdateInput}
           onNewRequest={this.selectAddress}
+          ref="Address"
           />
         <FieldArray name="experience" component={renderExperience}/>
         <div className="flex-row justify-right">
-
-          <FlatButton
-            label="cancle"
-            style={{marginTop: "16px", marginLeft: "16px"}}
-            onClick={()=>{
-              this.props.handleCancle()
-            }}
-            />
           <FlatButton
             label="RESET"
             labelStyle={{color: "#FFF"}}
@@ -216,7 +216,7 @@ class NewPublicAdvisorForm extends Component {
             hoverColor="#F57C00"
             style={{marginTop: "16px", marginLeft: "16px"}}
             onClick={()=>{
-              this.props.dispatch(reset('newPublicAdvisor'))
+              this.reset()
             }}
             />
           <FlatButton

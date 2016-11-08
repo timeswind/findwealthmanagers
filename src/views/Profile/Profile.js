@@ -230,9 +230,9 @@ class Profile extends Component {
   }
 
   changeCalendarView(newCalendarView) {
-    const { actions } = this.props
+    // const { actions } = this.props
     const { calendar, calendarView } = this.props.list
-    var newSchedule
+    // var newSchedule
     if (newCalendarView !== calendarView) {
       if (newCalendarView === 'agenda') {
         if (calendar && calendar.available) {

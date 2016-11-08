@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-// import { Card } from 'material-ui/Card';
-// import FlatButton from 'material-ui/FlatButton';
 import Avatar from 'material-ui/Avatar';
 import FontIcon from 'material-ui/FontIcon';
 import MainFooter from '../../components/MainFooter/MainFooter'
@@ -98,7 +96,7 @@ class Search extends Component {
                           />
                         <span style={{margin: "8px 0", fontSize: "20px", fontWeight: 600}}>
                           {
-                            !!list.name && list.name ||
+                            (!!list.name && list.name) ||
                             list.advisor.firstName + " " + list.advisor.lastName
                           }
                         </span>

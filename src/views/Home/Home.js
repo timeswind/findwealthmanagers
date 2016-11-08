@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Menu from 'material-ui/Menu';
-import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
 import Popover from 'material-ui/Popover';
 import SearchCard from '../../components/SearchCard/SearchCard';
@@ -231,7 +230,7 @@ class Home extends Component {
                         <div style={{margin: "16px"}}>
                           <TopWealthManagerCard
                             managerName={
-                              !!manager.name && manager.name ||
+                              (!!manager.name && manager.name) ||
                               manager.advisor.firstName + " " + manager.advisor.lastName
                             }
                             description={manager.brief}

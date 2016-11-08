@@ -3,6 +3,7 @@ import Dialog from 'material-ui/Dialog';
 import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
 import { connect } from 'react-redux';
+import { push } from 'react-router-redux'
 import * as AuthActions from './redux/actions/auth';
 import * as ViewActions from './redux/actions/view';
 import { bindActionCreators } from 'redux';
@@ -14,7 +15,7 @@ class App extends Component {
   render() {
     const { loginModel, isLogin } = this.props.auth
     const { drawer } = this.props.view
-    const { actions } = this.props
+    const { actions, dispatch } = this.props
     const showNavBar = this.props.location.pathname !== '/' && this.props.location.pathname !== '/internal'
     return (
       <div>
@@ -24,7 +25,7 @@ class App extends Component {
           title="Login"
           modal={false}
           autoScrollBodyContent={true}
-          open={this.props.auth.loginModel}
+          open={loginModel}
           onRequestClose={()=>{
             actions.hideLoginModel()
           }}
@@ -40,7 +41,8 @@ class App extends Component {
           >
           { !isLogin && (
             <MenuItem onTouchTap={() => {
-                this.routerPush('/login')
+                dispatch(push('/login'))
+                actions.setViewDrawerStatus(false)
               }}>
               Login/Sign up
             </MenuItem>
@@ -65,6 +67,7 @@ App = connect(
   },
   dispatch => {
     return {
+      dispatch,
       actions: bindActionCreators(Object.assign({}, AuthActions, ViewActions), dispatch)
     }
   }

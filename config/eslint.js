@@ -125,7 +125,7 @@ module.exports = {
     'no-useless-computed-key': 'warn',
     'no-useless-concat': 'warn',
     'no-useless-constructor': 'warn',
-    'no-useless-escape': 'warn',
+    'no-useless-escape': 'off',
     'no-useless-rename': ['warn', {
       ignoreDestructuring: false,
       ignoreImport: false,
