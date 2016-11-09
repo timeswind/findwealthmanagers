@@ -20,12 +20,6 @@ const headerWrapperStyle = {
   maxWidth: "600px"
 }
 
-const TopWealthManagerCardStyle = {
-  flex: "50 1 50%",
-  cursor: "pointer"
-}
-
-
 class Home extends Component {
   state = {
     userMenuOpen: false,
@@ -221,10 +215,10 @@ class Home extends Component {
             <div style={{backgroundColor: "#fff"}}>
               <div className="xl-wrapper flex-column">
                 <p className="home-headline raleway overline">Top Wealth Managers</p>
-                <div className="flex-row flex-wrap raleway" style={{padding: "16px 0"}}>
+                <div className="flex-row home-top-managers raleway">
                   { this.state.topManagers.map((manager)=>{
                     return (
-                      <div className="flex-column" style={TopWealthManagerCardStyle} key={manager._id} onTouchTap={()=>{
+                      <div className="flex-column home-top-manager" key={manager._id} onTouchTap={()=>{
                           this.routerPush('/p/' + manager._id)
                         }}>
                         <div style={{margin: "16px"}}>
