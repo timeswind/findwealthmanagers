@@ -54,17 +54,11 @@
   .home-top-managers {
     display: flex;
     flex-direction: row;
-  }
-  .home-top-manager {
-    flex-wrap: wrap;
-    -webkit-box-flex: 1;
-    -ms-flex-positive: 1;
-    flex-grow: 1;
-    -ms-flex-preferred-size: 0;
-    flex-basis: 0;
-    max-width: 100%;
     -webkit-flex: 1;
     flex-wrap: wrap;
+  }
+  .home-top-manager {
+    flex: 1 1 30%;
   }
   .login-signup-wrapper {
     display: flex;
@@ -79,17 +73,11 @@
   .home-top-managers {
     display: flex;
     flex-direction: row;
-  }
-  .home-top-manager {
-    flex-wrap: wrap;
-    -webkit-box-flex: 1;
-    -ms-flex-positive: 1;
-    flex-grow: 1;
-    -ms-flex-preferred-size: 0;
-    flex-basis: 0;
-    max-width: 100%;
     -webkit-flex: 1;
     flex-wrap: wrap;
+  }
+  .home-top-manager {
+    flex: 1 1 30%;
   }
   .login-signup-wrapper {
     display: flex;
