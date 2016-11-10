@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Dialog from 'material-ui/Dialog';
 import Drawer from 'material-ui/Drawer';
+// import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux'
@@ -13,7 +14,7 @@ import './App.css';
 
 class App extends Component {
   render() {
-    const { loginModel, isLogin } = this.props.auth
+    const { loginModel, isLogin, role } = this.props.auth
     const { drawer } = this.props.view
     const { actions, dispatch } = this.props
     const showNavBar = this.props.location.pathname !== '/' && this.props.location.pathname !== '/internal'
@@ -39,19 +40,53 @@ class App extends Component {
           open={drawer}
           onRequestChange={(status) => actions.setViewDrawerStatus(status) }
           >
-          { !isLogin && (
+          <MenuItem onTouchTap={()=>{
+              var win = window.open('https://blog.wealthie.co', '_blank')
+              win.focus()
+            }}>
+            Blog
+          </MenuItem>
+          { isLogin ? (
+            <div>
+              {(role === 1 || role === 2 || role === 3) && (
+                <MenuItem primaryText="Dashboard"
+                  onClick={()=>{
+                    dispatch(push('/dashboard'))
+                    actions.setViewDrawerStatus(false)
+                  }}
+                  />
+              )}
+              {(role === 2 || role === 3) && (
+                <MenuItem primaryText="Client Book"
+                  onClick={()=>{
+                    dispatch(push('/dashboard/clients'))
+                    actions.setViewDrawerStatus(false)
+                  }}
+                  />
+              )}
+              {(role === 101) && (
+                <MenuItem primaryText="Manage"
+                  onClick={()=>{
+                    dispatch(push('/internal'))
+                    actions.setViewDrawerStatus(false)
+                  }}
+                  />
+              )}
+              <MenuItem primaryText="Sign out"
+                onClick={()=>{
+                  this.logout()
+                  actions.setViewDrawerStatus(false)
+                }}
+                />
+            </div>
+          ) : (
             <MenuItem onTouchTap={() => {
                 dispatch(push('/login'))
                 actions.setViewDrawerStatus(false)
               }}>
               Login/Sign up
             </MenuItem>
-          ) }
-          <MenuItem onTouchTap={()=>{
-              window.location.replace("https://blog.wealthie.co");
-            }}>
-            Blog
-          </MenuItem>
+          )}
         </Drawer>
       </div>
     );

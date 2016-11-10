@@ -77,11 +77,12 @@ class Home extends Component {
           <div className="home-navbar">
             <a className="nav-brand-text-white">WEALTHIE</a>
             <span className="nav-item-home" onTouchTap={()=>{
-                window.location.replace("https://blog.wealthie.co");
+                var win = window.open('https://blog.wealthie.co', '_blank')
+                win.focus()
               }}>Blog</span>
-              { this.props.auth.isLogin ? (
-                <div className="flex-row flex-center" style={{marginLeft: "auto"}}>
-                  <div className="raleway">
+              <div className="login-signup-wrapper"  style={{marginLeft: "auto"}}>
+                { isLogin ? (
+                  <div className="flex-row flex-center raleway">
                     <div className="flex-row flex-center"
                       onTouchTap={this.handleUserManuTouchTap}
                       style={{cursor: "pointer", backgroundColor:"rgba(0, 0, 0, 0.5)", padding: "8px 16px", borderRadius: "3px"}}>
@@ -140,20 +141,20 @@ class Home extends Component {
                       }
                     </Popover>
                   </div>
-                </div>
-              ) : (
-                <div className="flex-row flex-center login-signup-wrapper" style={{marginRight: "16px", marginLeft: "auto"}}>
-                  <FlatButton
-                    label="Login/Signup"
-                    backgroundColor="#4CAF50"
-                    hoverColor="#388E3C"
-                    style={{color: "#fff"}}
-                    onTouchTap={() => {
-                      this.routerPush('/login')
-                    }}
-                    />
-                </div>
-              )}
+                ) : (
+                  <div className="flex-row flex-center" style={{marginRight: "16px"}}>
+                    <FlatButton
+                      label="Login/Signup"
+                      backgroundColor="#4CAF50"
+                      hoverColor="#388E3C"
+                      style={{color: "#fff"}}
+                      onTouchTap={() => {
+                        this.routerPush('/login')
+                      }}
+                      />
+                  </div>
+                )}
+              </div>
               <IconButton className="home-nav-menu" onTouchTap={()=>{
                   actions.setViewDrawerStatus(!drawer)
                 }}>

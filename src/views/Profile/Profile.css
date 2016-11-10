@@ -2,17 +2,46 @@
   width: 100%;
   background: #fff;
   padding: 32px 0;
-  border-bottom: 1px solid #ddd;
+}
+
+.p-tabs-inner-wrapper > div > div:nth-child(1), .p-tabs-inner-wrapper > div > div:nth-child(2) {
+  max-width: 600px;
+  margin: 0 auto
+}
+
+.p-header-makeappointment {
+  display: flex;
+  margin-top: 16px;
+  display: flex;
+}
+
+.profile-info-icon {
+  margin-right: 8px;
+  color: #666 !important;
 }
 
 .profile-body {
   padding: 0 0 32px 0
 }
 
+.p-categories-wrapper {
+  background-color: #fff;
+  padding: 0 16px
+}
+
 .p-categories {
-  padding: 16px;
+  padding: 16px 0;
   background: #fff;
   border-bottom: 1px solid #ddd;
+  max-width: 600px;
+  margin: 0 auto
+}
+
+.p-category-label {
+  padding: 8px 16px 8px 16px;
+  border-radius: 3px;
+  background: #ddd;
+  margin: 8px 8px 8px 0;
 }
 
 .p-tabs-outter-wrapper {
@@ -26,7 +55,7 @@
   width: 100%;
   background: #fff;
   height: 48px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.09);
+  box-shadow: 0 2px 3px rgba(0,0,0,0.09);
 }
 
 .p-tab-wrapper {
@@ -42,14 +71,6 @@
 .p-tabs-inner-wrapper {
   margin: 0 auto;
 }
-
-.p-category-label {
-  padding: 8px 16px;
-  border-radius: 3px;
-  background: #ddd;
-  margin: 8px;
-}
-
 
 .weekday {
   position: relative;
@@ -166,6 +187,10 @@
   .p-h-info .name {
     text-align: center;
   }
+  .p-header-makeappointment {
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 /* Extra Small Devices, Phones */
@@ -182,6 +207,10 @@
   }
   .p-h-info .name {
     text-align: center;
+  }
+  .p-header-makeappointment {
+    align-items: center;
+    justify-content: center;
   }
 }
 
@@ -200,6 +229,10 @@
   .p-h-info .name {
     text-align: center;
   }
+  .p-header-makeappointment {
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 /* Medium Devices, Desktops */
@@ -217,6 +250,10 @@
   .p-h-info .name {
     text-align: left;
   }
+  .p-header-makeappointment {
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
 }
 
 /* Large Devices, Wide Screens */
@@ -233,5 +270,9 @@
   }
   .p-h-info .name {
     text-align: left;
+  }
+  .p-header-makeappointment {
+    align-items: flex-start;
+    justify-content: flex-start;
   }
 }
