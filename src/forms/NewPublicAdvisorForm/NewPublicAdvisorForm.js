@@ -35,7 +35,8 @@ class NewPublicAdvisorForm extends Component {
     }
     this.state = {
       addressPredictions: [],
-      selectCategories: selectCategories
+      selectCategories: selectCategories,
+      submitType: 'Create'
     };
     this.AddressAutoCompleteService = null
     this.geocoder = null
@@ -45,9 +46,9 @@ class NewPublicAdvisorForm extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.initialValues && nextProps.initialValues.categories) {
-      this.setState({ selectCategories: nextProps.initialValues.categories });
+      this.setState({ selectCategories: nextProps.initialValues.categories, submitType: 'Update' });
     } else {
-      this.setState({ selectCategories: [] });
+      this.setState({ selectCategories: [], submitType: 'Create' });
     }
   }
 
@@ -329,7 +330,7 @@ class NewPublicAdvisorForm extends Component {
               }}
               />
             <FlatButton
-              label="submit"
+              label={this.state.submitType}
               type="submit"
               labelStyle={{color: "#FFF"}}
               rippleColor="#B2DFDB"

@@ -175,6 +175,10 @@
   font-family: 'Noto Sans', sans-serif;
 }
 
+.Noto {
+  font-family: 'Noto Sans', sans-serif;
+}
+
 .default-padding {
   padding: 16px
 }
@@ -355,4 +359,46 @@
 .right-panel {
   min-height: 400px;
   padding-left: 512px;
+}
+
+/*==========  Mobile First Method  ==========*/
+
+/* Custom, iPhone Retina */
+@media only screen and (min-width : 320px) {
+  .r-flex-row {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+/* Extra Small Devices, Phones */
+@media only screen and (min-width : 480px) {
+  .r-flex-row {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+/* Small Devices, Tablets */
+@media only screen and (min-width : 768px) {
+  .r-flex-row {
+    display: flex;
+    flex-direction: row;
+  }
+}
+
+/* Medium Devices, Desktops */
+@media only screen and (min-width : 992px) {
+  .r-flex-row {
+    display: flex;
+    flex-direction: row;
+  }
+}
+
+/* Large Devices, Wide Screens */
+@media only screen and (min-width : 1200px) {
+  .r-flex-row {
+    display: flex;
+    flex-direction: row;
+  }
 }
