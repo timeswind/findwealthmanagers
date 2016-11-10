@@ -15,10 +15,6 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 import './Home.css'
-const headerWrapperStyle = {
-  margin: "0 auto",
-  maxWidth: "600px"
-}
 
 class Home extends Component {
   state = {
@@ -161,7 +157,7 @@ class Home extends Component {
                 <FontIcon className="material-icons" color="#fff">menu</FontIcon>
               </IconButton>
             </div>
-            <div style={headerWrapperStyle} className="home-search-field">
+            <div className="home-search-field">
               { (!isLogin || !listed) && (
                 <FlatButton
                   backgroundColor="rgba(33, 150, 243, 1)"

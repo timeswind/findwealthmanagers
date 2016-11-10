@@ -213,7 +213,7 @@ class NewPublicAdvisorForm extends Component {
   }
 
   render() {
-    const { initialValues, handleSubmit } = this.props
+    const { initialValues, handleSubmit, handleListDelete } = this.props
     const renderCategorySelector = ({ input, label, type, meta: { touched, error } }) => (
       <div>
         <CategorySelector onSelect={this.onCategorySelect} initialValues={this.state.selectCategories}></CategorySelector>
@@ -304,6 +304,19 @@ class NewPublicAdvisorForm extends Component {
             />
           <FieldArray name="experience" component={renderExperience}/>
           <div className="flex-row justify-right">
+            {initialValues._id && (
+              <FlatButton
+                label="DELETE"
+                labelStyle={{color: "#FFF"}}
+                rippleColor="#B2DFDB"
+                backgroundColor="#F44336"
+                hoverColor="#E57373"
+                style={{marginTop: "16px", marginLeft: "16px"}}
+                onTouchTap={()=>{
+                  handleListDelete(initialValues._id)
+                }}
+                />
+            )}
             <FlatButton
               label="RESET"
               labelStyle={{color: "#FFF"}}

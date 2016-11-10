@@ -1,3 +1,30 @@
+.nav-item-home {
+  font-family: "Raleway";
+  font-size: 16px;
+  text-shadow: 1px 1px 1px #000;
+  padding: 4px 16px;
+  cursor: pointer;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.4);
+  margin-left: 16px;
+  color: #fff
+}
+
+.nav-item-home:hover {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.nav-item-home:active {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.home-search-field {
+  max-width: 600px;
+  margin: 0 auto;
+}
+.home-top-manager {
+  cursor: pointer;
+}
 /*==========  Mobile First Method  ==========*/
 .home-nav-menu {
   border-radius: 3px;

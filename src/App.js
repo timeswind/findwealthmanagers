@@ -80,12 +80,20 @@ class App extends Component {
                 />
             </div>
           ) : (
-            <MenuItem onTouchTap={() => {
-                dispatch(push('/login'))
-                actions.setViewDrawerStatus(false)
-              }}>
-              Login/Sign up
-            </MenuItem>
+            <div>
+              <MenuItem onTouchTap={() => {
+                  dispatch(push('/login'))
+                  actions.setViewDrawerStatus(false)
+                }}>
+                Login/Sign up
+              </MenuItem>
+              <MenuItem onTouchTap={() => {
+                  dispatch(push('/getlisted'))
+                  actions.setViewDrawerStatus(false)
+                }}>
+                Get Listed
+              </MenuItem>
+            </div>
           )}
         </Drawer>
       </div>

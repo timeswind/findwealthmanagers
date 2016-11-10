@@ -1,0 +1,74 @@
+.nav-item {
+  font-family: "Raleway";
+  font-size: 16px;
+  padding: 4px 16px;
+  cursor: pointer;
+  border-radius: 3px;
+  background: rgb(83, 104, 128);
+  margin-left: 16px;
+  color: #fff
+}
+
+.nav-item:hover {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.nav-item:active {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.nav-menu {
+  border-radius: 3px;
+  margin-left: auto !important
+}
+
+@media only screen and (min-width : 320px) {
+  .nav-menu {
+
+  }
+  .login-signup-wrapper {
+    display: none;
+  }
+}
+
+/* Extra Small Devices, Phones */
+@media only screen and (min-width : 480px) {
+  .nav-menu {
+
+  }
+  .login-signup-wrapper {
+    display: none
+  }
+}
+
+/* Small Devices, Tablets */
+@media only screen and (min-width : 768px) {
+  .-nav-menu {
+
+  }
+  .login-signup-wrapper {
+    display: none
+  }
+}
+
+/* Medium Devices, Desktops */
+@media only screen and (min-width : 992px) {
+  .nav-menu {
+    display: none !important
+  }
+  .login-signup-wrapper {
+    display: flex;
+    margin-left: auto;
+  }
+}
+
+/* Large Devices, Wide Screens */
+@media only screen and (min-width : 1200px) {
+  .nav-menu {
+    display: none !important
+  }
+  .login-signup-wrapper {
+    display: flex;
+    margin-left: auto;
+  }
+}

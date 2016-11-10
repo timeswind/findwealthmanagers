@@ -40,8 +40,21 @@ class ManagePublicInfoView extends Component {
         self.initAdvisorsData()
       })
     }
-
   }
+
+  handleListDelete = (id) => {
+    var self = this
+    if (id) {
+      axios.delete('/api/internal/lists/unclaimed?id=' + id)
+      .then((response) => {
+        if (response.data && response.data.success) {
+          self.setState({selectedAdvisor: {}})
+          self.initAdvisorsData()
+        }
+      })
+    }
+  }
+
   render() {
     const { actions } = this.props
     const { publicAdvisors } = this.props.internal
@@ -72,7 +85,7 @@ class ManagePublicInfoView extends Component {
         </div>
         <div className="right-panel" style={{margin: "0 16px"}}>
           <div className="light-card default-padding">
-            <NewPublicAdvisorForm onSubmit={this.handleFormSubmit} initialValues={this.state.selectedAdvisor} enableReinitialize={true}></NewPublicAdvisorForm>
+            <NewPublicAdvisorForm onSubmit={this.handleFormSubmit} initialValues={this.state.selectedAdvisor} enableReinitialize={true} handleListDelete={this.handleListDelete}></NewPublicAdvisorForm>
           </div>
         </div>
       </div>
