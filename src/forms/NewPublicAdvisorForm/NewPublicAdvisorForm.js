@@ -8,6 +8,7 @@ import AutoComplete from 'material-ui/AutoComplete';
 import { connect } from 'react-redux';
 import FlatButton from 'material-ui/FlatButton';
 import CategorySelector from '../../components/CategorySelector/CategorySelector';
+import moment from 'moment';
 // var Dropzone = require('react-dropzone');
 
 const validate = values => {
@@ -61,84 +62,37 @@ class NewPublicAdvisorForm extends Component {
   }
 
   uploadListPicFile () {
+    const { auth } = this.props
+    const ossTokenExpires = auth.aliyunOSS.expires
     var listPicFile = this.state.listPicFile
     console.log(listPicFile)
     if (listPicFile) {
       const { actions } = this.props
-      axios.get('/api/public/pic-token')
-      .then(function(response){
-        if (response.data.success && response.data.credentials) {
-          actions.setAliyunSTS(response.data.credentials)
-          axios.get('https://wealthie.oss-us-east-1.aliyuncs.com', {
-            headers: {
-              'accessKeyId': response.data.credentials.AccessKeyId,
-              'accessKeySecret': response.data.credentials.AccessKeySecret,
-              'securityToken': response.data.credentials.SecurityToken
-            }
-          }).then(function(response){
-            console.log(response)
-          })
-          // <Dropzone onDrop={(e) => {
-          //     this.onDrop(e)
-          //   }}>
-          //   <div>Try dropping some files here, or click to select files to upload.</div>
-          // </Dropzone>
-          // <FlatButton
-          //   label="UPLOAD PIC"
-          //   labelStyle={{color: "#FFF"}}
-          //   rippleColor="#B2DFDB"
-          //   backgroundColor="#FFC107"
-          //   hoverColor="#F57C00"
-          //   style={{marginTop: "16px", marginLeft: "16px"}}
-          //   onTouchTap={()=>{
-          //     this.uploadListPicFile()
-          //   }}
-          //   />
-          // var client = window.OSS.Wrapper({
-          //   accessKeyId: response.data.credentials.AccessKeyId,
-          //   accessKeySecret: response.data.credentials.AccessKeySecret,
-          //   securityToken: response.data.credentials.SecurityToken,
-          //   bucket: 'wealthie',
-          //   region: 'oss-us-east-1'
-          // });
-          // client.list().then(function (result) {
-          //   console.log('objects: %j', result.objects);
-          // })
-          // var oss = new ALY.OSS({
-          //   region: 'oss-us-east-1',
-          //   accessKeyId: response.data.credentials.AccessKeyId,
-          //   secretAccessKey: response.data.credentials.AccessKeySecret,
-          //   securityToken: response.data.credentials.SecurityToken,
-          //   bucket: 'wealthie',
-          //   app
-          // });
-          // console.log(oss)
-          // oss.putObject({
-          //   Bucket: 'wealthie',
-          //   Key: 'test',                 // 注意, Key 的值不能以 / 开头, 否则会返回错误.
-          //   Body: listPicFile,
-          //   AccessControlAllowOrigin: '',
-          //   ContentType: listPicFile.type,
-          //   CacheControl: 'no-cache',         // 参考: http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.9
-          //   ContentDisposition: '',           // 参考: http://www.w3.org/Protocols/rfc2616/rfc2616-sec19.html#sec19.5.1
-          //   ContentEncoding: 'utf-8',         // 参考: http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.11
-          //   ServerSideEncryption: 'AES256',
-          //   Expires: null                     // 参考: http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.21
-          // },
-          // function (err, data) {
-          //
-          //   if (err) {
-          //     console.log('error:', err);
-          //     return;
-          //   }
-          //
-          //   console.log('success:', data);
-          //
-          // });
-        } else {
-          window.alert('get pic-token fail')
-        }
-      })
+      if (ossTokenExpires && (new Date() / 1000) < ossTokenExpires) {
+        axios.post('https://wealthie.oss-us-east-1.aliyuncs.com?OSSAccessKeyId=' + auth.aliyunOSS.AccessKeyId + "&Expires=" + auth.aliyunOSS.expires + '&Signature=' + auth.aliyunOSS.signature, listPicFile)
+        .then((response)=>{
+          console.log(response)
+        })
+      } else {
+        axios.get('/api/public/pic-token')
+        .then(function(response){
+          if (response.data.success && response.data.expires && response.data.AccessKeyId && response.data.signature) {
+            actions.setAliyunOSS({
+              expires: response.data.expires,
+              AccessKeyId: response.data.AccessKeyId,
+              signature: response.data.signature
+            })
+
+            axios.post('https://wealthie.oss-us-east-1.aliyuncs.com/' + listPicFile.name + '/?OSSAccessKeyId=' + response.data.AccessKeyId + "&Expires=" + response.data.expires + '&Signature=' + response.data.signature, listPicFile)
+            .then((response)=>{
+              console.log(response)
+            })
+
+          } else {
+            window.alert('get pic-token fail')
+          }
+        })
+      }
     }
   }
 
@@ -151,7 +105,7 @@ class NewPublicAdvisorForm extends Component {
       if (status === window.google.maps.GeocoderStatus.OK) {
         let longitude = results[0].geometry.location.lng()
         let latitude = results[0].geometry.location.lat()
-        let loc = [longitude, latitude] //getjson format [ lng, lat ]
+        let loc = [longitude, latitude]
         self.props.dispatch(change('newPublicAdvisor', 'loc', loc))
       } else {
         console.log("Geocode was not successful for the following reason: " + status);
@@ -206,12 +160,29 @@ class NewPublicAdvisorForm extends Component {
   }
 
   reset() {
-    const { reset, dispatch } = this.props
+    const { reset, dispatch, } = this.props
     reset()
     dispatch(change('newPublicAdvisor', 'address', ''))
     dispatch(change('newPublicAdvisor', 'loc', []))
     this.props.initialValues.categories = []
   }
+
+  // <Dropzone onDrop={(e) => {
+  //     this.onDrop(e)
+  //   }}>
+  //   <div>Try dropping some files here, or click to select files to upload.</div>
+  // </Dropzone>
+  // <FlatButton
+  //   label="UPLOAD PIC"
+  //   labelStyle={{color: "#FFF"}}
+  //   rippleColor="#B2DFDB"
+  //   backgroundColor="#FFC107"
+  //   hoverColor="#F57C00"
+  //   style={{marginTop: "16px", marginLeft: "16px"}}
+  //   onTouchTap={()=>{
+  //     this.uploadListPicFile()
+  //   }}
+  //   />
 
   render() {
     const { initialValues, handleSubmit, handleListDelete } = this.props
@@ -272,6 +243,12 @@ class NewPublicAdvisorForm extends Component {
     )
     return (
       <div className="flex-column">
+        {(this.props.initialValues && this.props.initialValues.listBy && this.props.initialValues.listBy.firstName) && (
+          <div className="flex-column">
+            <span style={{color: "#3F51B5"}}>created by {this.props.initialValues.listBy.firstName}</span>
+            <span style={{color: "#aaa", marginTop: 8}}>update: {moment(this.props.initialValues.updated_at).calendar()}</span>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="flex-column">
           <Field name="name" component={TextField} hintText="Name" floatingLabelText="Name"/>
@@ -352,6 +329,12 @@ NewPublicAdvisorForm = reduxForm({
   validate
 })(NewPublicAdvisorForm);
 
+const mapStatesToProps = (states) => {
+  return {
+    auth: states.auth
+  };
+}
+
 const mapDispatchToProps = (dispatch) => {
   return {
     dispatch,
@@ -359,4 +342,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 }
 
-export default connect(null, mapDispatchToProps)(NewPublicAdvisorForm);
+export default connect(mapStatesToProps, mapDispatchToProps)(NewPublicAdvisorForm);

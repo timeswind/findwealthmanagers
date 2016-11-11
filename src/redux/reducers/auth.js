@@ -11,7 +11,7 @@ import {
   SET_EMAIL_VERIFIED_STATUS,
   SET_LISTED_STATUS,
   SET_VERIFY_EMAIL_STATUS,
-  SET_ALIYUN_STS
+  SET_ALIYUN_OSS
 } from '../constants'
 
 import localStore from 'store2'
@@ -27,11 +27,10 @@ const initialState = {
   emailVerified: true,
   verifyEmailStatus: "",
   listed: false,
-  aliyunSTS: {
-    AccessKeySecret: "",
-    AccessKeyId: "",
-    Expiration: null,
-    SecurityToken: ""
+  aliyunOSS: {
+    OSSAccessKeyId: "",
+    expires: null,
+    signature: ""
   }
 }
 
@@ -91,9 +90,9 @@ export default function update(state = initialState, action) {
       verifyEmailStatus: action.verifyEmailStatus
     })
   }
-  else if(action.type === SET_ALIYUN_STS) {
+  else if(action.type === SET_ALIYUN_OSS) {
     return Object.assign({}, state, {
-      aliyunSTS: action.credentials
+      aliyunOSS: action.aliyunOSS
     })
   }
   else if(action.type === LOGOUT) {

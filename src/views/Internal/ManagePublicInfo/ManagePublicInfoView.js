@@ -85,31 +85,31 @@ class ManagePublicInfoView extends Component {
                   }} key={advisor._id} primaryText={
                     <span style={createdBySelf && { color: "#E91E63" }}>{advisor.name}</span>
                   } secondaryText={advisor._id}/>
-              )
-            })}
-          </List>
-        </div>
-        <div className="right-panel" style={{margin: "0 16px"}}>
-          <div className="light-card default-padding">
-            <NewPublicAdvisorForm onSubmit={this.handleFormSubmit} initialValues={this.state.selectedAdvisor} enableReinitialize={true} handleListDelete={this.handleListDelete}></NewPublicAdvisorForm>
+                )
+              })}
+            </List>
+          </div>
+          <div className="right-panel" style={{margin: "0 16px"}}>
+            <div className="light-card default-padding">
+              <NewPublicAdvisorForm onSubmit={this.handleFormSubmit} initialValues={this.state.selectedAdvisor} enableReinitialize={true} handleListDelete={this.handleListDelete}></NewPublicAdvisorForm>
+            </div>
           </div>
         </div>
-      </div>
-    )
+      )
+    }
   }
-}
 
-const mapStatesToProps = (states) => {
-  return {
-    auth: states.auth,
-    internal: states.internal,
-  };
-}
+  const mapStatesToProps = (states) => {
+    return {
+      auth: states.auth,
+      internal: states.internal,
+    };
+  }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    actions: bindActionCreators(InternalActions, dispatch)
-  };
-}
+  const mapDispatchToProps = (dispatch) => {
+    return {
+      actions: bindActionCreators(InternalActions, dispatch)
+    };
+  }
 
-export default connect(mapStatesToProps, mapDispatchToProps)(ManagePublicInfoView);
+  export default connect(mapStatesToProps, mapDispatchToProps)(ManagePublicInfoView);

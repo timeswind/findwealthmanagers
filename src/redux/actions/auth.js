@@ -11,7 +11,7 @@ import {
   SET_EMAIL_VERIFIED_STATUS,
   SET_LISTED_STATUS,
   SET_VERIFY_EMAIL_STATUS,
-  SET_ALIYUN_STS
+  SET_ALIYUN_OSS
 } from '../constants'
 
 export function showLoginModel() {
@@ -89,10 +89,10 @@ export function setVerifyEmailStatus(verifyEmailStatus) {
   }
 }
 
-export function setAliyunSTS(credentials) {
+export function setAliyunOSS(aliyunOSS) {
   return {
-    type: SET_ALIYUN_STS,
-    credentials
+    type: SET_ALIYUN_OSS,
+    aliyunOSS
   }
 }
 
