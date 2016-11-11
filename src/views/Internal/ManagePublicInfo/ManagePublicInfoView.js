@@ -56,7 +56,7 @@ class ManagePublicInfoView extends Component {
   }
 
   render() {
-    const { actions } = this.props
+    const { actions, auth } = this.props
     const { publicAdvisors } = this.props.internal
     return (
       <div>
@@ -75,10 +75,16 @@ class ManagePublicInfoView extends Component {
           </div>
           <List>
             { publicAdvisors.length > 0 && publicAdvisors.map((advisor)=>{
+              var createdBySelf = false
+              if (advisor.listBy && advisor.listBy._id && auth.id) {
+                createdBySelf = (auth.id === advisor.listBy._id)
+              }
               return (
-                <ListItem onTouchTap={()=>{
+                <ListItem style={createdBySelf && { backgroundColor: "rgb(245, 245, 245)" }} onTouchTap={()=>{
                     this.setState({selectedAdvisor: advisor})
-                  }} key={advisor._id} primaryText={advisor.name} secondaryText={advisor._id}/>
+                  }} key={advisor._id} primaryText={
+                    <span style={createdBySelf && { color: "#E91E63" }}>{advisor.name}</span>
+                  } secondaryText={advisor._id}/>
               )
             })}
           </List>
@@ -95,6 +101,7 @@ class ManagePublicInfoView extends Component {
 
 const mapStatesToProps = (states) => {
   return {
+    auth: states.auth,
     internal: states.internal,
   };
 }
