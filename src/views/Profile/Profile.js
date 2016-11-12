@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Avatar from 'material-ui/Avatar';
 import FontIcon from 'material-ui/FontIcon';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
@@ -317,10 +316,12 @@ class Profile extends Component {
           <div className="profile-header raleway">
             <div className="p-h-wrapper">
               <div className="p-h-avatar">
-                <Avatar
-                  src="http://www.lovemarks.com/wp-content/uploads/profile-avatars/default-avatar-tech-guy.png"
-                  size={120}
-                  />
+                {!!listInfo._id && (
+                  <img
+                    alt="list"
+                    src={`https://wealthie.oss-us-east-1.aliyuncs.com/list-avatar-${listInfo._id}?x-oss-process=image/resize,w_210,limit_0/format,jpg`}
+                    />
+                )}
               </div>
               <div className="p-h-info align-center justify-center">
                 <p className="name">{listInfo.name}</p>

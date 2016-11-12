@@ -28,9 +28,10 @@ const initialState = {
   verifyEmailStatus: "",
   listed: false,
   aliyunOSS: {
-    OSSAccessKeyId: "",
+    AccessKeyId: "",
     expires: null,
-    signature: ""
+    signature: "",
+    policy: ""
   }
 }
 

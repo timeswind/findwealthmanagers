@@ -3,6 +3,9 @@
   background: #fff;
   padding: 32px 0;
 }
+.p-h-avatar {
+  border-radius: 3px
+}
 
 .p-tabs-inner-wrapper > div > div:nth-child(1), .p-tabs-inner-wrapper > div > div:nth-child(2) {
   max-width: 600px;
@@ -247,6 +250,9 @@
   .p-h-info {
     margin-left: 32px
   }
+  .p-h-avatar {
+    margin-bottom: 0
+  }
   .p-h-info .name {
     text-align: left;
   }
@@ -267,6 +273,9 @@
   }
   .p-h-info {
     margin-left: 32px
+  }
+  .p-h-avatar {
+    margin-bottom: 0
   }
   .p-h-info .name {
     text-align: left;

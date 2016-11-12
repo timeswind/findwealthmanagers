@@ -9,7 +9,8 @@ import { connect } from 'react-redux';
 import FlatButton from 'material-ui/FlatButton';
 import CategorySelector from '../../components/CategorySelector/CategorySelector';
 import moment from 'moment';
-// var Dropzone = require('react-dropzone');
+import { push } from 'react-router-redux';
+var Dropzone = require('react-dropzone');
 
 const validate = values => {
   const errors = {}
@@ -47,51 +48,75 @@ class NewPublicAdvisorForm extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.initialValues && nextProps.initialValues.categories) {
-      this.setState({ selectCategories: nextProps.initialValues.categories, submitType: 'Update' });
+      this.setState({ selectCategories: nextProps.initialValues.categories, submitType: 'Update', listPicFile: null });
     } else {
-      this.setState({ selectCategories: [], submitType: 'Create' });
+      this.setState({ selectCategories: [], submitType: 'Create', listPicFile: null });
+    }
+  }
+  onDrop (files) {
+    const isEditList = this.props.initialValues && this.props.initialValues._id
+    if (isEditList) {
+      this.setState({
+        listPicFile: files[0]
+      })
     }
   }
 
-  onDrop (files) {
-    console.log(files)
-    console.log(this.state)
-    this.setState({
-      listPicFile: files[0]
-    })
-  }
-
   uploadListPicFile () {
-    const { auth } = this.props
-    const ossTokenExpires = auth.aliyunOSS.expires
-    var listPicFile = this.state.listPicFile
-    console.log(listPicFile)
-    if (listPicFile) {
-      const { actions } = this.props
-      if (ossTokenExpires && (new Date() / 1000) < ossTokenExpires) {
-        axios.post('https://wealthie.oss-us-east-1.aliyuncs.com?OSSAccessKeyId=' + auth.aliyunOSS.AccessKeyId + "&Expires=" + auth.aliyunOSS.expires + '&Signature=' + auth.aliyunOSS.signature, listPicFile)
-        .then((response)=>{
-          console.log(response)
-        })
-      } else {
-        axios.get('/api/public/pic-token')
-        .then(function(response){
-          if (response.data.success && response.data.expires && response.data.AccessKeyId && response.data.signature) {
-            actions.setAliyunOSS({
-              expires: response.data.expires,
-              AccessKeyId: response.data.AccessKeyId,
-              signature: response.data.signature
-            })
+    console.log(this.state.listPicFile)
+    var self = this
+    const isEditList = this.props.initialValues && this.props.initialValues._id
+    if (isEditList) {
+      const { auth } = this.props
+      const ossTokenExpires = auth.aliyunOSS.expires
+      var listPicFile = this.state.listPicFile
+      console.log(listPicFile)
+      if (listPicFile) {
+        const { actions } = this.props
+        if (ossTokenExpires && (new Date() / 1000) < ossTokenExpires) {
+          var formData = new FormData();
+          var key = 'list-avatar-' + self.props.initialValues._id
+          formData.append("OSSAccessKeyId", auth.aliyunOSS.AccessKeyId);
+          formData.append("policy", auth.aliyunOSS.policy);
+          formData.append("Signature", auth.aliyunOSS.signature);
+          formData.append("key", key);
+          formData.append('file', listPicFile);
+          axios.post('https://wealthie.oss-us-east-1.aliyuncs.com', formData)
+          .then((response)=>{
+            console.log(response)
+          })
+        } else {
+          axios.get('/api/internal/lists/upload-list-avatar-token?id=' + self.props.initialValues._id)
+          .then(function(response){
+            if (response.data.success && response.data.expires && response.data.AccessKeyId && response.data.signature) {
+              actions.setAliyunOSS({
+                policy: response.data.policy,
+                expires: Math.floor(new Date(response.data.expires) / 1000),
+                AccessKeyId: response.data.AccessKeyId,
+                signature: response.data.signature
+              })
+              var formData = new FormData();
+              var key = 'list-avatar-' + self.props.initialValues._id
+              formData.append("OSSAccessKeyId", response.data.AccessKeyId);
+              formData.append("policy", response.data.policy);
+              formData.append("Signature", response.data.signature);
+              formData.append("key", key);
+              formData.append('file', listPicFile);
+              // + listPicFile.name + '/?OSSAccessKeyId=' + response.data.AccessKeyId + "&Expires=" + response.data.expires + '&Signature=' + response.data.signature
+              axios.post('https://wealthie.oss-us-east-1.aliyuncs.com', formData)
+              .then((response)=>{
+                if (response.status === 204) {
 
-            axios.post('https://wealthie.oss-us-east-1.aliyuncs.com/' + listPicFile.name + '/?OSSAccessKeyId=' + response.data.AccessKeyId + "&Expires=" + response.data.expires + '&Signature=' + response.data.signature, listPicFile)
-            .then((response)=>{
-              console.log(response)
-            })
+                } else {
+                  window.alert('fail to upload')
+                }
+              })
 
-          } else {
-            window.alert('get pic-token fail')
-          }
-        })
+            } else {
+              window.alert('fail to get token')
+            }
+          })
+        }
       }
     }
   }
@@ -167,25 +192,13 @@ class NewPublicAdvisorForm extends Component {
     this.props.initialValues.categories = []
   }
 
-  // <Dropzone onDrop={(e) => {
-  //     this.onDrop(e)
-  //   }}>
-  //   <div>Try dropping some files here, or click to select files to upload.</div>
-  // </Dropzone>
-  // <FlatButton
-  //   label="UPLOAD PIC"
-  //   labelStyle={{color: "#FFF"}}
-  //   rippleColor="#B2DFDB"
-  //   backgroundColor="#FFC107"
-  //   hoverColor="#F57C00"
-  //   style={{marginTop: "16px", marginLeft: "16px"}}
-  //   onTouchTap={()=>{
-  //     this.uploadListPicFile()
-  //   }}
-  //   />
-
   render() {
-    const { initialValues, handleSubmit, handleListDelete } = this.props
+    var list_pic_url = ''
+    const { initialValues, handleSubmit, handleListDelete, dispatch } = this.props
+    const isEditList = initialValues && initialValues._id
+    if (isEditList) {
+      list_pic_url = `https://wealthie.oss-us-east-1.aliyuncs.com/list-avatar-${initialValues._id}?x-oss-process=image/resize,w_150,limit_0/format,jpg&${new Date().getTime()}`
+    }
     const renderCategorySelector = ({ input, label, type, meta: { touched, error } }) => (
       <div>
         <CategorySelector onSelect={this.onCategorySelect} initialValues={this.state.selectCategories}></CategorySelector>
@@ -241,16 +254,61 @@ class NewPublicAdvisorForm extends Component {
         </div>
       </div>
     )
+
     return (
       <div className="flex-column">
-        {(this.props.initialValues && this.props.initialValues.listBy && this.props.initialValues.listBy.firstName) && (
+        {(initialValues && initialValues.listBy && initialValues.listBy.firstName) && (
           <div className="flex-column">
-            <span style={{color: "#3F51B5"}}>created by {this.props.initialValues.listBy.firstName}</span>
+            <FlatButton
+              label="Preview"
+              labelStyle={{color: "#FFF"}}
+              rippleColor="#B2DFDB"
+              backgroundColor="#00BFA5"
+              hoverColor="#26A69A"
+              onTouchTap={()=>{
+                dispatch(push(`/p/${initialValues._id}`))
+              }}
+              />
+            <span style={{color: "#3F51B5", marginTop: 8}}>created by {this.props.initialValues.listBy.firstName}</span>
             <span style={{color: "#aaa", marginTop: 8}}>update: {moment(this.props.initialValues.updated_at).calendar()}</span>
           </div>
         )}
-
+        { isEditList && (
+          <div style={{margin: "16px 0"}}>
+            {(this.state.listPicFile && this.state.listPicFile.preview) ? (
+              <div className="flex-column" style={{width: 150, border: "1px dashed #aaa", padding: 16}}>
+                <span style={{margin: "8px 0"}}>New Image Preview</span>
+                <img src={this.state.listPicFile.preview} alt="preview" style={{width: 150}}/>
+                <FlatButton
+                  label="UPLOAD PIC"
+                  labelStyle={{color: "#FFF"}}
+                  rippleColor="#B2DFDB"
+                  backgroundColor="#FFC107"
+                  hoverColor="#F57C00"
+                  style={{marginTop: "16px", width: 150}}
+                  onTouchTap={()=>{
+                    this.uploadListPicFile()
+                  }}
+                  />
+              </div>
+            ) :(
+              <div>
+                <Dropzone onDrop={(e) => {
+                    this.onDrop(e)
+                  }}>
+                  <div style={{padding: 16, cursor: 'pointer'}}>Drop or add new image here</div>
+                </Dropzone>
+              </div>
+            )}
+          </div>
+        )}
         <form onSubmit={handleSubmit} className="flex-column">
+          {isEditList && (
+            <div className="flex-column">
+              <span style={{margin: "8px 0"}}>List image</span>
+              <img src={list_pic_url} alt="List" style={{width: 150}}/>
+            </div>
+          )}
           <Field name="name" component={TextField} hintText="Name" floatingLabelText="Name"/>
           <Field name="phone" component={TextField} hintText="Phone" floatingLabelText="Phone"/>
           <Field name="email" component={TextField} hintText="Email for bussiness" floatingLabelText="Email for bussiness"/>
