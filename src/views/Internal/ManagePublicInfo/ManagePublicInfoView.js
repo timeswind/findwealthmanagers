@@ -72,6 +72,7 @@ class ManagePublicInfoView extends Component {
                 this.setState({selectedAdvisor: {}})
               }}
               />
+            <span style={{marginTop: 8, color: "#999"}}>total {publicAdvisors.length} lists</span>
           </div>
           <List>
             { publicAdvisors.length > 0 && publicAdvisors.map((advisor)=>{

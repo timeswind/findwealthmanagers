@@ -10,7 +10,8 @@ import FlatButton from 'material-ui/FlatButton';
 import CategorySelector from '../../components/CategorySelector/CategorySelector';
 import moment from 'moment';
 import { push } from 'react-router-redux';
-var Dropzone = require('react-dropzone');
+import CircularProgress from 'material-ui/CircularProgress';
+import Dropzone from 'react-dropzone';
 
 const validate = values => {
   const errors = {}
@@ -38,7 +39,9 @@ class NewPublicAdvisorForm extends Component {
     this.state = {
       addressPredictions: [],
       selectCategories: selectCategories,
-      submitType: 'Create'
+      submitType: 'Create',
+      list_pic_url: null,
+      imageUploading: false
     };
     this.AddressAutoCompleteService = null
     this.geocoder = null
@@ -48,11 +51,33 @@ class NewPublicAdvisorForm extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.initialValues && nextProps.initialValues.categories) {
-      this.setState({ selectCategories: nextProps.initialValues.categories, submitType: 'Update', listPicFile: null });
+      this.setState({ selectCategories: nextProps.initialValues.categories, submitType: 'Update', listPicFile: null, list_pic_url: null });
     } else {
-      this.setState({ selectCategories: [], submitType: 'Create', listPicFile: null });
+      this.setState({ selectCategories: [], submitType: 'Create', listPicFile: null, list_pic_url: null });
+    }
+
+    if (nextProps.initialValues && nextProps.initialValues.profileImage && nextProps.initialValues.profileImage.key) {
+      this.updateListImage(nextProps.initialValues.profileImage.key, false)
     }
   }
+
+  startImageUpload() {
+    this.setState({imageUploading: true})
+  }
+
+  stopImageUpload() {
+    this.setState({imageUploading: false})
+  }
+
+  updateListImage(key, refreshCache) {
+    var profileImageParams = `x-oss-process=image/resize,w_150,limit_0/format,jpg`
+    if (refreshCache) {
+      profileImageParams =  + `${profileImageParams}&${new Date().getTime()}`
+    }
+    let url = `https://wealthie.oss-us-east-1.aliyuncs.com/${key}?${profileImageParams}`
+    this.setState({ list_pic_url:  url, listPicFile: null })
+  }
+
   onDrop (files) {
     const isEditList = this.props.initialValues && this.props.initialValues._id
     if (isEditList) {
@@ -63,62 +88,58 @@ class NewPublicAdvisorForm extends Component {
   }
 
   uploadListPicFile () {
-    console.log(this.state.listPicFile)
     var self = this
     const isEditList = this.props.initialValues && this.props.initialValues._id
     if (isEditList) {
-      const { auth } = this.props
-      const ossTokenExpires = auth.aliyunOSS.expires
       var listPicFile = this.state.listPicFile
-      console.log(listPicFile)
       if (listPicFile) {
-        const { actions } = this.props
-        if (ossTokenExpires && (new Date() / 1000) < ossTokenExpires) {
-          var formData = new FormData();
-          var key = 'list-avatar-' + self.props.initialValues._id
-          formData.append("OSSAccessKeyId", auth.aliyunOSS.AccessKeyId);
-          formData.append("policy", auth.aliyunOSS.policy);
-          formData.append("Signature", auth.aliyunOSS.signature);
-          formData.append("key", key);
-          formData.append('file', listPicFile);
-          axios.post('https://wealthie.oss-us-east-1.aliyuncs.com', formData)
-          .then((response)=>{
-            console.log(response)
-          })
-        } else {
-          axios.get('/api/internal/lists/upload-list-avatar-token?id=' + self.props.initialValues._id)
-          .then(function(response){
-            if (response.data.success && response.data.expires && response.data.AccessKeyId && response.data.signature) {
-              actions.setAliyunOSS({
-                policy: response.data.policy,
-                expires: Math.floor(new Date(response.data.expires) / 1000),
-                AccessKeyId: response.data.AccessKeyId,
-                signature: response.data.signature
-              })
-              var formData = new FormData();
-              var key = 'list-avatar-' + self.props.initialValues._id
-              formData.append("OSSAccessKeyId", response.data.AccessKeyId);
-              formData.append("policy", response.data.policy);
-              formData.append("Signature", response.data.signature);
-              formData.append("key", key);
-              formData.append('file', listPicFile);
-              // + listPicFile.name + '/?OSSAccessKeyId=' + response.data.AccessKeyId + "&Expires=" + response.data.expires + '&Signature=' + response.data.signature
-              axios.post('https://wealthie.oss-us-east-1.aliyuncs.com', formData)
-              .then((response)=>{
-                if (response.status === 204) {
+        this.startImageUpload()
+        axios.get('/api/internal/lists/upload-list-avatar-token?id=' + self.props.initialValues._id)
+        .then(function(response){
+          if (response.data.success && response.data.expires && response.data.AccessKeyId && response.data.signature) {
+            var formData = new FormData();
+            var key = response.data.key
+            formData.append("OSSAccessKeyId", response.data.AccessKeyId);
+            formData.append("policy", response.data.policy);
+            formData.append("Signature", response.data.signature);
+            formData.append("success_action_status", 201);
+            formData.append("key", response.data.key);
+            formData.append('file', listPicFile);
+            // + listPicFile.name + '/?OSSAccessKeyId=' + response.data.AccessKeyId + "&Expires=" + response.data.expires + '&Signature=' + response.data.signature
+            axios.post('https://wealthie.oss-us-east-1.aliyuncs.com', formData)
+            .then((response)=>{
+              if (response.status === 201) {
+                self.updateListImageCallback(self.props.initialValues._id, key)
+              } else {
+                self.stopImageUpload()
+                window.alert('fail to upload')
+              }
+            })
 
-                } else {
-                  window.alert('fail to upload')
-                }
-              })
-
-            } else {
-              window.alert('fail to get token')
-            }
-          })
-        }
+          } else {
+            self.stopImageUpload()
+            window.alert('fail to get token')
+          }
+        })
       }
     }
+  }
+
+  updateListImageCallback(list_id, key) {
+    var self = this
+    var data = {
+      id: list_id,
+      key: key
+    }
+    this.stopImageUpload()
+    axios.post(`/api/internal/lists/profile-image-callback`, data)
+    .then((response) => {
+      if (response.status === 200 && response.data.success) {
+        self.updateListImage(key, true)
+      } else {
+        window.alert('fail to upload')
+      }
+    })
   }
 
   selectAddress = (chosenAddress, index) => {
@@ -193,12 +214,9 @@ class NewPublicAdvisorForm extends Component {
   }
 
   render() {
-    var list_pic_url = ''
+    const { submitType, list_pic_url, imageUploading, listPicFile } = this.state
     const { initialValues, handleSubmit, handleListDelete, dispatch } = this.props
     const isEditList = initialValues && initialValues._id
-    if (isEditList) {
-      list_pic_url = `https://wealthie.oss-us-east-1.aliyuncs.com/list-avatar-${initialValues._id}?x-oss-process=image/resize,w_150,limit_0/format,jpg&${new Date().getTime()}`
-    }
     const renderCategorySelector = ({ input, label, type, meta: { touched, error } }) => (
       <div>
         <CategorySelector onSelect={this.onCategorySelect} initialValues={this.state.selectCategories}></CategorySelector>
@@ -275,21 +293,25 @@ class NewPublicAdvisorForm extends Component {
         )}
         { isEditList && (
           <div style={{margin: "16px 0"}}>
-            {(this.state.listPicFile && this.state.listPicFile.preview) ? (
-              <div className="flex-column" style={{width: 150, border: "1px dashed #aaa", padding: 16}}>
+            {(listPicFile && listPicFile.preview) ? (
+              <div className="flex-column flex-center" style={{width: 150, border: "1px dashed #aaa", padding: 16}}>
                 <span style={{margin: "8px 0"}}>New Image Preview</span>
-                <img src={this.state.listPicFile.preview} alt="preview" style={{width: 150}}/>
-                <FlatButton
-                  label="UPLOAD PIC"
-                  labelStyle={{color: "#FFF"}}
-                  rippleColor="#B2DFDB"
-                  backgroundColor="#FFC107"
-                  hoverColor="#F57C00"
-                  style={{marginTop: "16px", width: 150}}
-                  onTouchTap={()=>{
-                    this.uploadListPicFile()
-                  }}
-                  />
+                <img src={listPicFile.preview} alt="preview" style={{width: 150, marginBottom: 16}}/>
+                { imageUploading ? (
+                  <CircularProgress />
+                ) : (
+                  <FlatButton
+                    label="UPLOAD PIC"
+                    labelStyle={{color: "#FFF"}}
+                    rippleColor="#B2DFDB"
+                    backgroundColor="#FFC107"
+                    hoverColor="#F57C00"
+                    onTouchTap={()=>{
+                      this.uploadListPicFile()
+                    }}
+                    />
+                ) }
+
               </div>
             ) :(
               <div>
@@ -303,7 +325,7 @@ class NewPublicAdvisorForm extends Component {
           </div>
         )}
         <form onSubmit={handleSubmit} className="flex-column">
-          {isEditList && (
+          {(isEditList && list_pic_url) && (
             <div className="flex-column">
               <span style={{margin: "8px 0"}}>List image</span>
               <img src={list_pic_url} alt="List" style={{width: 150}}/>
@@ -365,7 +387,7 @@ class NewPublicAdvisorForm extends Component {
               }}
               />
             <FlatButton
-              label={this.state.submitType}
+              label={submitType}
               type="submit"
               labelStyle={{color: "#FFF"}}
               rippleColor="#B2DFDB"

@@ -316,10 +316,10 @@ class Profile extends Component {
           <div className="profile-header raleway">
             <div className="p-h-wrapper">
               <div className="p-h-avatar">
-                {!!listInfo._id && (
+                { (listInfo && listInfo.profileImage && listInfo.profileImage.key) && (
                   <img
                     alt="list"
-                    src={`https://wealthie.oss-us-east-1.aliyuncs.com/list-avatar-${listInfo._id}?x-oss-process=image/resize,w_210,limit_0/format,jpg`}
+                    src={`https://wealthie.oss-us-east-1.aliyuncs.com/${listInfo.profileImage.key}?x-oss-process=image/resize,w_210,limit_0/format,jpg`}
                     />
                 )}
               </div>
