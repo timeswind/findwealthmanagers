@@ -3,7 +3,8 @@ import {
   SET_SEARCH_ADDRESS,
   SET_SEARCH_COORDINATE,
   SET_SEARCH_CATEGORIES,
-  SET_SEARCH_COMPANY_NAME
+  SET_SEARCH_COMPANY_NAME,
+  SET_SEARCH_RESULTS
 } from '../constants'
 
 const initialState = {
@@ -11,7 +12,9 @@ const initialState = {
   address: "",
   coordinate: [ 0, 0 ],
   categories: [1],
-  companyName: ""
+  companyName: "",
+  results: [],
+  found: null
 }
 
 export default function update(state = initialState, action) {
@@ -38,6 +41,12 @@ export default function update(state = initialState, action) {
   else if(action.type === SET_SEARCH_COMPANY_NAME) {
     return Object.assign({}, state, {
       companyName: action.companyName
+    })
+  }
+  else if(action.type === SET_SEARCH_RESULTS) {
+    return Object.assign({}, state, {
+      results: action.results,
+      found: action.found
     })
   }
   return state

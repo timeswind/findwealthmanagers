@@ -1,19 +1,14 @@
 import React, { Component } from 'react';
-import FontIcon from 'material-ui/FontIcon';
-import MainFooter from '../../components/MainFooter/MainFooter'
+import MainFooter from '../../components/MainFooter/MainFooter';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as SearchActions from '../../redux/actions/search';
-import { push } from 'react-router-redux'
-import SearchCard from '../../components/SearchCard/SearchCard'
-import categories from '../../assets/categories'
-import './Search.css'
+import { push } from 'react-router-redux';
+import SearchCard from '../../components/SearchCard/SearchCard';
+import categories from '../../assets/categories';
+import SearchResultCard from '../../components/SearchResultCard/SearchResultCard';
+import './Search.css';
 class Search extends Component {
-  state = {
-    found: false,
-    results: []
-  }
-
   componentDidMount() {
     this.search()
   }
@@ -47,11 +42,9 @@ class Search extends Component {
   }
 
   updateResults(results) {
+    const { actions } = this.props
     if (results === null) {
-      this.setState({
-        found: false,
-        results: []
-      })
+      actions.setSearchResults([], false)
     } else {
       results.map((result) => {
         result.categories = result.categories.map((category_code) => {
@@ -61,93 +54,39 @@ class Search extends Component {
           result
         )
       })
-
-      this.setState({
-        found: true,
-        results: results
-      })
+      actions.setSearchResults(results, true)
     }
   }
 
-  goToListDetail(id) {
+  goToListDetail = (id) => {
+    console.log(id)
     var path = '/p/' + id
     this.props.dispatch(push(path))
   }
 
   render() {
+    const { results, found } = this.props.search
     return (
       <div className="search">
         <div className="g-background" style={{padding: "77px 0"}}>
           <div style={{maxWidth: "860px", margin: '32px auto 0 auto'}}>
             <SearchCard onSearch={this.search}></SearchCard>
-            { this.state.found && (
+            { (found === true) && (
               <div className="flex-column">
-                { this.state.results.map((list) => {
+                { results.map((list) => {
                   return (
-                    <div key={list._id} className="light-card flex-column" style={{cursor: "pointer"}}  onClick={()=>{
-                        this.goToListDetail(list._id)
-                      }}>
-                      <div className="r-flex-row">
-                        <div className="flex-column align-center default-padding raleway" style={{flex: 30}}>
-                          { (list.profileImage && list.profileImage.key) && (
-                            <img
-                              alt="profile"
-                              className="s-r-profile-image"
-                              src={`https://wealthie.oss-us-east-1.aliyuncs.com/${list.profileImage.key}?x-oss-process=image/resize,w_210,limit_0/format,jpg`}
-                              />
-                          )}
-                          <span style={{margin: "8px 0", fontSize: "20px", fontWeight: 600}}>
-                            {
-                              (!!list.name && list.name) ||
-                              list.advisor.firstName + " " + list.advisor.lastName
-                            }
-                          </span>
-                            {
-                              list.email && (
-                                <span className="s-r-email">
-                                  {list.email}
-                                </span>
-                              )
-                            }
-                            {
-                              list.phone && (
-                                <span className="s-r-phone">
-                                  {list.phone}
-                                </span>
-                              )
-                            }
-                        </div>
-                        <div className="flex-column" style={{flex: 70, borderLeft: "1px solid #ddd"}}>
-                          <div className="s-r-aoi" style={{borderBottom: "1px solid #ddd"}}>
-                            <div>Area of focus</div>
-                              <div className="flex-wrap flex-row flex-center">
-                              { list.categories.map((category) => {
-                                return (<div className="s-category-label" key={category.code}>{category.name}</div>)
-                              }) }
-                            </div>
-                          </div>
-                          <div className="s-r-brief">
-                            {list.brief}
-                          </div>
-                        </div>
-                      </div>
-                      {list.address && (
-                        <div className="s-r-address" style={{borderTop: "1px solid #ddd"}}>
-                          <FontIcon className="material-icons" style={{ marginRight: "8px", color: "#666"}}>location_on</FontIcon>
-                          <span>{list.address}</span>
-                        </div>
-                      )}
-                    </div>
+                    <SearchResultCard list={list} key={list._id} onSelect={this.goToListDetail}></SearchResultCard>
                   )
-                }) }
-              </div>
-            )}
-          </div>
+                })
+              }
+            </div>
+          )}
         </div>
-        <MainFooter></MainFooter>
       </div>
-    );
-  }
+      <MainFooter></MainFooter>
+    </div>
+  );
+}
 }
 
 const mapStatesToProps = (states) => {

@@ -3,40 +3,49 @@ import {
   SET_SEARCH_ADDRESS,
   SET_SEARCH_COORDINATE,
   SET_SEARCH_CATEGORIES,
-  SET_SEARCH_COMPANY_NAME
+  SET_SEARCH_COMPANY_NAME,
+  SET_SEARCH_RESULTS
 } from '../constants'
 
 export function setSearchUSSTATE(usState) {
   return {
     type: SET_SEARCH_USSTATE,
-    usState: usState
+    usState
   }
 }
 
 export function setSearchAddress(address) {
   return {
     type: SET_SEARCH_ADDRESS,
-    address: address
+    address
   }
 }
 
 export function setSearchCoordinate(coordinate) {
   return {
     type: SET_SEARCH_COORDINATE,
-    coordinate: coordinate
+    coordinate
   }
 }
 
 export function setSearchCategories(categories) {
   return {
     type: SET_SEARCH_CATEGORIES,
-    categories: categories
+    categories
   }
 }
 
 export function setSearchCompanyName(companyName) {
   return {
     type: SET_SEARCH_COMPANY_NAME,
-    companyName: companyName
+    companyName
+  }
+}
+
+export function setSearchResults(results, found) {
+  return {
+    type: SET_SEARCH_RESULTS,
+    results,
+    found
   }
 }
