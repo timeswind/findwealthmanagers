@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Avatar from 'material-ui/Avatar';
 import FontIcon from 'material-ui/FontIcon';
 import MainFooter from '../../components/MainFooter/MainFooter'
 import { bindActionCreators } from 'redux';
@@ -76,7 +75,6 @@ class Search extends Component {
   }
 
   render() {
-
     return (
       <div className="search">
         <div className="g-background" style={{padding: "77px 0"}}>
@@ -91,10 +89,13 @@ class Search extends Component {
                       }}>
                       <div className="r-flex-row">
                         <div className="flex-column align-center default-padding raleway" style={{flex: 30}}>
-                          <Avatar
-                            src="http://www.lovemarks.com/wp-content/uploads/profile-avatars/default-avatar-tech-guy.png"
-                            size={100}
-                            />
+                          { (list.profileImage && list.profileImage.key) && (
+                            <img
+                              alt="profile"
+                              className="s-r-profile-image"
+                              src={`https://wealthie.oss-us-east-1.aliyuncs.com/${list.profileImage.key}?x-oss-process=image/resize,w_210,limit_0/format,jpg`}
+                              />
+                          )}
                           <span style={{margin: "8px 0", fontSize: "20px", fontWeight: 600}}>
                             {
                               (!!list.name && list.name) ||

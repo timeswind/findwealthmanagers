@@ -220,6 +220,7 @@ class Home extends Component {
                         }}>
                         <div style={{margin: "16px"}}>
                           <TopWealthManagerCard
+                            image={(manager.profileImage && manager.profileImage.key) && (`https://wealthie.oss-us-east-1.aliyuncs.com/${manager.profileImage.key}?x-oss-process=image/resize,m_pad,h_200,w_150,color_FFFFFF`)}
                             managerName={
                               (!!manager.name && manager.name) ||
                               manager.advisor.firstName + " " + manager.advisor.lastName
@@ -251,7 +252,6 @@ class Home extends Component {
           </div>
         </div>
         <MainFooter></MainFooter>
-
       </div>
     );
   }

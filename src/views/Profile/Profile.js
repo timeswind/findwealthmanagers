@@ -302,7 +302,7 @@ class Profile extends Component {
     const { listInfo } = this.props.list
     const { actions } = this.props
     if (listInfo.public && listInfo.public === true) {
-
+      window.alert('hi')
     } else {
       actions.setListTab('calendar')
     }
@@ -310,6 +310,7 @@ class Profile extends Component {
 
   render() {
     const { listInfo, tab, previousAppointment, calendarView, schedules, appointmentModalOpen } = this.props.list
+    const isPublic = listInfo.public && listInfo.public === true
     return (
       <div className="view-body flex-column g-background">
         <div className="g-background">
@@ -358,7 +359,7 @@ class Profile extends Component {
                   {tab !== 'calendar' && (
                     <div>
                       <FlatButton
-                        label="make appointment"
+                        label={isPublic ? ('Contact') : ('Make appointment')}
                         labelStyle={{color: "#FFF"}}
                         primary
                         rippleColor="#B2DFDB"
@@ -445,7 +446,7 @@ class Profile extends Component {
                     </div>
                   </div>
                 </Tab>
-                {!(listInfo.public && listInfo.public === true) && (
+                {!isPublic && (
                   <Tab label="Calendar" value="calendar" style={{backgroundColor: "#fff", color: "#333"}}>
                     <div className="flex-row flex-baseline" style={{margin: '8px 8px 0 8px'}}>
                       <div className="light-shadow default-margin-right">

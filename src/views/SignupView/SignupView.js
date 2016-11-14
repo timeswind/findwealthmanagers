@@ -94,6 +94,7 @@ class SignupView extends Component {
 
     axios.post('/api/public/signup', data)
     .then(function(response) {
+      console.log(response)
       var json = response.data
       if (json.success === true) {
         newState.errorText.result = "";
@@ -119,9 +120,18 @@ class SignupView extends Component {
         }
       }
       self.setState(newState)
-    }).catch(function(ex) {
-      console.log('failed', ex)
-    })
+    }).catch(function (error) {
+      if (error.response) {
+        console.log(error.response.data);
+        if (error.response.data && error.response.data.error) {
+          self.setState({errorText: {
+            result: error.response.data.error
+          }})
+        }
+      } else {
+        console.log('Error', error.message);
+      }
+    });
   }
 
   handleIsManagerToggle = (event, value) => {
@@ -130,124 +140,129 @@ class SignupView extends Component {
     } else {
       value = false
     }
-    this.setState({isManager: value})
+    this.setState({
+      isManager: value,
+      errorText: {
+        result: ""
+      }
+    })
   }
 
-  handleIsIndependentOnCheck() {
-    const isIndependent = this.state.isIndependent;
-    this.setState({isIndependent: !isIndependent})
-    this.setState({affiliation: ""});
-  }
+    handleIsIndependentOnCheck() {
+      const isIndependent = this.state.isIndependent;
+      this.setState({isIndependent: !isIndependent})
+      this.setState({affiliation: ""});
+    }
 
-  render() {
-    return (
-      <div className="view-body">
-        <div className="g-background" style={{padding:"36px 8px 64px 8px"}}>
-          <div style={{maxWidth: 500, margin: 'auto'}}>
-            <Card>
-              <div className="flex-column flex-center">
-                <div style={{padding: "32px 0", borderBottom: "1px solid #ddd", width: "100%"}}>
-                  <RadioButtonGroup
-                    name="isManager"
-                    defaultSelected="false"
-                    onChange={this.handleIsManagerToggle}
-                    style={{padding: "0 16px"}}
-                    >
-                    <RadioButton
-                      value="false"
-                      label="I am seeking a financial professional"
-                      style={{marginBottom: "16px", textAlign: "center"}}
-                      labelStyle={{fontFamily: "Raleway"}}
-                      />
-                    <RadioButton
-                      value="true"
-                      label="I am a financial professional"
-                      style={{textAlign: "center"}}
-                      labelStyle={{fontFamily: "Raleway"}}
-                      />
-                  </RadioButtonGroup>
-                </div>
-                <div className="flex-column flex-center" style={{padding: "16px 16px 32px 16px"}}>
-                  {this.state.isManager ? (
-                    <div style={{textAlign: "center"}}>
-                      <Checkbox
-                        label="I am an Independent Financial Professional"
+    render() {
+      return (
+        <div className="view-body">
+          <div className="g-background" style={{padding:"36px 8px 64px 8px"}}>
+            <div style={{maxWidth: 500, margin: 'auto'}}>
+              <Card>
+                <div className="flex-column flex-center">
+                  <div style={{padding: "32px 0", borderBottom: "1px solid #ddd", width: "100%"}}>
+                    <RadioButtonGroup
+                      name="isManager"
+                      defaultSelected="false"
+                      onChange={this.handleIsManagerToggle}
+                      style={{padding: "0 16px"}}
+                      >
+                      <RadioButton
+                        value="false"
+                        label="I am seeking a financial professional"
+                        style={{marginBottom: "16px", textAlign: "center"}}
                         labelStyle={{fontFamily: "Raleway"}}
-                        defaultChecked={this.state.isIndependent}
-                        onCheck={()=>{
-                          this.handleIsIndependentOnCheck()
-                        }}
                         />
-                      {this.state.isIndependent ? null : (
-                        <TextField
-                          hintText="Company Name"
-                          floatingLabelText="Affiliation"
-                          onChange={this.handleAffiliationInput}
+                      <RadioButton
+                        value="true"
+                        label="I am a financial professional"
+                        style={{textAlign: "center"}}
+                        labelStyle={{fontFamily: "Raleway"}}
+                        />
+                    </RadioButtonGroup>
+                  </div>
+                  <div className="flex-column flex-center" style={{padding: "16px 16px 32px 16px"}}>
+                    {this.state.isManager ? (
+                      <div style={{textAlign: "center"}}>
+                        <Checkbox
+                          label="I am an Independent Financial Professional"
+                          labelStyle={{fontFamily: "Raleway"}}
+                          defaultChecked={this.state.isIndependent}
+                          onCheck={()=>{
+                            this.handleIsIndependentOnCheck()
+                          }}
                           />
-                      )}
-                    </div>
+                        {this.state.isIndependent ? null : (
+                          <TextField
+                            hintText="Company Name"
+                            floatingLabelText="Affiliation"
+                            onChange={this.handleAffiliationInput}
+                            />
+                        )}
+                      </div>
 
-                  ) : null}
-                  <TextField
-                    hintText="First Name"
-                    floatingLabelText="First Name"
-                    onChange={this.handleFirstNameInput}
-                    type="email"
-                    />
-                  <TextField
-                    hintText="Last Name"
-                    floatingLabelText="Last Name"
-                    onChange={this.handleLastNameInput}
-                    />
-                  <TextField
-                    hintText="Email"
-                    floatingLabelText="Email"
-                    onChange={this.handleEmailEnter}
-                    errorText={this.state.errorText.email}
-                    />
-                  <TextField
-                    hintText="********"
-                    floatingLabelText="Password"
-                    onChange={this.handlePasswordEnter}
-                    type="password"
-                    />
-                  <TextField
-                    hintText="********"
-                    floatingLabelText="Re-enter password"
-                    onChange={this.handlePasswordReEnter}
-                    errorText={this.state.errorText.repassword}
-                    type="password"
-                    />
-                  { <div><span style={{color: "#F44336"}}>{this.state.errorText.result}</span></div> }
-                  <FlatButton
-                    backgroundColor="#304966"
-                    hoverColor="#495767"
-                    rippleColor="#B2DFDB"
-                    label="Sign Up"
-                    onClick={() => {
-                      this.signUp()
-                    }}
-                    style={{color: "#fff", width: "256px", marginTop: "36px"}}
-                    />
+                    ) : null}
+                    <TextField
+                      hintText="First Name"
+                      floatingLabelText="First Name"
+                      onChange={this.handleFirstNameInput}
+                      type="email"
+                      />
+                    <TextField
+                      hintText="Last Name"
+                      floatingLabelText="Last Name"
+                      onChange={this.handleLastNameInput}
+                      />
+                    <TextField
+                      hintText="Email"
+                      floatingLabelText="Email"
+                      onChange={this.handleEmailEnter}
+                      errorText={this.state.errorText.email}
+                      />
+                    <TextField
+                      hintText="********"
+                      floatingLabelText="Password"
+                      onChange={this.handlePasswordEnter}
+                      type="password"
+                      />
+                    <TextField
+                      hintText="********"
+                      floatingLabelText="Re-enter password"
+                      onChange={this.handlePasswordReEnter}
+                      errorText={this.state.errorText.repassword}
+                      type="password"
+                      />
+                    { <div><span style={{color: "#F44336"}}>{this.state.errorText.result}</span></div> }
+                    <FlatButton
+                      backgroundColor="#304966"
+                      hoverColor="#495767"
+                      rippleColor="#B2DFDB"
+                      label="Sign Up"
+                      onClick={() => {
+                        this.signUp()
+                      }}
+                      style={{color: "#fff", width: "256px", marginTop: "36px"}}
+                      />
+                  </div>
+
                 </div>
+              </Card>
+            </div>
 
-              </div>
-            </Card>
           </div>
+          <MainFooter></MainFooter>
 
         </div>
-        <MainFooter></MainFooter>
-
-      </div>
-    );
+      );
+    }
   }
-}
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    dispatch,
-    actions: bindActionCreators(AuthActions, dispatch)
-  };
-}
+  const mapDispatchToProps = (dispatch) => {
+    return {
+      dispatch,
+      actions: bindActionCreators(AuthActions, dispatch)
+    };
+  }
 
-export default connect(null, mapDispatchToProps)(SignupView);
+  export default connect(null, mapDispatchToProps)(SignupView);

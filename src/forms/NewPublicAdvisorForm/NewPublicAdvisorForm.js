@@ -375,17 +375,19 @@ class NewPublicAdvisorForm extends Component {
                 }}
                 />
             )}
-            <FlatButton
-              label="RESET"
-              labelStyle={{color: "#FFF"}}
-              rippleColor="#B2DFDB"
-              backgroundColor="#FFC107"
-              hoverColor="#F57C00"
-              style={{marginTop: "16px", marginLeft: "16px"}}
-              onTouchTap={()=>{
-                this.reset()
-              }}
-              />
+            {!isEditList && (
+              <FlatButton
+                label="RESET"
+                labelStyle={{color: "#FFF"}}
+                rippleColor="#B2DFDB"
+                backgroundColor="#FFC107"
+                hoverColor="#F57C00"
+                style={{marginTop: "16px", marginLeft: "16px"}}
+                onTouchTap={()=>{
+                  this.reset()
+                }}
+                />
+            )}
             <FlatButton
               label={submitType}
               type="submit"

@@ -4,6 +4,10 @@
   background: #ddd;
   margin: 4px 8px 4px 0;
 }
+.s-r-profile-image {
+  width: 150px;
+  border-radius: 3px;
+}
 .s-r-aoi {
   padding: 16px;
   display: flex;

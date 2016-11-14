@@ -81,11 +81,12 @@ class ManagePublicInfoView extends Component {
                 createdBySelf = (auth.id === advisor.listBy._id)
               }
               return (
-                <ListItem style={createdBySelf && { backgroundColor: "rgb(245, 245, 245)" }} onTouchTap={()=>{
-                    this.setState({selectedAdvisor: advisor})
-                  }} key={advisor._id} primaryText={
-                    <span style={createdBySelf && { color: "#E91E63" }}>{advisor.name}</span>
-                  } secondaryText={advisor._id}/>
+                <ListItem
+                  style={createdBySelf && { backgroundColor: "rgb(245, 245, 245)" }}
+                  onTouchTap={()=>{this.setState({selectedAdvisor: advisor})}}
+                  key={advisor._id}
+                  primaryText={<span style={createdBySelf && { color: "#E91E63" }}>{advisor.name}{!advisor.profileImage && (<span style={{color: "#3F51B5"}}> --No Image--</span>)}</span>}
+                  secondaryText={advisor._id}/>
                 )
               })}
             </List>
