@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import MainFooter from '../../components/MainFooter/MainFooter';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
 import * as SearchActions from '../../redux/actions/search';
-import { push } from 'react-router-redux';
+import {push} from 'react-router-redux';
 import SearchCard from '../../components/SearchCard/SearchCard';
 import categories from '../../assets/categories';
 import SearchResultCard from '../../components/SearchResultCard/SearchResultCard';
@@ -17,15 +17,15 @@ class Search extends Component {
     var self = this
     const categories = this.props.search.categories
     const loc = this.props.search.coordinate
-    fetch('/api/public/search?categories=' + categories +'&lat=' + loc[1] + '&long=' + loc[0], {
+    fetch('/api/public/search?categories=' + categories + '&lat=' + loc[1] + '&long=' + loc[0], {
       method: "GET",
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
-    }).then(function(response) {
+    }).then(function (response) {
       return response.json()
-    }).then(function(json) {
+    }).then(function (json) {
       console.log(json)
       if (json.success === true) {
         if (json.listInfo.length > 0) {
@@ -36,13 +36,13 @@ class Search extends Component {
       } else {
         // self.props.dispatch(push('/'))
       }
-    }).catch(function(ex) {
+    }).catch(function (ex) {
       console.log('failed', ex)
     })
   }
 
   updateResults(results) {
-    const { actions } = this.props
+    const {actions} = this.props
     if (results === null) {
       actions.setSearchResults([], false)
     } else {
@@ -51,7 +51,7 @@ class Search extends Component {
           return categories[category_code - 1]
         })
         return (
-          result
+            result
         )
       })
       actions.setSearchResults(results, true)
@@ -65,28 +65,27 @@ class Search extends Component {
   }
 
   render() {
-    const { results, found } = this.props.search
+    const {results, found} = this.props.search
     return (
-      <div className="search">
-        <div className="g-background" style={{padding: "77px 0"}}>
-          <div style={{maxWidth: "860px", margin: '32px auto 0 auto'}}>
-            <SearchCard onSearch={this.search}></SearchCard>
-            { (found === true) && (
-              <div className="flex-column">
-                { results.map((list) => {
-                  return (
-                    <SearchResultCard list={list} key={list._id} onSelect={this.goToListDetail}></SearchResultCard>
-                  )
-                })
-              }
+        <div className="search">
+          <div className="g-background" style={{padding: "77px 0"}}>
+            <div style={{maxWidth: "860px", margin: '32px auto 0 auto'}}>
+              <SearchCard onSearch={this.search}></SearchCard>
+              {(found === true) && (
+                  <div className="flex-column">
+                    {results.map((list) => {
+                      return (<SearchResultCard list={list} key={list._id}
+                                                onSelect={this.goToListDetail}></SearchResultCard>)
+                    })
+                    }
+                  </div>
+              )}
             </div>
-          )}
+          </div>
+          <MainFooter></MainFooter>
         </div>
-      </div>
-      <MainFooter></MainFooter>
-    </div>
-  );
-}
+    );
+  }
 }
 
 const mapStatesToProps = (states) => {

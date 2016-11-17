@@ -61,14 +61,16 @@ const store = createStore(
 const history = syncHistoryWithStore(browserHistory, store)
 
 axios.interceptors.request.use(function (config) {
-  let urlArray = config.url.split('/')
-  if (urlArray && urlArray[1] === 'api' && urlArray[2] !== 'public') {
-    if (store.getState().auth.token) {
-      config.headers["Authorization"] = "Bearer " + store.getState().auth.token
-    } else {
-      Promise.reject({
-        message: "Need Authorization Token"
-      })
+  if (config && config.url) {
+    let urlArray = config.url.split('/')
+    if (urlArray && urlArray[1] === 'api' && urlArray[2] !== 'public') {
+      if (store.getState().auth.token) {
+        config.headers["Authorization"] = "Bearer " + store.getState().auth.token
+      } else {
+        Promise.reject({
+          message: "Need Authorization Token"
+        })
+      }
     }
   }
   return config;

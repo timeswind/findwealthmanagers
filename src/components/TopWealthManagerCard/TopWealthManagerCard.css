@@ -1,0 +1,17 @@
+.twm-card {
+  background: #fff;
+  margin: 8px;
+  border: 1px solid rgba(0,0,0,.04);
+  box-shadow: 0 1px 7px rgba(0,0,0,.05);
+  border-radius: 4px;
+}
+.t-w-m-card-title {
+  font-size: 24px;
+  color: rgba(0, 0, 0, 0.870588);
+  display: block;
+  line-height: 36px;
+  font-weight: 600;
+}
+.t-w-m-card-wrapper {
+  padding: 8px 16px 0 16px;
+}

@@ -14,6 +14,7 @@ import * as ViewActions from '../../redux/actions/view';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
+import categories from '../../assets/categories';
 import './Home.css'
 
 class Home extends Component {
@@ -31,6 +32,18 @@ class Home extends Component {
     axios.get('/api/public/topmanagers')
     .then(function(response) {
       if (response.data.success && response.data.topmanagers) {
+        response.data.topmanagers.map((result) => {
+          if (result.categories) {
+            result.categories = result.categories.map((category_code) => {
+              return categories[category_code - 1]
+            })
+            return (
+              result
+            )
+          } else {
+            return {}
+          }
+        })
         self.setState({topManagers: response.data.topmanagers})
       }
     }).catch(function(ex) {
@@ -209,25 +222,18 @@ class Home extends Component {
                 </div>
               </div>
             </div>
-            <div style={{backgroundColor: "#fff"}}>
+            <div style={{backgroundColor: "#fafafa"}}>
               <div className="xl-wrapper flex-column">
-                <p className="home-headline raleway overline">Top Wealth Managers</p>
+                <p className="home-headline raleway overline">Financial Professionals</p>
                 <div className="flex-row home-top-managers raleway">
                   { this.state.topManagers.map((manager)=>{
                     return (
                       <div className="flex-column home-top-manager" key={manager._id} onTouchTap={()=>{
                           this.routerPush('/p/' + manager._id)
                         }}>
-                        <div style={{margin: "16px"}}>
-                          <TopWealthManagerCard
-                            image={(manager.profileImage && manager.profileImage.key) && (`https://wealthie.oss-us-east-1.aliyuncs.com/${manager.profileImage.key}?x-oss-process=image/resize,m_pad,h_200,w_150,color_FFFFFF`)}
-                            managerName={
-                              (!!manager.name && manager.name) ||
-                              manager.advisor.firstName + " " + manager.advisor.lastName
-                            }
-                            description={manager.brief}
-                            />
-                        </div>
+                        <TopWealthManagerCard
+                          manager={manager}
+                          />
                       </div>
                     )
                   })
