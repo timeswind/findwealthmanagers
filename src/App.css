@@ -48,7 +48,7 @@
   background-image: url("https://wealthie.oss-us-east-1.aliyuncs.com/header-pic.jpg");
   background-repeat: no-repeat;
   background-position: 50%;
-  background-size:cover;
+  background-size: cover;
   padding: 16px;
   color: white;
 }
@@ -85,6 +85,7 @@
   display: flex;
   flex-direction: column;
 }
+
 .nav-brand-text-white {
   font-size: 32px;
   font-family: "Raleway";
@@ -93,7 +94,6 @@
   color: #fff;
   cursor: pointer;
 }
-
 
 @media screen and (min-width: 681px) {
   .nav-brand-text {
@@ -107,6 +107,7 @@
   .flex-33, .flex-33-d {
     flex: 33;
   }
+
   .flex-home-card-d {
     flex: 33;
   }
@@ -125,9 +126,11 @@
   .flex-33-d, .flex-home-card-d {
     width: 100%
   }
+
   .home-feature-card {
     margin-bottom: 32px
   }
+
   .home-feature-card:last-child {
     margin-bottom: 0
   }
@@ -164,12 +167,20 @@
 .flex-wrap {
   flex-wrap: wrap;
 }
+
 .flex-float-right {
   margin-left: auto !important;
 }
 
 .default-paragraph {
   font-size: 16px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  font-family: 'Noto Sans', sans-serif;
+}
+
+.default-paragraph-s {
+  font-size: 14px;
   line-height: 1.5;
   white-space: pre-wrap;
   font-family: 'Noto Sans', sans-serif;
@@ -238,8 +249,8 @@
 }
 
 .field-title {
-  font: 500 14px Roboto,RobotoDraft,Helvetica,Arial,sans-serif;
-  color: rgba(0,0,0,0.54);
+  font: 500 14px Roboto, RobotoDraft, Helvetica, Arial, sans-serif;
+  color: rgba(0, 0, 0, 0.54);
   overflow: hidden;
   padding-bottom: 4px;
   text-overflow: ellipsis;
@@ -247,36 +258,39 @@
 }
 
 .field-content {
-  font: 400 16px/24px Roboto,RobotoDraft,Helvetica,Arial,sans-serif;
-  color: rgba(0,0,0,0.87);
+  font: 400 16px/24px Roboto, RobotoDraft, Helvetica, Arial, sans-serif;
+  color: rgba(0, 0, 0, 0.87);
   overflow: hidden;
   padding-bottom: 4px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
 @media screen and (min-width: 681px) {
   .home-search-field {
     padding: 64px 0;
   }
 }
+
 @media screen and (max-width: 680px) {
   .home-search-field {
     padding: 32px 0 16px 0;
   }
 }
-.light-card{
+
+.light-card {
   border-radius: 3px;
   margin-top: 16px;
   background: #fff;
-  box-shadow: 0 1px 4px rgba(0,0,0,.04);
-  border: 1px solid rgba(0,0,0,.09);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .04);
+  border: 1px solid rgba(0, 0, 0, .09);
 }
 
 .light-shadow {
   border-radius: 3px;
   background: #fff;
-  box-shadow: 0 1px 4px rgba(0,0,0,.04);
-  border: 1px solid rgba(0,0,0,.09);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .04);
+  border: 1px solid rgba(0, 0, 0, .09);
 }
 
 .feedback-form-list {
@@ -321,18 +335,22 @@
   padding: 8px;
   background-color: #fafafa
 }
+
 .feedback-rates-preview input {
   margin: 8px 0
 }
+
 .alter-color-rows .alter-color-row {
-  font: 400 13px Roboto,RobotoDraft,Helvetica,Arial,sans-serif;
+  font: 400 13px Roboto, RobotoDraft, Helvetica, Arial, sans-serif;
   line-height: 135%;
   white-space: pre-line;
   padding: 8px 16px;
 }
+
 .alter-color-rows .alter-color-row:nth-child(odd) {
   background-color: #B0BEC5;
 }
+
 .alter-color-rows .alter-color-row:nth-child(even) {
   background-color: #ECEFF1;
 }
@@ -361,10 +379,51 @@
   padding-left: 512px;
 }
 
+.component-pagination-wrapper {
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+
+}
+
+.component-pagination {
+  list-style: none;
+  padding: 8px;
+  text-align: center;
+  background: #fff;
+  border-radius: 3px;
+  margin-top: 16px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .04);
+  border: 1px solid rgba(0, 0, 0, .09);
+}
+
+.component-pagination li {
+  cursor: pointer;
+  font-family: "Roboto", sans-serif;
+  font-size: 14px;
+  text-align: center;
+  line-height: 24px;
+  /* min-width: 40px; */
+  padding: 8px 16px;
+  display: inline;
+}
+
+.component-pagination li.active {
+  background: #304966;
+  color: #fff;
+  border-radius: 3px;
+}
+
+.component-pagination li:hover {
+  background: #eee;
+  color: #000;
+  border-radius: 3px;
+}
+
 /*==========  Mobile First Method  ==========*/
 
 /* Custom, iPhone Retina */
-@media only screen and (min-width : 320px) {
+@media only screen and (min-width: 320px) {
   .r-flex-row {
     display: flex;
     flex-direction: column;
@@ -372,7 +431,7 @@
 }
 
 /* Extra Small Devices, Phones */
-@media only screen and (min-width : 480px) {
+@media only screen and (min-width: 480px) {
   .r-flex-row {
     display: flex;
     flex-direction: column;
@@ -380,7 +439,7 @@
 }
 
 /* Small Devices, Tablets */
-@media only screen and (min-width : 768px) {
+@media only screen and (min-width: 768px) {
   .r-flex-row {
     display: flex;
     flex-direction: column;
@@ -388,7 +447,7 @@
 }
 
 /* Medium Devices, Desktops */
-@media only screen and (min-width : 992px) {
+@media only screen and (min-width: 992px) {
   .r-flex-row {
     display: flex;
     flex-direction: row;
@@ -396,7 +455,7 @@
 }
 
 /* Large Devices, Wide Screens */
-@media only screen and (min-width : 1200px) {
+@media only screen and (min-width: 1200px) {
   .r-flex-row {
     display: flex;
     flex-direction: row;

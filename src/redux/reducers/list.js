@@ -10,16 +10,7 @@ import {
 } from '../constants'
 
 const initialState = {
-  listInfo: {
-    name: '',
-    email: '',
-    address: '',
-    affiliation: '',
-    categories: [],
-    brief: '',
-    experience: [],
-    advisor: ''
-  },
+  listInfo: {},
   calendar: {},
   previousAppointment: [],
   tab: 'brief',

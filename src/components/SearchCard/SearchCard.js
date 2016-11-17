@@ -68,10 +68,10 @@ class SearchCard extends Component {
     }
   };
 
-  handleCompanyNameInput = (event) => {
-    const { actions } = this.props
-    actions.setSearchCompanyName(event.target.value)
-  }
+  // handleCompanyNameInput = (event) => {
+  //   const { actions } = this.props
+  //   actions.setSearchCompanyName(event.target.value)
+  // }
 
   searchAddress = (address) => {
     let self = this
@@ -107,6 +107,7 @@ class SearchCard extends Component {
   }
 
   render() {
+    const {showCategoriesSelector} = this.props
     return (
       <Card className="search-card">
         <div className="flex-column" style={{padding: "4px 32px 32px 32px"}}>
@@ -123,23 +124,27 @@ class SearchCard extends Component {
               onNewRequest={this.selectAddress}
               />
           </div>
-          <div className="flex-row flex-center" style={{marginBottom: "16px"}}>
-            <SelectField
-              floatingLabelText="Category"
-              value={this.props.search.categories[0]}
-              onChange={this.selectCategory}
-              style={{flex: 50, marginRight: "8px"}}>
-              {managerCategories}
-            </SelectField>
+          {showCategoriesSelector && (
+              <div className="flex-row flex-center">
+                <SelectField
+                    floatingLabelText="Category"
+                    value={this.props.search.categories[0]}
+                    onChange={this.selectCategory}
+                    style={{flex: 50, marginRight: "8px"}}>
+                  {managerCategories}
+                </SelectField>
+              </div>
+          )}
+          <div style={{marginTop: 16}} className="flex-column">
+            <FlatButton
+                label="Find Your Advisors"
+                labelStyle={{color: "#FFF"}}
+                primary
+                rippleColor="#B2DFDB"
+                backgroundColor="#00BFA5"
+                hoverColor="#26A69A"
+                onClick={this.search}/>
           </div>
-          <FlatButton
-            label="Find Your Advisors"
-            labelStyle={{color: "#FFF"}}
-            primary
-            rippleColor="#B2DFDB"
-            backgroundColor="#00BFA5"
-            hoverColor="#26A69A"
-            onClick={this.search}/>
         </div>
       </Card>
     );

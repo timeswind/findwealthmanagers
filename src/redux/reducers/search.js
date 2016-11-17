@@ -4,15 +4,18 @@ import {
   SET_SEARCH_COORDINATE,
   SET_SEARCH_CATEGORIES,
   SET_SEARCH_COMPANY_NAME,
-  SET_SEARCH_RESULTS
+  SET_SEARCH_RESULTS,
+  SET_SEARCH_PAGINATION
 } from '../constants'
 
 const initialState = {
   usState: "",
   address: "",
   coordinate: [ 0, 0 ],
-  categories: [1],
+  categories: [],
   companyName: "",
+  listPerPage: null,
+  pageNum: null,
   results: [],
   found: null
 }
@@ -47,6 +50,12 @@ export default function update(state = initialState, action) {
     return Object.assign({}, state, {
       results: action.results,
       found: action.found
+    })
+  }
+  else if(action.type === SET_SEARCH_PAGINATION) {
+    return Object.assign({}, state, {
+      listPerPage: action.listPerPage,
+      pageNum: action.pageNum
     })
   }
   return state

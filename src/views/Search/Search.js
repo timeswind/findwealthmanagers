@@ -7,54 +7,75 @@ import {push} from 'react-router-redux';
 import SearchCard from '../../components/SearchCard/SearchCard';
 import categories from '../../assets/categories';
 import SearchResultCard from '../../components/SearchResultCard/SearchResultCard';
+import ReactPaginate from 'react-paginate';
 import './Search.css';
 class Search extends Component {
   componentDidMount() {
     this.search()
   }
 
-  search = () => {
+  search = (page) => {
+    const {search} = this.props
     var self = this
-    const categories = this.props.search.categories
-    const loc = this.props.search.coordinate
-    fetch('/api/public/search?categories=' + categories + '&lat=' + loc[1] + '&long=' + loc[0], {
-      method: "GET",
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-    }).then(function (response) {
-      return response.json()
-    }).then(function (json) {
-      console.log(json)
-      if (json.success === true) {
-        if (json.listInfo.length > 0) {
-          self.updateResults(json.listInfo)
+    var apiURL = '/api/public/search?version=1'
+    if (search.categories) {
+      apiURL = `${apiURL}&categories=${search.categories}`
+    }
+    if (page) {
+      apiURL = `${apiURL}&page=${page}`
+    }
+    const loc = search.coordinate
+    if (loc[1] && loc[0]) {
+      fetch(apiURL + '&lat=' + loc[1] + '&long=' + loc[0], {
+        method: "GET",
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+      }).then(function (response) {
+        return response.json()
+      }).then(function (json) {
+        console.log(json)
+        if (json.success === true) {
+          if (json.count && json.count > 0 && json.listInfo && json.listInfo.length > 0) {
+            self.updateResults(json.count, json.listInfo)
+          } else {
+            self.updateResults(null, null)
+          }
         } else {
-          self.updateResults(null)
+          // self.props.dispatch(push('/'))
         }
-      } else {
-        // self.props.dispatch(push('/'))
-      }
-    }).catch(function (ex) {
-      console.log('failed', ex)
-    })
+      }).catch(function (ex) {
+        console.log('failed', ex)
+      })
+    }
   }
 
-  updateResults(results) {
+  updateResults(count, results) {
     const {actions} = this.props
     if (results === null) {
       actions.setSearchResults([], false)
+      actions.setSearchPagination(null, null)
     } else {
       results.map((result) => {
-        result.categories = result.categories.map((category_code) => {
-          return categories[category_code - 1]
-        })
+        if (result.categories) {
+          result.categories = result.categories.map((category_code) => {
+            return categories[category_code - 1]
+          })
+        }
         return (
             result
         )
       })
       actions.setSearchResults(results, true)
+      let results_count = count
+      let listPerPage = 10
+      if (results_count > listPerPage) {
+        actions.setSearchPagination(listPerPage, Math.ceil(results_count / listPerPage))
+      } else {
+        actions.setSearchPagination(null, null)
+      }
+      window.scrollTo(0, 0)
     }
   }
 
@@ -64,8 +85,12 @@ class Search extends Component {
     this.props.dispatch(push(path))
   }
 
+  handlePageClick = (data) => {
+    this.search(data.selected + 1)
+  };
+
   render() {
-    const {results, found} = this.props.search
+    const {results, found, pageNum } = this.props.search
     return (
         <div className="search">
           <div className="g-background" style={{padding: "77px 0"}}>
@@ -80,6 +105,23 @@ class Search extends Component {
                     }
                   </div>
               )}
+              { !!pageNum && (
+                  <div className="component-pagination-wrapper">
+                    <ReactPaginate previousLabel={"<"}
+                                   nextLabel={">"}
+                                   breakLabel={<span>...</span>}
+                                   breakClassName={"break-me"}
+                                   pageNum={pageNum}
+                                   marginPagesDisplayed={2}
+                                   pageRangeDisplayed={5}
+                                   clickCallback={this.handlePageClick}
+                                   containerClassName={"component-pagination"}
+                                   subContainerClassName={"pagination"}
+                                   activeClassName={"active"}/>
+                  </div>
+
+              )}
+
             </div>
           </div>
           <MainFooter></MainFooter>

@@ -4,7 +4,8 @@ import {
   SET_SEARCH_COORDINATE,
   SET_SEARCH_CATEGORIES,
   SET_SEARCH_COMPANY_NAME,
-  SET_SEARCH_RESULTS
+  SET_SEARCH_RESULTS,
+  SET_SEARCH_PAGINATION
 } from '../constants'
 
 export function setSearchUSSTATE(usState) {
@@ -47,5 +48,13 @@ export function setSearchResults(results, found) {
     type: SET_SEARCH_RESULTS,
     results,
     found
+  }
+}
+
+export function setSearchPagination(listPerPage, pageNum) {
+  return {
+    type: SET_SEARCH_PAGINATION,
+    listPerPage,
+    pageNum
   }
 }
