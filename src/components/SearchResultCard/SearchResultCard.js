@@ -37,8 +37,7 @@ class SearchResultCard extends Component {
               )}
               <span style={{margin: "8px 0", fontSize: "20px", fontWeight: 600}}>
               {
-                (!!list.name && list.name) ||
-                list.advisor.firstName + " " + list.advisor.lastName
+                (!!list.name && list.name) || ""
               }
             </span>
 

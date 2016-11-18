@@ -37,11 +37,10 @@ class DashboardView extends Component {
     const { actions } = this.props
     axios.get('/api/protect/dashboard')
     .then(function (response) {
-      var json = response.data
-      console.log(json)
+      let json = response.data;
       let userInfo = json.userInfo
       let listInfo = json.listInfo
-      var appointmentInfo = json.appointmentInfo
+      let appointmentInfo = json.appointmentInfo;
       if (json.listInfo.categories) {
         var modifiedCategories = []
         json.listInfo.categories.forEach((category_code) => {
@@ -56,7 +55,6 @@ class DashboardView extends Component {
       }
       if (listInfo !== false) {
         actions.setDashboardListInfo(listInfo)
-        actions.endEditListInfo()
         actions.setListedStatus(true)
       } else {
         actions.setListedStatus(false)
@@ -69,7 +67,7 @@ class DashboardView extends Component {
           return new Date(appointment.date)
         })
         .map(function(appointment) {
-          var obj = {}
+          var obj = {};
           if (new Date().setHours(0, 0, 0, 0) === new Date(appointment.date).setHours(0, 0, 0, 0)) {
             obj["date"] = "today"
           } else {
@@ -93,11 +91,19 @@ class DashboardView extends Component {
   }
 
   handleEditListFormSubmit = (values) => {
-    let self = this
+    const {actions} = this.props
     axios.put('/api/protect/list', values)
     .then(function(response) {
-      if (response.data.success) {
-        self.getDashBoardData()
+      if (response.data.success && response.data.listInfo) {
+        if (response.data.listInfo.categories) {
+          var modifiedCategories = []
+          response.data.listInfo.categories.forEach((category_code) => {
+            modifiedCategories.push(categoryTypes[category_code - 1])
+          })
+          response.data.listInfo.modifiedCategories = modifiedCategories
+        }
+        actions.endEditListInfo()
+        actions.setDashboardListInfo(response.data.listInfo)
       }
     }).catch(function(ex) {
       console.log('failed', ex)
@@ -379,21 +385,15 @@ class DashboardView extends Component {
                                   <div className="default-padding">
                                     <div className="flex-column">
                                       <span className="field-title">
-                                        Phone
+                                        Phone Numbers
                                       </span>
-                                      <span className="field-content">
-                                        {listInfo.phone}
-                                      </span>
+                                      { (listInfo.phones && listInfo.phones.length > 0) && (
+                                          listInfo.phones.map((phone) => {
+                                            return <span key={phone} className="field-content">{phone}</span>
+                                          })
+                                      )}
                                     </div>
-                                    <div className="flex-column" style={{marginTop: "16px"}}>
-                                      <span className="field-title">
-                                        Email
-                                      </span>
-                                      <span className="field-content">
-                                        {listInfo.email}
-                                      </span>
-                                    </div>
-                                    <div className="flex-column" style={{marginTop: "16px"}}>
+                                    <div className="flex-column" style={{marginTop: 8}}>
                                       <span className="field-title">
                                         Categories
                                       </span>
@@ -407,21 +407,16 @@ class DashboardView extends Component {
                                         }) : null}
                                       </div>
                                     </div>
-                                    <div className="flex-column" style={{marginTop: "16px"}}>
+
+                                    <div className="flex-column" style={{marginTop: 8}}>
                                       <span className="field-title">
-                                        Building/Suite
+                                        Addresses
                                       </span>
-                                      <span className="field-content">
-                                        {listInfo.room}
-                                      </span>
-                                    </div>
-                                    <div className="flex-column" style={{marginTop: "16px"}}>
-                                      <span className="field-title">
-                                        Address
-                                      </span>
-                                      <span className="field-content">
-                                        {listInfo.address}
-                                      </span>
+                                      { (listInfo.addresses && listInfo.addresses.length > 0) && (
+                                          listInfo.addresses.map((address, index) => {
+                                            return <span key={index} className="field-content">{address.formattedAddress}</span>
+                                          })
+                                      )}
                                     </div>
                                     <div className="flex-column" style={{marginTop: "16px"}}>
                                       <span className="field-title">

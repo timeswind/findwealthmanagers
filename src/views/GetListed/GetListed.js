@@ -55,7 +55,7 @@ class GetListed extends Component {
     let categories = this.state.categories
     let data = {
       'categories': [],
-      'phone': this.state.phone,
+      'phones': [this.state.phone],
       'brief': this.state.brief
     }
 
