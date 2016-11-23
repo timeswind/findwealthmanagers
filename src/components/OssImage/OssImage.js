@@ -14,20 +14,23 @@ class OssImage extends Component {
   }
 
   checkImage(ossKey, width) {
-    var urlToFile = `${OssDomain}${ossKey}?x-oss-process=image/resize,w_${width},limit_0/format,jpg`
+    var urlToFile
+    if (ossKey && isNaN(ossKey)) {
+      urlToFile = `${OssDomain}${ossKey}?x-oss-process=image/resize,w_${width},limit_0/format,jpg`
+    } else {
+      urlToFile = `${OssDomain}${ossKey}`
+    }
     this.setState({url: urlToFile})
   }
 
   render() {
-    const {width, ossKey} = this.props
+    const {width} = this.props
     const {url} = this.state
     return (
-        <div className={this.props.wrapperClass}>
-          {url && (<img className={this.props.className} src={url} style={{"width": width}} alt="" onError={()=>{
-            this.setState({url: `${OssDomain}${ossKey}`})
-          }}/>)}
-        </div>
-    );
+      <div className={this.props.wrapperClass}>
+      {url && (<img className={this.props.className} src={url} style={{"width": width}} alt=""/>)}
+      </div>
+      );
   }
 }
 

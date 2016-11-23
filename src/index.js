@@ -36,7 +36,7 @@ import axios from 'axios'
 
 const muiTheme = getMuiTheme({
   palette: {
-    primary1Color: 'rgba(48, 73, 102, 0.7)',
+    primary1Color: 'rgb(48, 73, 102)',
     primary2Color: 'rgb(48, 73, 102)'
   },
 });

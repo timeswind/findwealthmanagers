@@ -10,12 +10,7 @@ import { connect } from 'react-redux';
 import * as SearchActions from '../../redux/actions/search.js';
 import { push } from 'react-router-redux'
 
-// const usStates = [];
 const managerCategories = []
-
-// us_states.forEach((state) => {
-//   usStates.push(<MenuItem value={state.abbreviation} key={state.abbreviation} label={state.abbreviation} primaryText={state.name} />);
-// })
 
 categories.forEach((category) => {
   managerCategories.push(<MenuItem value={category.code} key={category.code} label={category.name} primaryText={category.name} />);
@@ -110,44 +105,44 @@ class SearchCard extends Component {
     const {showCategoriesSelector} = this.props
     return (
       <Card className="search-card">
-        <div className="flex-column" style={{padding: "4px 32px 32px 32px"}}>
-          <div className="flex-row" style={{marginBottom: "0"}}>
-            <AutoComplete
-              hintText="Street"
-              floatingLabelText="Street"
-              fullWidth={true}
-              openOnFocus={true}
-              filter={AutoComplete.noFilter}
-              dataSource={this.state.addressPredictions}
-              onUpdateInput={this.handleAddressUpdateInput}
-              searchText={this.props.search.address}
-              onNewRequest={this.selectAddress}
-              />
-          </div>
-          {showCategoriesSelector && (
-              <div className="flex-row flex-center">
-                <SelectField
-                    floatingLabelText="Category"
-                    value={this.props.search.categories[0]}
-                    onChange={this.selectCategory}
-                    style={{flex: 50, marginRight: "8px"}}>
-                  {managerCategories}
-                </SelectField>
-              </div>
-          )}
-          <div style={{marginTop: 16}} className="flex-column">
-            <FlatButton
-                label="Find Your Advisors"
-                labelStyle={{color: "#FFF"}}
-                primary
-                rippleColor="#B2DFDB"
-                backgroundColor="#00BFA5"
-                hoverColor="#26A69A"
-                onClick={this.search}/>
-          </div>
+      <div className="flex-column" style={{padding: "4px 32px 32px 32px"}}>
+      <div className="flex-row" style={{marginBottom: "0"}}>
+      <AutoComplete
+      hintText="Street"
+      floatingLabelText="Street"
+      fullWidth={true}
+      openOnFocus={true}
+      filter={AutoComplete.noFilter}
+      dataSource={this.state.addressPredictions}
+      onUpdateInput={this.handleAddressUpdateInput}
+      searchText={this.props.search.address}
+      onNewRequest={this.selectAddress}
+      />
+      </div>
+      {showCategoriesSelector && (
+        <div className="flex-row flex-center">
+        <SelectField
+        floatingLabelText="Category"
+        value={this.props.search.categories[0]}
+        onChange={this.selectCategory}
+        style={{flex: 50, marginRight: "8px"}}>
+        {managerCategories}
+        </SelectField>
         </div>
+        )}
+      <div style={{marginTop: 16}} className="flex-column">
+      <FlatButton
+      label="Find Your Advisors"
+      labelStyle={{color: "#FFF"}}
+      primary
+      rippleColor="#B2DFDB"
+      backgroundColor="#00BFA5"
+      hoverColor="#26A69A"
+      onClick={this.search}/>
+      </div>
+      </div>
       </Card>
-    );
+      );
   }
 }
 

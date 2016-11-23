@@ -68,8 +68,9 @@ class AddressAutoComplete extends Component {
     return (
         <div className={this.props.wrapperClass} style={this.props.style}>
           <AutoComplete
+              onKeyDown={this.props.onKeyDown}
+              underlineShow={this.props.underlineShow}
               hintText={this.props.hintText || "Address"}
-              floatingLabelText={this.props.hintText || "Address"}
               openOnFocus={this.props.openOnFocus || true}
               fullWidth={this.props.fullWidth || true}
               filter={(address) => {

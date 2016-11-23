@@ -268,13 +268,13 @@
 
 @media screen and (min-width: 681px) {
   .home-search-field {
-    padding: 64px 0;
+    padding: 104px 0;
   }
 }
 
 @media screen and (max-width: 680px) {
   .home-search-field {
-    padding: 32px 0 16px 0;
+    padding: 64px 0 64px 0px;
   }
 }
 
