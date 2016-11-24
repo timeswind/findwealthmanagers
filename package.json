@@ -80,6 +80,7 @@
     "react-dom": "^15.3.2",
     "react-dropzone": "^3.7.3",
     "react-google-recaptcha": "^0.5.4",
+    "react-helmet": "^3.2.2",
     "react-intl": "^2.1.5",
     "react-paginate": "^2.2.3",
     "react-redux": "^4.4.5",
