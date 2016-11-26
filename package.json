@@ -59,8 +59,6 @@
     "whatwg-fetch": "1.0.0"
   },
   "dependencies": {
-    "ali-oss": "^4.6.2",
-    "aliyun-sdk": "^1.9.9",
     "axios": "^0.15.2",
     "cropperjs": "^0.8.1",
     "draft-js": "^0.9.1",
