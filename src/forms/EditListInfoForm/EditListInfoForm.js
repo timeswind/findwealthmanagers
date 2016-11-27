@@ -8,7 +8,7 @@ import CategorySelector from '../../components/CategorySelector/CategorySelector
 
 const validate = values => {
   const errors = {}
-  const requiredFields = ['brief']
+  const requiredFields = ['brief', 'name']
   requiredFields.forEach(field => {
     if (!values[field]) {
       errors[field] = 'Required'
@@ -182,10 +182,17 @@ class EditListInfoForm extends Component {
     const {handleSubmit} = this.props;
     return (
         <form onSubmit={handleSubmit} className="flex-column">
+          <Field
+              name="name"
+              fullWidth={true}
+              component={TextField}
+              hintText="Name"
+              floatingLabelText="Name"
+              style={{marginBottom: 16}}
+          />
           <FieldArray name="phones" component={renderPhones}/>
           <CategorySelector onSelect={this.onCategorySelect}
                             initialValues={this.state.selectCategories}></CategorySelector>
-
           <Field
               name="brief"
               multiLine={true}
