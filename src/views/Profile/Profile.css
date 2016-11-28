@@ -63,11 +63,12 @@
 
 .p-tab-wrapper {
   border-radius: 3px;
-  margin-top: 16px;
+  margin-top: 8px;
   background: #fff;
   box-shadow: 0 1px 4px rgba(0,0,0,.04);
   border: 1px solid rgba(0,0,0,.09);
   padding: 16px;
+  color: #595959
 }
 
 
@@ -168,6 +169,11 @@
   flex-direction: column;
 }
 
+.p-brief-wrapper {
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
 .p-h-info .name {
   font-size: 24px;
   font-weight: 600;
@@ -194,6 +200,19 @@
     align-items: center;
     justify-content: center;
   }
+
+  .p-brief-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .p-brief-left {
+    flex: 100
+  }
+
+  .p-brief-right {
+    flex: 100
+  }
 }
 
 /* Extra Small Devices, Phones */
@@ -215,6 +234,18 @@
     align-items: center;
     justify-content: center;
   }
+  .p-brief-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .p-brief-left {
+    flex: 100
+  }
+
+  .p-brief-right {
+    flex: 100
+  }
 }
 
 /* Small Devices, Tablets */
@@ -235,6 +266,18 @@
   .p-header-makeappointment {
     align-items: center;
     justify-content: center;
+  }
+  .p-brief-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .p-brief-left {
+    flex: 100
+  }
+
+  .p-brief-right {
+    flex: 100
   }
 }
 
@@ -260,6 +303,17 @@
     align-items: flex-start;
     justify-content: flex-start;
   }
+  .p-brief-wrapper {
+    display: flex;
+    flex-direction: row;
+  }
+  .p-brief-left {
+    flex: 70
+  }
+  .p-brief-right {
+    flex: 30;
+    margin-left: 8px
+  }
 }
 
 /* Large Devices, Wide Screens */
@@ -283,5 +337,16 @@
   .p-header-makeappointment {
     align-items: flex-start;
     justify-content: flex-start;
+  }
+  .p-brief-wrapper {
+    display: flex;
+    flex-direction: row;
+  }
+  .p-brief-left {
+    flex: 70
+  }
+  .p-brief-right {
+    flex: 30;
+    margin-left: 8px
   }
 }
