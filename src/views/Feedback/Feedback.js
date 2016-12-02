@@ -16,7 +16,7 @@ class FeedbackView extends Component {
     let self = this
     axios.get('/api/public/feedback/' + this.props.routeParams.id)
     .then(function(response) {
-      if (response.data.success && response.feedbackTemplate) {
+      if (response.data.success && response.data.feedbackTemplate) {
         self.setState({template: response.data.feedbackTemplate})
       }
     }).catch(function(ex) {
