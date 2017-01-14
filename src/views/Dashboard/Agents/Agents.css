@@ -1,0 +1,43 @@
+.clients-panel {
+
+}
+
+.clients-side-panel {
+  border-right: 1px solid #ddd;
+  background: #fff;
+  height: 100%;
+  width: 380px;
+  position: fixed;
+  z-index: 1;
+  left: 0px;
+  top: 62px;
+  transform: translate(0px, 0px);
+  overflow: auto;
+  padding-bottom: 64px
+}
+
+.clients-search-bar {
+  padding: 8px 0 8px 16px;
+}
+
+.clients-detail-panel-wrapper {
+  margin: 16px;
+  padding-left: 380px
+}
+
+.clients-detail-panel {
+
+}
+
+.clients-detail-panel-item {
+  flex: 50;
+  background: #fff;
+  border-radius: 3px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.04);
+  border: 1px solid rgba(0,0,0,.09);
+  overflow-y: auto;
+}
+
+.clients-detail-panel-item:first-child {
+  margin-right: 16px;
+}

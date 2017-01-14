@@ -35,87 +35,87 @@ class App extends Component {
     const showNavBar = pathname !== '/' && pathname !== '/internal'
     return (
       <div>
-      {!!helmetPathTitles[pathname] && (
-        <Helmet title={helmetPathTitles[pathname]} />
+        {!!helmetPathTitles[pathname] && (
+          <Helmet title={helmetPathTitles[pathname]} />
         )}
-      {showNavBar && (<Navbar path={pathname}></Navbar>)}
-      {children}
-      <Dialog
-      title="Login"
-      modal={false}
-      autoScrollBodyContent={true}
-      open={loginModel}
-      onRequestClose={()=>{
-        actions.hideLoginModel()
-      }}
-      >
-      <LoginSignupForm></LoginSignupForm>
-      </Dialog>
-      <Drawer
-      docked={false}
-      openSecondary={true}
-      width={200}
-      open={drawer}
-      onRequestChange={(status) => actions.setViewDrawerStatus(status) }
-      >
-      <MenuItem onTouchTap={()=>{
-        var win = window.open('https://blog.wealthie.co', '_blank')
-        win.focus()
-      }}>
-      Blog
-      </MenuItem>
-      { isLogin ? (
-        <div>
-        {(role === 1 || role === 2 || role === 3) && (
-          <MenuItem primaryText="Dashboard"
-          onClick={()=>{
-            dispatch(push('/dashboard'))
-            actions.setViewDrawerStatus(false)
+        {showNavBar && (<Navbar path={pathname}></Navbar>)}
+        {children}
+        <Dialog
+          title="Login"
+          modal={false}
+          autoScrollBodyContent={true}
+          open={loginModel}
+          onRequestClose={()=>{
+            actions.hideLoginModel()
           }}
-          />
+          >
+          <LoginSignupForm></LoginSignupForm>
+        </Dialog>
+        <Drawer
+          docked={false}
+          openSecondary={true}
+          width={200}
+          open={drawer}
+          onRequestChange={(status) => actions.setViewDrawerStatus(status) }
+          >
+          <MenuItem onTouchTap={()=>{
+              var win = window.open('https://blog.wealthie.co', '_blank')
+              win.focus()
+            }}>
+            Blog
+          </MenuItem>
+          { isLogin ? (
+            <div>
+              {(role === 1 || role === 2 || role === 3) && (
+                <MenuItem primaryText="Dashboard"
+                  onClick={()=>{
+                    dispatch(push('/dashboard'))
+                    actions.setViewDrawerStatus(false)
+                  }}
+                  />
+              )}
+              {(role === 2 || role === 3) && (
+                <MenuItem primaryText="Client Book"
+                  onClick={()=>{
+                    dispatch(push('/dashboard/clients'))
+                    actions.setViewDrawerStatus(false)
+                  }}
+                  />
+              )}
+              {(role === 101) && (
+                <MenuItem primaryText="Manage"
+                  onClick={()=>{
+                    dispatch(push('/internal'))
+                    actions.setViewDrawerStatus(false)
+                  }}
+                  />
+              )}
+              <MenuItem primaryText="Sign out"
+                onClick={()=>{
+                  this.logout()
+                  actions.setViewDrawerStatus(false)
+                }}
+                />
+            </div>
+          ) : (
+            <div>
+              <MenuItem onTouchTap={() => {
+                  dispatch(push('/login'))
+                  actions.setViewDrawerStatus(false)
+                }}>
+                Login/Sign up
+              </MenuItem>
+              <MenuItem onTouchTap={() => {
+                  dispatch(push('/getlisted'))
+                  actions.setViewDrawerStatus(false)
+                }}>
+                Get Listed
+              </MenuItem>
+            </div>
           )}
-        {(role === 2 || role === 3) && (
-          <MenuItem primaryText="Client Book"
-          onClick={()=>{
-            dispatch(push('/dashboard/clients'))
-            actions.setViewDrawerStatus(false)
-          }}
-          />
-          )}
-        {(role === 101) && (
-          <MenuItem primaryText="Manage"
-          onClick={()=>{
-            dispatch(push('/internal'))
-            actions.setViewDrawerStatus(false)
-          }}
-          />
-          )}
-        <MenuItem primaryText="Sign out"
-        onClick={()=>{
-          this.logout()
-          actions.setViewDrawerStatus(false)
-        }}
-        />
-        </div>
-        ) : (
-        <div>
-        <MenuItem onTouchTap={() => {
-          dispatch(push('/login'))
-          actions.setViewDrawerStatus(false)
-        }}>
-        Login/Sign up
-        </MenuItem>
-        <MenuItem onTouchTap={() => {
-          dispatch(push('/getlisted'))
-          actions.setViewDrawerStatus(false)
-        }}>
-        Get Listed
-        </MenuItem>
-        </div>
-        )}
         </Drawer>
-        </div>
-        );
+      </div>
+    );
   }
 }
 
@@ -132,6 +132,6 @@ App = connect(
       actions: bindActionCreators(Object.assign({}, AuthActions, ViewActions), dispatch)
     }
   }
-  )(App)
+)(App)
 
-  export default App;
+export default App;

@@ -9,6 +9,7 @@ import './LoginSignupForm.css';
 import { push } from 'react-router-redux';
 import axios from 'axios';
 import * as AuthActions from '../../redux/actions/auth.js';
+import * as FunctionsActions from '../../redux/actions/functions.js';
 const validate = values => {
   const errors = {}
   // const requiredFields = [ 'name' ]
@@ -68,6 +69,12 @@ class LoginSignupForm extends Component {
         localStore.session("name", json.name);
         localStore.session("email", json.email);
         localStore.session("role", json.role);
+        if (json.permissions && json.permissions.length > 0) {
+          localStore.session("permissions", json.permissions);
+          if (json.permissions.indexOf('agentbook') > -1) {
+            actions.enableAgentBook()
+          }
+        }
         if (json.role !== 1) {
           actions.hideLoginModel();
           dispatch(push('/dashboard'))
@@ -206,7 +213,7 @@ LoginSignupForm = reduxForm({
 const mapDispatchToProps = (dispatch) => {
   return {
     dispatch,
-    actions: bindActionCreators(AuthActions, dispatch)
+    actions: bindActionCreators(Object.assign({}, AuthActions, FunctionsActions), dispatch)
   };
 }
 

@@ -6,6 +6,7 @@ import {
   SET_NAME,
   SET_EMAIL,
   SET_ROLE,
+  SET_PERMISSIONS,
   SET_LOGIN_STATE,
   LOGOUT,
   SET_EMAIL_VERIFIED_STATUS,
@@ -23,6 +24,7 @@ const initialState = {
   name: "",
   email: "",
   role: "",
+  permissions: [],
   loginModel: false,
   emailVerified: true,
   verifyEmailStatus: "",
@@ -59,6 +61,11 @@ export default function update(state = initialState, action) {
   else if(action.type === SET_ROLE) {
     return Object.assign({}, state, {
       role: action.role
+    })
+  }
+  else if(action.type === SET_PERMISSIONS) {
+    return Object.assign({}, state, {
+      permissions: action.permissions
     })
   }
   else if(action.type === SET_LOGIN_STATE) {

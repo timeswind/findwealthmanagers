@@ -26,7 +26,7 @@ class DashboardView extends Component {
   }
 
   getDashBoardData() {
-    const {actions} = this.props
+    const { actions } = this.props
     axios.get('/api/protect/dashboard')
         .then(function (response) {
           let json = response.data;
@@ -53,12 +53,9 @@ class DashboardView extends Component {
           }
 
           if (appointmentInfo !== false) {
-            appointmentInfo = _
-                .chain(appointmentInfo)
-                .sortBy(function (appointment) {
+            appointmentInfo = _.chain(appointmentInfo).sortBy(function (appointment) {
                   return new Date(appointment.date)
-                })
-                .map(function (appointment) {
+                }).map(function (appointment) {
                   var obj = {};
                   if (new Date().setHours(0, 0, 0, 0) === new Date(appointment.date).setHours(0, 0, 0, 0)) {
                     obj["date"] = "today"
@@ -72,8 +69,7 @@ class DashboardView extends Component {
                   obj["start"] = IndexToTime(appointment.start)
                   obj["end"] = IndexToTime(appointment.end)
                   return obj
-                })
-                .value()
+                }).value()
             actions.setDashboardAppointment(appointmentInfo)
           }
           actions.setDashboardUserInfo(userInfo)
@@ -131,6 +127,7 @@ class DashboardView extends Component {
   render() {
     const {listed, emailVerified, verifyEmailStatus} = this.props.auth
     const {userInfo, listInfo, appointments, editListInfo} = this.props.dashboard
+    const { agentbook } =  this.props.functions
     return (
         <div className="view-body flex-column">
           <div style={{padding: "36px 8px 64px 8px"}}>
@@ -159,6 +156,21 @@ class DashboardView extends Component {
                                   style={{marginLeft: "auto"}}>keyboard_arrow_right</FontIcon>
                       </div>
                     </div>
+                    {
+                      agentbook && (
+                        <div className="panel-top-entry">
+                          <div className="flex-row flex-center default-padding raleway light-shadow"
+                               onClick={() => {
+                                 this.props.dispatch(push('/dashboard/agents'))
+                               }}>
+                            <FontIcon className="material-icons">book</FontIcon>
+                            <span style={{marginLeft: "16px"}}>Agents Book</span>
+                            <FontIcon className="material-icons"
+                                      style={{marginLeft: "auto"}}>keyboard_arrow_right</FontIcon>
+                          </div>
+                        </div>
+                      )
+                    }
                   </div>
               ) : null }
 
@@ -493,7 +505,8 @@ class DashboardView extends Component {
 const mapStatesToProps = (states) => {
   return {
     auth: states.auth,
-    dashboard: states.dashboard
+    dashboard: states.dashboard,
+    functions: states.functions
   };
 }
 

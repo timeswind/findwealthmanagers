@@ -5,15 +5,19 @@ import Route from 'react-router/lib/Route';
 import browserHistory from 'react-router/lib/browserHistory';
 import applyRouterMiddleware from 'react-router/lib/applyRouterMiddleware';
 import { useScroll } from 'react-router-scroll';
-import { createStore, combineReducers, applyMiddleware } from 'redux';
+import { compose, createStore, combineReducers, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import { syncHistoryWithStore, routerReducer, routerMiddleware } from 'react-router-redux';
 import IndexRoute from 'react-router/lib/IndexRoute';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import thunk from 'redux-thunk';
+// import { getDashBoardData } from './redux/actions/dashboard';
 
 import Raven from 'raven-js';
-Raven.config('https://428f8ff22ea44869a1b6410cf83d7905@sentry.io/101570').install();
+if (process.env.NODE_ENV === 'production') {
+  Raven.config('https://428f8ff22ea44869a1b6410cf83d7905@sentry.io/101570').install();
+}
 // import { IntlProvider } from 'react-intl';
 // global.Intl = require('intl');
 import injectTapEventPlugin from 'react-tap-event-plugin';
@@ -29,6 +33,8 @@ import searchReducers from './redux/reducers/search';
 import listReducers from './redux/reducers/list';
 import dashboardReducers from './redux/reducers/dashboard';
 import clientbookReducers from './redux/reducers/clientbook';
+import functionsReducer from './redux/reducers/functions';
+import agentbookReducer from './redux/reducers/agentbook';
 
 import './index.css';
 
@@ -53,10 +59,15 @@ const store = createStore(
     search: searchReducers,
     list: listReducers,
     dashboard: dashboardReducers,
-    clientbook: clientbookReducers
+    clientbook: clientbookReducers,
+    agentbook: agentbookReducer,
+    functions: functionsReducer
   }),
-  window.devToolsExtension && window.devToolsExtension(),
-  applyMiddleware(reactRouterMiddleware)
+  compose(
+    applyMiddleware(thunk),
+    applyMiddleware(reactRouterMiddleware),
+    window.devToolsExtension ? window.devToolsExtension() : f => f
+  )
 )
 const history = syncHistoryWithStore(browserHistory, store)
 
@@ -99,6 +110,16 @@ if (localStore.session.get("token") && localStore.session.get("email") && localS
     type: "SET_ROLE",
     role: localStore.session.get("role")
   })
+  if (localStore.session.get("permissions")) {
+    let permissions = localStore.session.get("permissions")
+    store.dispatch({
+      type: "SET_PERMISSIONS",
+      role: localStore.session.get("permissions")
+    })
+    if (permissions.indexOf('agentbook') > -1) {
+      store.dispatch({ type: 'ENABLE_AGENTBOOK' })
+    }
+  }
   store.dispatch({
     type: "SET_LOGIN_STATE",
     isLogin: true
@@ -116,6 +137,18 @@ if (localStore.session.get("token") && localStore.session.get("email") && localS
   })
 }
 
+function requirePermissionAGENTBOOK (nextState, replace, done) {
+  if (store.getState().auth.isLogin && store.getState().functions.agentbook) {
+    done()
+  } else {
+    replace({
+      pathname: '/login',
+      state: { nextPathname: nextState.location.pathname }
+    })
+    done()
+  }
+}
+
 // function requireAuthLogin(nextState, replace) {
 //   if (!store.getState().auth.isLogin) {
 //     replace({
@@ -125,7 +158,7 @@ if (localStore.session.get("token") && localStore.session.get("email") && localS
 //   }
 // }
 
-function requireAuthDashboard(nextState, replace) {
+function dashboardOnEnter(nextState, replace, done) {
   if (!store.getState().auth.isLogin || store.getState().auth.role > 3) {
     if (store.getState().auth.role > 100) {
       replace({
@@ -139,6 +172,7 @@ function requireAuthDashboard(nextState, replace) {
       })
     }
   }
+  done()
 }
 
 
@@ -221,7 +255,7 @@ const MUI = () => (
               })
             }}>
           </Route>
-          <Route path="/dashboard" onEnter={requireAuthDashboard}>
+          <Route path="/dashboard" onEnter={dashboardOnEnter}>
             <IndexRoute getComponent={function(location, cb){
                 require.ensure([], (require) => {
                   cb(null, require('./views/Dashboard/Dashboard').default)
@@ -237,6 +271,12 @@ const MUI = () => (
             <Route path="clients" onEnter={requireAuthAdvisor} getComponent={function(location, cb){
                 require.ensure([], (require) => {
                   cb(null, require('./views/Dashboard/Clients/Clients').default)
+                })
+              }}>
+            </Route>
+            <Route path="agents" onEnter={requirePermissionAGENTBOOK} getComponent={function(location, cb){
+                require.ensure([], (require) => {
+                  cb(null, require('./views/Dashboard/Agents/Agents').default)
                 })
               }}>
             </Route>

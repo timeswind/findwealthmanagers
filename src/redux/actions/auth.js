@@ -6,6 +6,7 @@ import {
   SET_NAME,
   SET_EMAIL,
   SET_ROLE,
+  SET_PERMISSIONS,
   SET_LOGIN_STATE,
   LOGOUT,
   SET_EMAIL_VERIFIED_STATUS,
@@ -58,6 +59,13 @@ export function setRole(role) {
   return {
     type: SET_ROLE,
     role: role
+  }
+}
+
+export function setPermissions (permissions) {
+  return {
+    type: SET_PERMISSIONS,
+    permissions: permissions
   }
 }
 

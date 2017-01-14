@@ -8,6 +8,7 @@ import localStore from 'store2';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as AuthActions from '../../redux/actions/auth.js';
+import * as FunctionsActions from '../../redux/actions/functions.js';
 import { push } from 'react-router-redux'
 import Raven from 'raven-js';
 class LoginView extends Component {
@@ -68,6 +69,12 @@ class LoginView extends Component {
         localStore.session("name", json.name);
         localStore.session("email", json.email);
         localStore.session("role", json.role);
+        if (json.permissions && json.permissions.length > 0) {
+          localStore.session("permissions", json.permissions);
+          if (json.permissions.indexOf('agentbook') > -1) {
+            actions.enableAgentBook()
+          }
+        }
         Raven.setUserContext({
           name: json.name,
           email: json.email,
@@ -142,7 +149,7 @@ class LoginView extends Component {
 const mapDispatchToProps = (dispatch) => {
   return {
     dispatch,
-    actions: bindActionCreators(AuthActions, dispatch)
+    actions: bindActionCreators(Object.assign({}, AuthActions, FunctionsActions), dispatch)
   };
 }
 
