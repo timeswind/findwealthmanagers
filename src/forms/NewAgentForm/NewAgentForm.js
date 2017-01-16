@@ -1,0 +1,130 @@
+import React, { Component } from 'react';
+import { Field, FieldArray, reduxForm, formValueSelector, change } from 'redux-form';
+import { TextField, DatePicker, Checkbox } from 'redux-form-material-ui';
+import FlatButton from 'material-ui/FlatButton';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
+import FontIcon from 'material-ui/FontIcon';
+import IconButton from 'material-ui/IconButton';
+import { connect } from 'react-redux';
+import _ from 'lodash';
+
+const required = value => value == null ? 'Required' : undefined
+
+const renderFields = ({ fields }) =>
+<div className="flex-column" style={{display: 'inline-block'}}>
+  {fields.map((field, index) =>
+    <div className="flex-column" key={index} style={{margin: "0 0 16px 0", border: "1px solid #ddd", padding: "0 16px 16px 16px", display: 'inline-block'}}>
+      <div className="flex-row flex-baseline">
+        <Field
+          floatingLabelText="Field Name"
+          hintText="Field Name"
+          name={`${field}.key`}
+          type="text"
+          component={TextField}
+          style={{marginRight: 16}}
+          />
+        <Field
+          floatingLabelText="Value"
+          hintText="Value"
+          name={`${field}.value`}
+          type="text"
+          component={TextField}
+          style={{marginRight: 16}}
+          />
+        <FlatButton
+          icon={<FontIcon className="material-icons" style={{color: "#fff"}}>clear</FontIcon>}
+          labelStyle={{color: "#FFF"}}
+          rippleColor="#B2DFDB"
+          backgroundColor="#F44336"
+          hoverColor="#E57373"
+          onTouchTap={() => fields.remove(index)}
+          style={{bottom: 4}}/>
+      </div>
+    </div>
+  )}
+  <div className="flex-row">
+    <FlatButton
+      label="Add Field"
+      labelStyle={{color: "#FFF"}}
+      rippleColor="#B2DFDB"
+      backgroundColor="#546E7A"
+      hoverColor="#37474F"
+      onTouchTap={() => fields.push()}
+      icon={<FontIcon className="material-icons" style={{color: "#fff"}}>add</FontIcon>}/>
+  </div>
+</div>
+
+
+class NewAgentForm extends Component {
+  render() {
+    const { handleSubmit, fieldsValue, dispatch } = this.props;
+
+    return (
+      <form onSubmit={handleSubmit} className="flex-column">
+        <div className="flex-column">
+          <Field
+            name="name"
+            component={TextField}
+            hintText="Agent Name"
+            floatingLabelText="Agent Name"
+            />
+          <Field
+            name="email"
+            component={TextField}
+            hintText="Email"
+            floatingLabelText="Email"
+            />
+          <Field
+            name="phone"
+            component={TextField}
+            hintText="Phone Number"
+            floatingLabelText="Phone Number"
+            />
+          <Field name="joinAt"
+            component={DatePicker}
+            format={null}
+            onChange={(value) => {
+              console.log('date changed ', value) // eslint-disable-line no-console
+            }}
+            hintText="Join At"
+            floatingLabelText="Join At"
+            style={{marginBottom: 16}}
+            />
+          <Field name="isActive"
+            component={Checkbox}
+            label="Active"
+            style={{marginBottom: 24}}/>
+          <FieldArray name="fields" component={renderFields}/>
+          <FlatButton
+            type="submit"
+            label="Create"
+            style={{width: '100%', marginTop: '24px'}}
+            backgroundColor="#ddd"
+            />
+        </div>
+      </form>
+    );
+  }
+}
+
+NewAgentForm = reduxForm({
+  form: 'newAgentForm'
+})(NewAgentForm);
+
+const selector = formValueSelector('newAgentForm')
+NewAgentForm = connect(
+  state => {
+    const fieldsValue = selector(state, 'fields')
+    return {
+      fieldsValue,
+    }
+  },
+  dispatch => {
+    return {
+      dispatch
+    }
+  }
+)(NewAgentForm)
+
+export default NewAgentForm;
