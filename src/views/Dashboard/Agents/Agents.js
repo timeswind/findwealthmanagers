@@ -1,26 +1,20 @@
 import React, { Component } from 'react';
-import axios from 'axios';
+// import axios from 'axios';
 import _ from 'lodash';
-import IconButton from 'material-ui/IconButton';
 import FlatButton from 'material-ui/FlatButton';
-import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
 import FontIcon from 'material-ui/FontIcon';
 import Avatar from 'material-ui/Avatar';
-import Popover from 'material-ui/Popover';
-import { List, ListItem } from 'material-ui/List';
+import { ListItem } from 'material-ui/List';
 import Subheader from 'material-ui/Subheader';
-import Dialog from 'material-ui/Dialog';
-import DatePicker from 'material-ui/DatePicker';
-import TimePicker from 'material-ui/TimePicker';
-import TextField from 'material-ui/TextField';
 import { connect } from 'react-redux';
 import * as AgentbookActions from '../../../redux/actions/agentbook';
 import { bindActionCreators } from 'redux';
 import NewAgentForm from '../../../forms/NewAgentForm/NewAgentForm';
+import AgentDetailView from './AgentDetailView';
 
 import './Agents.css'
 
-class Clients extends Component {
+class Agents extends Component {
   componentWillMount() {
     this.getAgents()
   }
@@ -41,6 +35,12 @@ class Clients extends Component {
     console.log(agentData)
   }
 
+  handleEditAgentFormOnSubmit = (newAgentData) => {
+    const { actions } = this.props
+    actions.updateAgent(newAgentData)
+    console.log(newAgentData)
+  }
+
   agentOnSelect (agent) {
     const { actions } = this.props
     actions.setAgentBookSelectedAgent(agent)
@@ -50,8 +50,8 @@ class Clients extends Component {
     const { agents, selectAgent } = this.props.agentbook
     return (
       <div className="view-body flex-column">
-        <div className="flex-row clients-panel">
-          <div className="clients-side-panel flex-column" style={{height: '100%'}}>
+        <div className="flex-row agents-panel">
+          <div className="agents-side-panel flex-column" style={{height: '100%'}}>
             <div className="flex-column default-padding">
               <FlatButton
                 label="Add new agent"
@@ -66,7 +66,7 @@ class Clients extends Component {
             {/*
               A JSX comment
               // <div className="flex-row flex-center" style={{flexShrink: 0}}>
-              //   <div className="clients-search-bar" style={{flex: 100}}>
+              //   <div className="agents-search-bar" style={{flex: 100}}>
               //     <TextField
               //       hintText="Search"
               //       fullWidth={true}
@@ -90,10 +90,10 @@ class Clients extends Component {
             }) }
 
           </div>
-          <div className="clients-detail-panel-wrapper" style={{flex: 100}}>
+          <div className="agents-detail-panel-wrapper" style={{flex: 100}}>
             { _.isEmpty(selectAgent) ? (
-              <div className="clients-detail-panel flex-row" style={{height: '100%'}}>
-                <div className="clients-detail-panel-item">
+              <div className="agents-detail-panel flex-row" style={{height: '100%'}}>
+                <div className="agents-detail-panel-item">
                   <Subheader>Create New Agent</Subheader>
                   <div style={{padding: '0 16px 16px 16px'}}>
                     <NewAgentForm onSubmit={this.handleNewAgentFormOnSubmit}/>
@@ -101,14 +101,10 @@ class Clients extends Component {
                 </div>
               </div>
             ) : (
-              <div className="clients-detail-panel flex-row" style={{height: '100%'}}>
-                <div className="clients-detail-panel-item">
-                  <Subheader>Contact</Subheader>
-
-                </div>
-                <div className="clients-detail-panel-item">
-                  <Subheader>Note</Subheader>
-
+              <div className="agents-detail-panel flex-row" style={{height: '100%'}}>
+                <div className="agents-detail-panel-item">
+                  <Subheader>Agent Detail</Subheader>
+                  <AgentDetailView style={{padding: "0px 16px 16px 16px"}} initialValues={selectAgent} onSubmit={this.handleEditAgentFormOnSubmit}/>
                 </div>
               </div>
             ) }
@@ -133,4 +129,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 }
 
-export default connect(mapStatesToProps, mapDispatchToProps)(Clients);
+export default connect(mapStatesToProps, mapDispatchToProps)(Agents);

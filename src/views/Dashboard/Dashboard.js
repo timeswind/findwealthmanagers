@@ -130,7 +130,7 @@ class DashboardView extends Component {
     const { agentbook } =  this.props.functions
     return (
         <div className="view-body flex-column">
-          <div style={{padding: "36px 8px 64px 8px"}}>
+          <div style={{padding: "16px 8px 64px 8px"}}>
             <div style={{width: '100%', maxWidth: "1080px", margin: '0 auto'}}>
               { this.props.auth.role !== 1 ? (
                   <div className="panel-top-entries">
@@ -164,7 +164,7 @@ class DashboardView extends Component {
                                  this.props.dispatch(push('/dashboard/agents'))
                                }}>
                             <FontIcon className="material-icons">book</FontIcon>
-                            <span style={{marginLeft: "16px"}}>Agents Book</span>
+                            <span style={{marginLeft: "16px"}}>Agent Book</span>
                             <FontIcon className="material-icons"
                                       style={{marginLeft: "auto"}}>keyboard_arrow_right</FontIcon>
                           </div>

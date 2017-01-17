@@ -1,8 +1,8 @@
-.clients-panel {
+.agents-panel {
 
 }
 
-.clients-side-panel {
+.agents-side-panel {
   border-right: 1px solid #ddd;
   background: #fff;
   height: 100%;
@@ -10,26 +10,26 @@
   position: fixed;
   z-index: 1;
   left: 0px;
-  top: 62px;
+  top: 68px;
   transform: translate(0px, 0px);
   overflow: auto;
   padding-bottom: 64px
 }
 
-.clients-search-bar {
+.agents-search-bar {
   padding: 8px 0 8px 16px;
 }
 
-.clients-detail-panel-wrapper {
+.agents-detail-panel-wrapper {
   margin: 16px;
   padding-left: 380px
 }
 
-.clients-detail-panel {
+.agents-detail-panel {
 
 }
 
-.clients-detail-panel-item {
+.agents-detail-panel-item {
   flex: 50;
   background: #fff;
   border-radius: 3px;
@@ -38,6 +38,6 @@
   overflow-y: auto;
 }
 
-.clients-detail-panel-item:first-child {
+.agents-detail-panel-item:first-child {
   margin-right: 16px;
 }

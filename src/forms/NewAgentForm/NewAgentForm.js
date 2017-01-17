@@ -1,15 +1,11 @@
 import React, { Component } from 'react';
-import { Field, FieldArray, reduxForm, formValueSelector, change } from 'redux-form';
+import { Field, FieldArray, reduxForm } from 'redux-form';
 import { TextField, DatePicker, Checkbox } from 'redux-form-material-ui';
 import FlatButton from 'material-ui/FlatButton';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
 import FontIcon from 'material-ui/FontIcon';
-import IconButton from 'material-ui/IconButton';
 import { connect } from 'react-redux';
-import _ from 'lodash';
 
-const required = value => value == null ? 'Required' : undefined
+// const required = value => value == null ? 'Required' : undefined
 
 const renderFields = ({ fields }) =>
 <div className="flex-column" style={{display: 'inline-block'}}>
@@ -58,7 +54,7 @@ const renderFields = ({ fields }) =>
 
 class NewAgentForm extends Component {
   render() {
-    const { handleSubmit, fieldsValue, dispatch } = this.props;
+    const { handleSubmit } = this.props;
 
     return (
       <form onSubmit={handleSubmit} className="flex-column">
@@ -112,12 +108,12 @@ NewAgentForm = reduxForm({
   form: 'newAgentForm'
 })(NewAgentForm);
 
-const selector = formValueSelector('newAgentForm')
+// const selector = formValueSelector('newAgentForm')
 NewAgentForm = connect(
   state => {
-    const fieldsValue = selector(state, 'fields')
+    // const fieldsValue = selector(state, 'fields')
     return {
-      fieldsValue,
+      // fieldsValue,
     }
   },
   dispatch => {

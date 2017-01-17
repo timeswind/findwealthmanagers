@@ -259,31 +259,31 @@ const MUI = () => (
             <IndexRoute getComponent={function(location, cb){
                 require.ensure([], (require) => {
                   cb(null, require('./views/Dashboard/Dashboard').default)
-                })
+                }, 'dashboard')
               }}>
             </IndexRoute>
             <Route path="calendar" onEnter={requireAuthAdvisor} getComponent={function(location, cb){
                 require.ensure([], (require) => {
                   cb(null, require('./views/ManageCalendar/ManageCalendar').default)
-                })
+                }, 'dashboard')
               }}>
             </Route>
             <Route path="clients" onEnter={requireAuthAdvisor} getComponent={function(location, cb){
                 require.ensure([], (require) => {
                   cb(null, require('./views/Dashboard/Clients/Clients').default)
-                })
+                }, 'dashboard')
               }}>
             </Route>
             <Route path="agents" onEnter={requirePermissionAGENTBOOK} getComponent={function(location, cb){
                 require.ensure([], (require) => {
                   cb(null, require('./views/Dashboard/Agents/Agents').default)
-                })
+                }, 'dashboard')
               }}>
             </Route>
             <Route path="feedback" onEnter={requireAuthAdvisor} getComponent={function(location, cb){
                 require.ensure([], (require) => {
                   cb(null, require('./views/Dashboard/ManageFeedback/ManageFeedback').default)
-                })
+                }, 'dashboard')
               }}>
             </Route>
           </Route>

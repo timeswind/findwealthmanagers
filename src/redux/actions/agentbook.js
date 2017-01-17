@@ -4,6 +4,8 @@ import {
   FETCH_AGENTS_FAILURE,
   CREATE_AGENTS_SUCCESS,
   CREATE_AGENTS_FAILURE,
+  UPDATE_AGENTS_SUCCESS,
+  UPDATE_AGENTS_FAILURE,
   SET_AGENTBOOK_SELECTED_AGENT
 } from '../constants'
 
@@ -42,6 +44,25 @@ export function createNewAgent(newAgent) {
         } else {
           dispatch({
             type: CREATE_AGENTS_FAILURE
+          })
+        }
+      })
+  }
+}
+
+export function updateAgent(updatedAgent) {
+  let url = '/api/protect/agentbook/agents';
+  return function (dispatch) {
+    return axios.put(url, updatedAgent)
+      .then(function (response) {
+        if (response.data.success) {
+          dispatch({
+            type: UPDATE_AGENTS_SUCCESS,
+            agent: response.data.agent
+          })
+        } else {
+          dispatch({
+            type: UPDATE_AGENTS_FAILURE
           })
         }
       })
