@@ -77,6 +77,12 @@ class NewAgentForm extends Component {
             hintText="Phone Number"
             floatingLabelText="Phone Number"
             />
+          <Field
+            name="referBy"
+            component={TextField}
+            hintText="Refer By"
+            floatingLabelText="Refer By"
+            />
           <Field name="joinAt"
             component={DatePicker}
             format={null}
@@ -92,6 +98,15 @@ class NewAgentForm extends Component {
             label="Active"
             style={{marginBottom: 24}}/>
           <FieldArray name="fields" component={renderFields}/>
+          <Field
+            name="note"
+            component={TextField}
+            multiLine={true}
+            fullWidth={true}
+            rows={3}
+            hintText="Note"
+            floatingLabelText="Note"
+            />
           <FlatButton
             type="submit"
             label="Create"

@@ -1,20 +1,30 @@
 import React, { Component } from 'react';
-// import axios from 'axios';
 import _ from 'lodash';
+import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import FontIcon from 'material-ui/FontIcon';
 import Avatar from 'material-ui/Avatar';
 import { ListItem } from 'material-ui/List';
-import Subheader from 'material-ui/Subheader';
 import { connect } from 'react-redux';
 import * as AgentbookActions from '../../../redux/actions/agentbook';
 import { bindActionCreators } from 'redux';
 import NewAgentForm from '../../../forms/NewAgentForm/NewAgentForm';
 import AgentDetailView from './AgentDetailView';
+import Snackbar from 'material-ui/Snackbar';
+import AutoComplete from 'material-ui/AutoComplete';
 
 import './Agents.css'
 
 class Agents extends Component {
+  state = {
+    deleteConfirmDialogOpen: false,
+    agentToBeDelete: '',
+    snackbarText: '',
+    snackbarShow: false,
+    searchDataSource: [],
+    searchText: ''
+  }
+
   componentWillMount() {
     this.getAgents()
   }
@@ -31,14 +41,16 @@ class Agents extends Component {
 
   handleNewAgentFormOnSubmit = (agentData) => {
     const { actions } = this.props
-    actions.createNewAgent(agentData)
-    console.log(agentData)
+    actions.createNewAgent(agentData).then(() => {
+      this.setState({snackbarShow: true, snackbarText: 'Create new agent success!'})
+    })
   }
 
   handleEditAgentFormOnSubmit = (newAgentData) => {
     const { actions } = this.props
-    actions.updateAgent(newAgentData)
-    console.log(newAgentData)
+    actions.updateAgent(newAgentData).then(() => {
+      this.setState({snackbarShow: true, snackbarText: 'Update agent success!'})
+    })
   }
 
   agentOnSelect (agent) {
@@ -46,8 +58,65 @@ class Agents extends Component {
     actions.setAgentBookSelectedAgent(agent)
   }
 
+  handleAgentOnDelete (agent_id) {
+    this.setState({agentToBeDelete: agent_id, deleteConfirmDialogOpen: true})
+  }
+
+  confirmAgentDelete() {
+    const { actions } = this.props
+    if (this.state.agentToBeDelete !== '') {
+      actions.deleteAgent(this.state.agentToBeDelete).then(() => {
+        this.setState({snackbarShow: true, snackbarText: 'Agent deleted'})
+      })
+      this.setState({agentToBeDelete: '', deleteConfirmDialogOpen: false})
+    }
+  }
+
+  handleDeleteAgentConfirmCancel() {
+    this.setState({agentToBeDelete: '', deleteConfirmDialogOpen: false})
+  }
+
+  handleSnackbarOnClose = () => {
+    this.setState({snackbarShow: false, snackbarText: ''})
+  }
+
+  handleSearchInput = (searchText) => {
+    const { agentSearchDataSource } = this.props.agentbook
+    var dataSource = []
+
+    agentSearchDataSource.forEach((agent, index) => {
+      if (agent.lowercase.indexOf(searchText) !== -1) {
+        dataSource.push(agent)
+      }
+    })
+
+    this.setState({searchDataSource: dataSource, searchText})
+  };
+
+  handleSearchResultClick = (chosenRequest, index) => {
+    const { actions } = this.props
+    actions.setAgentBookSelectedAgentById(chosenRequest.id)
+    this.setState({searchText: '', searchDataSource: []})
+  };
+
   render() {
     const { agents, selectAgent } = this.props.agentbook
+    const dialogActions = [
+      <FlatButton
+        label="Cancel"
+        primary={true}
+        onTouchTap={() => {
+          this.handleDeleteAgentConfirmCancel()
+        }}
+        />,
+      <FlatButton
+        label="Delete"
+        primary={true}
+        onTouchTap={() => {
+          this.confirmAgentDelete()
+        }}
+        />,
+    ];
     return (
       <div className="view-body flex-column">
         <div className="flex-row agents-panel">
@@ -63,6 +132,19 @@ class Agents extends Component {
                 }}
                 />
             </div>
+            <div className="flex-column flex-center">
+              <AutoComplete
+                style={{padding: '0 16px', boxSizing: 'border-box'}}
+                fullWidth={true}
+                hintText="Type anything"
+                searchText={this.state.searchText}
+                dataSource={this.state.searchDataSource}
+                onUpdateInput={this.handleSearchInput}
+                filter={AutoComplete.noFilter}
+                onNewRequest={this.handleSearchResultClick}
+                dataSourceConfig={{text: 'name', value: 'id',}}
+                />
+            </div>
             {/*
               A JSX comment
               // <div className="flex-row flex-center" style={{flexShrink: 0}}>
@@ -73,60 +155,79 @@ class Agents extends Component {
               //       />
               //   </div>
               // </div>
-            */}
-            { agents.map((agent, index)=>{
-              return (
-                <ListItem
-                  key={agent._id}
-                  primaryText={agent.name}
-                  secondaryText={agent.email}
-                  onClick={()=>{
-                    this.agentOnSelect(agent)
-                  }}
-                  leftAvatar={<Avatar src="http://www.lovemarks.com/wp-content/uploads/profile-avatars/default-avatar-tech-guy.png" />}
-                  rightIcon={<FontIcon className="material-icons">keyboard_arrow_right</FontIcon>}
-                  />
-              )
-            }) }
+              */}
+              { agents.map((agent, index)=>{
+                return (
+                  <ListItem
+                    key={agent._id}
+                    innerDivStyle={selectAgent._id === agent._id ? {background: "#eee"} : null}
+                    primaryText={agent.name}
+                    secondaryText={agent.email}
+                    onClick={()=>{
+                      this.agentOnSelect(agent)
+                    }}
+                    leftAvatar={<Avatar src="http://www.lovemarks.com/wp-content/uploads/profile-avatars/default-avatar-tech-guy.png" />}
+                    rightIcon={<FontIcon className="material-icons">keyboard_arrow_right</FontIcon>}
+                    />
+                )
+              }) }
 
-          </div>
-          <div className="agents-detail-panel-wrapper" style={{flex: 100}}>
-            { _.isEmpty(selectAgent) ? (
-              <div className="agents-detail-panel flex-row" style={{height: '100%'}}>
-                <div className="agents-detail-panel-item">
-                  <Subheader>Create New Agent</Subheader>
-                  <div style={{padding: '0 16px 16px 16px'}}>
-                    <NewAgentForm onSubmit={this.handleNewAgentFormOnSubmit}/>
+            </div>
+            <div className="agents-detail-panel-wrapper" style={{flex: 100}}>
+              { _.isEmpty(selectAgent) ? (
+                <div className="agents-detail-panel flex-row" style={{height: '100%'}}>
+                  <div className="agents-detail-panel-item">
+                    <div className="agents-right-panel-title">Create New Agent</div>
+                    <div style={{padding: '0 16px 16px 16px'}}>
+                      <NewAgentForm onSubmit={this.handleNewAgentFormOnSubmit}/>
+                    </div>
                   </div>
                 </div>
+              ) : (
+                <div className="agents-detail-panel flex-column" style={{height: '100%'}}>
+                  <div className="agents-detail-title">Agent Detail</div>
+                  <AgentDetailView style={{padding: "16px 0"}}
+                    initialValues={selectAgent}
+                    onSubmit={this.handleEditAgentFormOnSubmit}
+                    onDelete={(id) => {
+                      this.handleAgentOnDelete(id)
+                    }}/>
+                  </div>
+                ) }
               </div>
-            ) : (
-              <div className="agents-detail-panel flex-row" style={{height: '100%'}}>
-                <div className="agents-detail-panel-item">
-                  <Subheader>Agent Detail</Subheader>
-                  <AgentDetailView style={{padding: "0px 16px 16px 16px"}} initialValues={selectAgent} onSubmit={this.handleEditAgentFormOnSubmit}/>
-                </div>
-              </div>
-            ) }
+            </div>
+            <Dialog
+              title="Do you really want to delete this agent?"
+              actions={dialogActions}
+              modal={false}
+              deleteAgentId={null}
+              open={this.state.deleteConfirmDialogOpen}
+              >
+              The actions in this window were passed in as an array of React objects.
+            </Dialog>
+            <Snackbar
+              open={this.state.snackbarShow}
+              message={this.state.snackbarText}
+              autoHideDuration={1500}
+              onRequestClose={this.handleSnackbarOnClose}
+              />
           </div>
-        </div>
-      </div>
-    )
-  }
-}
+        )
+      }
+    }
 
-const mapStatesToProps = (states) => {
-  return {
-    auth: states.auth,
-    agentbook: states.agentbook
-  };
-}
+    const mapStatesToProps = (states) => {
+      return {
+        auth: states.auth,
+        agentbook: states.agentbook
+      };
+    }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    dispatch,
-    actions: bindActionCreators(AgentbookActions, dispatch)
-  };
-}
+    const mapDispatchToProps = (dispatch) => {
+      return {
+        dispatch,
+        actions: bindActionCreators(AgentbookActions, dispatch)
+      };
+    }
 
-export default connect(mapStatesToProps, mapDispatchToProps)(Agents);
+    export default connect(mapStatesToProps, mapDispatchToProps)(Agents);

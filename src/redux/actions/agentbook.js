@@ -6,6 +6,8 @@ import {
   CREATE_AGENTS_FAILURE,
   UPDATE_AGENTS_SUCCESS,
   UPDATE_AGENTS_FAILURE,
+  DELETE_AGENTS_SUCCESS,
+  DELETE_AGENTS_FAILURE,
   SET_AGENTBOOK_SELECTED_AGENT
 } from '../constants'
 
@@ -69,6 +71,25 @@ export function updateAgent(updatedAgent) {
   }
 }
 
+export function deleteAgent(id) {
+  let url = '/api/protect/agentbook/agents?id=' + id;
+  return function (dispatch) {
+    return axios.delete(url)
+      .then(function (response) {
+        if (response.data.success) {
+          dispatch({
+            type: DELETE_AGENTS_SUCCESS,
+            id: id
+          })
+        } else {
+          dispatch({
+            type: DELETE_AGENTS_FAILURE
+          })
+        }
+      })
+  }
+}
+
 export function updateAgentBookList(agents) {
   return {
     type: UPDATE_AGENTS_LIST,
@@ -80,5 +101,12 @@ export function setAgentBookSelectedAgent(selectAgent) {
   return {
     type: SET_AGENTBOOK_SELECTED_AGENT,
     selectAgent: selectAgent
+  }
+}
+
+export function setAgentBookSelectedAgentById(id) {
+  return {
+    type: SET_AGENTBOOK_SELECTED_AGENT,
+    id: id
   }
 }
