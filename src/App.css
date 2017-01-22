@@ -59,6 +59,10 @@
   text-transform: capitalize;
 }
 
+.flex-no-shrink {
+  flex-shrink: 0
+}
+
 .flex-25 {
   flex: 25
 }

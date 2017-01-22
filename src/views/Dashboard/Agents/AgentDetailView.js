@@ -5,51 +5,66 @@ import FlatButton from 'material-ui/FlatButton';
 import FontIcon from 'material-ui/FontIcon';
 import IconButton from 'material-ui/IconButton';
 import { connect } from 'react-redux';
+import AddressAutoComplete from '../../../components/AddressAutoComplete/AddressAutoComplete';
 
-const renderFields = ({ fields, fieldsValue }) =>
-<div className="flex-column" style={{display: 'inline-block'}}>
-  {fields.map((field, index) => {
-    console.log(fieldsValue)
-    return (
-      <div className="flex-column" key={index}>
-        <div className="flex-row flex-baseline">
-          <Field
-            floatingLabelText={(!!fieldsValue && fieldsValue[index]) ? fieldsValue[index].key : 'Field Name'}
-            hintText="Field Name"
-            name={`${field}.key`}
-            type="text"
-            component={TextField}
-            style={{marginRight: 16}}
-            />
-          <Field
-            floatingLabelText={(!!fieldsValue && fieldsValue[index]) ? fieldsValue[index].value : 'Field Value'}
-            hintText="Value"
-            name={`${field}.value`}
-            type="text"
-            component={TextField}
-            style={{marginRight: 16}}
-            />
-          <IconButton tooltip="Remove" style={{marginTop: 8}} iconStyle={{color: "#F44336"}} onTouchTap={() => fields.remove(index)}>
-            <FontIcon className="material-icons" style={{color: "#F44336"}}>delete</FontIcon>
-          </IconButton>
-        </div>
-      </div>
-    )
-  }
-)}
-<div className="flex-row">
-  <FlatButton
-    label="Add Field"
-    labelStyle={{color: "#FFF"}}
-    rippleColor="#B2DFDB"
-    backgroundColor="#546E7A"
-    hoverColor="#37474F"
-    onTouchTap={() => fields.push()}
-    icon={<FontIcon className="material-icons" style={{color: "#fff"}}>add</FontIcon>}/>
-</div>
-</div>
+const renderAddressInput = field => (
+  <AddressAutoComplete
+    currentValue={field.input.value}
+    onAddressInput={(address) => {field.input.onChange(address)}}
+    onAddressSelect={(address, loc) => {field.input.onChange(address)}}
+    underlineShow={true}
+    hintText="Address" />
+)
+const renderFields = ({ fields, fieldsValue }) => {
+  return (
+    <div className="flex-column" style={{display: 'inline-block'}}>
+      {fields.map((field, index) => {
+        return (
+          <div className="flex-column" key={index}>
+            <div className="flex-row flex-baseline">
+              <Field
+                floatingLabelText={(!!fieldsValue && fieldsValue[index]) ? fieldsValue[index].key : 'Field Name'}
+                hintText="Field Name"
+                name={`${field}.key`}
+                type="text"
+                component={TextField}
+                style={{marginRight: 16}}
+                />
+              <Field
+                floatingLabelText={(!!fieldsValue && fieldsValue[index]) ? fieldsValue[index].value : 'Field Value'}
+                hintText="Value"
+                name={`${field}.value`}
+                type="text"
+                component={TextField}
+                style={{marginRight: 16}}
+                />
+              <IconButton tooltip="Remove" style={{marginTop: 8}} iconStyle={{color: "#F44336"}} onTouchTap={() => fields.remove(index)}>
+                <FontIcon className="material-icons" style={{color: "#F44336"}}>delete</FontIcon>
+              </IconButton>
+            </div>
+          </div>
+        )
+      }
+    )}
+    <div className="flex-row">
+      <FlatButton
+        label="Add Field"
+        labelStyle={{color: "#FFF"}}
+        rippleColor="#B2DFDB"
+        backgroundColor="#546E7A"
+        hoverColor="#37474F"
+        onTouchTap={() => fields.push()}
+        icon={<FontIcon className="material-icons" style={{color: "#fff"}}>add</FontIcon>}/>
+    </div>
+  </div>
+)
+}
 
 class AgentDetailView extends Component {
+  shouldComponentUpdate(nextProps) {
+    return (nextProps.id !== this.props.id || nextProps.dirty !== this.props.dirty)
+  }
+
   render() {
     const { id, style, fields, dirty, reset, handleSubmit, onDelete } = this.props
 
@@ -88,12 +103,12 @@ class AgentDetailView extends Component {
               }}
               hintText="Join At"
               floatingLabelText="Join At"
-              style={{marginBottom: 16}}
               />
+            <Field name="address" component={renderAddressInput}/>
             <Field name="isActive"
               component={Checkbox}
               label="Active"
-              style={{marginBottom: 24}}/>
+              style={{marginBottom: 24, marginTop: 16}}/>
             <FieldArray name="fields" props={{fieldsValue: fields}} component={renderFields}/>
           </div>
           <div className="flex-column light-card" style={{flex: 50, padding: "0 16px 16px 16px"}}>

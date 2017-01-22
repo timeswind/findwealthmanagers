@@ -4,8 +4,16 @@ import { TextField, DatePicker, Checkbox } from 'redux-form-material-ui';
 import FlatButton from 'material-ui/FlatButton';
 import FontIcon from 'material-ui/FontIcon';
 import { connect } from 'react-redux';
-
+import AddressAutoComplete from '../../components/AddressAutoComplete/AddressAutoComplete';
 // const required = value => value == null ? 'Required' : undefined
+
+const renderAddressInput = field => (
+  <AddressAutoComplete
+    onAddressInput={(address) => {field.input.onChange(address)}}
+    onAddressSelect={(address, loc) => {field.input.onChange(address)}}
+    underlineShow={true}
+    hintText="Address" />
+)
 
 const renderFields = ({ fields }) =>
 <div className="flex-column" style={{display: 'inline-block'}}>
@@ -91,12 +99,13 @@ class NewAgentForm extends Component {
             }}
             hintText="Join At"
             floatingLabelText="Join At"
-            style={{marginBottom: 16}}
             />
+          <Field name="address" component={renderAddressInput}/>
+
           <Field name="isActive"
             component={Checkbox}
             label="Active"
-            style={{marginBottom: 24}}/>
+            style={{marginBottom: 24, marginTop: 16}}/>
           <FieldArray name="fields" component={renderFields}/>
           <Field
             name="note"

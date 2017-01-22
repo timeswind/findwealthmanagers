@@ -24,7 +24,7 @@ export default function update(state = initialState, action) {
       agents: action.agents,
       agentSearchDataSource: action.agents.map((agent) => {
         var obj = {}
-        obj.lowercase = agent.name.toLowerCase()
+        obj.searchtext = agent.name.toLowerCase() + (agent.email || '') + (agent.phone || '')
         obj.name = agent.name
         obj.id = agent._id
         return obj
@@ -53,7 +53,7 @@ export default function update(state = initialState, action) {
       agents: newAgentsList,
       agentSearchDataSource: newAgentsList.map((agent) => {
         var obj = {}
-        obj.lowercase = agent.name.toLowerCase()
+        obj.searchtext = agent.name.toLowerCase() + (agent.email || '') + (agent.phone || '')
         obj.name = agent.name
         obj.id = agent._id
         return obj
@@ -72,7 +72,7 @@ export default function update(state = initialState, action) {
       agents: newAgentsList,
       agentSearchDataSource: newAgentsList.map((agent) => {
         var obj = {}
-        obj.lowercase = agent.name.toLowerCase()
+        obj.searchtext = agent.name.toLowerCase() + (agent.email || '') + (agent.phone || '')
         obj.name = agent.name
         obj.id = agent._id
         return obj
@@ -108,7 +108,7 @@ export default function update(state = initialState, action) {
       agents: newAgentsList,
       agentSearchDataSource: newAgentsList.map((agent) => {
         var obj = {}
-        obj.lowercase = agent.name.toLowerCase()
+        obj.searchtext = agent.name.toLowerCase() + (agent.email || '') + (agent.phone || '')
         obj.name = agent.name
         obj.id = agent._id
         return obj

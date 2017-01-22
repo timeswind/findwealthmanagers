@@ -85,7 +85,7 @@ class Agents extends Component {
     var dataSource = []
 
     agentSearchDataSource.forEach((agent, index) => {
-      if (agent.lowercase.indexOf(searchText) !== -1) {
+      if (agent.searchtext.indexOf(searchText) !== -1) {
         dataSource.push(agent)
       }
     })
@@ -120,8 +120,8 @@ class Agents extends Component {
     return (
       <div className="view-body flex-column">
         <div className="flex-row agents-panel">
-          <div className="agents-side-panel flex-column" style={{height: '100%'}}>
-            <div className="flex-column default-padding">
+          <div className="agents-side-panel flex-column">
+            <div className="flex-column default-padding flex-no-shrink">
               <FlatButton
                 label="Add new agent"
                 backgroundColor="rgb(48, 73, 102)"
@@ -132,11 +132,11 @@ class Agents extends Component {
                 }}
                 />
             </div>
-            <div className="flex-column flex-center">
+            <div className="flex-column flex-center flex-no-shrink">
               <AutoComplete
                 style={{padding: '0 16px', boxSizing: 'border-box'}}
                 fullWidth={true}
-                hintText="Type anything"
+                hintText="Search Agent (Name, Email, Phone)"
                 searchText={this.state.searchText}
                 dataSource={this.state.searchDataSource}
                 onUpdateInput={this.handleSearchInput}
@@ -156,21 +156,23 @@ class Agents extends Component {
               //   </div>
               // </div>
               */}
-              { agents.map((agent, index)=>{
-                return (
-                  <ListItem
-                    key={agent._id}
-                    innerDivStyle={selectAgent._id === agent._id ? {background: "#eee"} : null}
-                    primaryText={agent.name}
-                    secondaryText={agent.email}
-                    onClick={()=>{
-                      this.agentOnSelect(agent)
-                    }}
-                    leftAvatar={<Avatar src="http://www.lovemarks.com/wp-content/uploads/profile-avatars/default-avatar-tech-guy.png" />}
-                    rightIcon={<FontIcon className="material-icons">keyboard_arrow_right</FontIcon>}
-                    />
-                )
-              }) }
+              <div className="flex-column flex-no-shrink" style={{marginBottom: 96}}>
+                { agents.map((agent, index)=>{
+                  return (
+                    <ListItem
+                      key={agent._id}
+                      innerDivStyle={{backgroundColor: selectAgent._id === agent._id ? '#eee' : '#fff'}}
+                      primaryText={agent.name}
+                      secondaryText={agent.email}
+                      onClick={()=>{
+                        this.agentOnSelect(agent)
+                      }}
+                      leftAvatar={<Avatar src="http://www.lovemarks.com/wp-content/uploads/profile-avatars/default-avatar-tech-guy.png" />}
+                      rightIcon={<FontIcon className="material-icons">keyboard_arrow_right</FontIcon>}
+                      />
+                  )
+                }) }
+              </div>
 
             </div>
             <div className="agents-detail-panel-wrapper" style={{flex: 100}}>

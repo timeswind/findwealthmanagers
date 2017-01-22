@@ -12,7 +12,7 @@
   left: 0px;
   top: 68px;
   transform: translate(0px, 0px);
-  overflow: auto;
+  overflow: scroll;
   padding-bottom: 64px
 }
 

@@ -1,17 +1,22 @@
 import React, {Component} from 'react';
 import AutoComplete from 'material-ui/AutoComplete';
 class AddressAutoComplete extends Component {
-
   constructor(props) {
     super(props);
     this.state = {
-      addressInput: (props.initialValue && props.initialValue.formattedAddress) || "",
+      addressInput: (props.initialValue && props.initialValue.formattedAddress) || props.currentValue || "",
       addressPredictions: []
     };
     this.AddressAutoCompleteService = null
     this.geocoder = null
     this.searchAddressDebounceTimeout = null
     this.initGoolePlaceAutocomplete()
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.currentValue !== this.props.currentValue) {
+      this.setState({addressInput: nextProps.currentValue})
+    }
   }
 
   selectAddress = (chosenAddress) => {
@@ -29,6 +34,9 @@ class AddressAutoComplete extends Component {
   }
 
   handleAddressUpdateInput = (address) => {
+    if (this.props.onAddressInput) {
+      this.props.onAddressInput(address)
+    }
     this.setState({addressInput: address})
     if (address) {
       let self = this
@@ -65,27 +73,34 @@ class AddressAutoComplete extends Component {
   }
 
   render() {
+    const {addressInput, addressPredictions} = this.state
+    const { style, wrapperClass, onKeyDown, underlineShow, hintText, openOnFocus, fullWidth } = this.props
     return (
-        <div className={this.props.wrapperClass} style={this.props.style}>
-          <AutoComplete
-              onKeyDown={this.props.onKeyDown}
-              underlineShow={this.props.underlineShow}
-              hintText={this.props.hintText || "Address"}
-              openOnFocus={this.props.openOnFocus || true}
-              fullWidth={this.props.fullWidth || true}
-              filter={(address) => {
-                return address
-              }}
-              searchText={this.state.addressInput}
-              dataSource={this.state.addressPredictions}
-              onUpdateInput={this.handleAddressUpdateInput}
-              onNewRequest={(address) => {
-                this.selectAddress(address)
-              }}
+      <div className={wrapperClass} style={style}>
+        <AutoComplete
+          onKeyDown={onKeyDown}
+          underlineShow={underlineShow}
+          hintText={hintText}
+          floatingLabelText={hintText}
+          openOnFocus={openOnFocus}
+          fullWidth={fullWidth}
+          filter={AutoComplete.noFilter}
+          searchText={addressInput}
+          dataSource={addressPredictions}
+          onUpdateInput={this.handleAddressUpdateInput}
+          onNewRequest={(address) => {
+            this.selectAddress(address)
+          }}
           />
-        </div>
+      </div>
     );
   }
+}
+
+AddressAutoComplete.defaultProps = {
+  hintText: 'Address',
+  openOnFocus: true,
+  fullWidth: true,
 }
 
 export default AddressAutoComplete;
