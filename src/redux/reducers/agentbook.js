@@ -19,6 +19,7 @@ const initialState = {
 }
 
 export default function update(state = initialState, action) {
+  var newAgentsList = []
   if(action.type === UPDATE_AGENTS_LIST || action.type === FETCH_AGENTS_SUCCESS) {
     return Object.assign({}, state, {
       agents: action.agents,
@@ -46,7 +47,7 @@ export default function update(state = initialState, action) {
     }
   }
   if(action.type === CREATE_AGENTS_SUCCESS) {
-    var newAgentsList = state.agents
+    newAgentsList = state.agents
     newAgentsList.push(action.agent)
     return Object.assign({}, state, {
       selectAgent: action.agent,

@@ -33,6 +33,7 @@ class App extends Component {
     const { actions, dispatch, location, children } = this.props
     const { pathname } = location
     const showNavBar = pathname !== '/' && pathname !== '/internal'
+    const { agentbook } =  this.props.functions
     return (
       <div>
         {!!helmetPathTitles[pathname] && (
@@ -82,6 +83,14 @@ class App extends Component {
                   }}
                   />
               )}
+              {agentbook && (
+                <MenuItem primaryText="Agent Book"
+                  onClick={()=>{
+                    dispatch(push('/dashboard/agents'))
+                    actions.setViewDrawerStatus(false)
+                  }}
+                  />
+              )}
               {(role === 101) && (
                 <MenuItem primaryText="Manage"
                   onClick={()=>{
@@ -123,7 +132,8 @@ App = connect(
   states => {
     return {
       auth: states.auth,
-      view: states.view
+      view: states.view,
+      functions: states.functions
     };
   },
   dispatch => {

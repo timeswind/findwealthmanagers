@@ -205,7 +205,6 @@ class Agents extends Component {
               deleteAgentId={null}
               open={this.state.deleteConfirmDialogOpen}
               >
-              The actions in this window were passed in as an array of React objects.
             </Dialog>
             <Snackbar
               open={this.state.snackbarShow}

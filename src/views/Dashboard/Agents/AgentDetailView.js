@@ -13,7 +13,8 @@ const renderAddressInput = field => (
     onAddressInput={(address) => {field.input.onChange(address)}}
     onAddressSelect={(address, loc) => {field.input.onChange(address)}}
     underlineShow={true}
-    hintText="Address" />
+    hintText="Address"
+    floatingLabelText="Address" />
 )
 const renderFields = ({ fields, fieldsValue }) => {
   return (
@@ -70,6 +71,24 @@ class AgentDetailView extends Component {
 
     return (
       <form className="flex-column" style={style} onSubmit={handleSubmit}>
+        { dirty && (
+          <div className="flex-row" style={{marginBottom: 8}}>
+            <FlatButton
+              label="Update Client"
+              backgroundColor="rgb(48, 73, 102)"
+              hoverColor="rgba(48, 73, 102, 0.8)"
+              style={{color: '#fff', marginRight: 8}}
+              type="submit"
+              />
+            <FlatButton
+              label="Cancel"
+              style={{color: 'rgb(48, 73, 102)', marginRight: 8}}
+              onTouchTap={()=>{
+                reset()
+              }}
+              />
+          </div>
+        ) }
         <div className="flex-row">
           <div className="flex-column light-card default-padding" style={{flex: 50, marginRight: 8}}>
             <Field
@@ -125,9 +144,9 @@ class AgentDetailView extends Component {
         </div>
         <div className="flex-row" style={{marginTop: 16}}>
           { dirty && (
-            <div className="flex-row">
+            <div className="flex-row" style={{marginBottom: 8}}>
               <FlatButton
-                label="Update Agent"
+                label="Update Client"
                 backgroundColor="rgb(48, 73, 102)"
                 hoverColor="rgba(48, 73, 102, 0.8)"
                 style={{color: '#fff', marginRight: 8}}

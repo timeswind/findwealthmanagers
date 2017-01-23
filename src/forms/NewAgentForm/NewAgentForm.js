@@ -12,7 +12,8 @@ const renderAddressInput = field => (
     onAddressInput={(address) => {field.input.onChange(address)}}
     onAddressSelect={(address, loc) => {field.input.onChange(address)}}
     underlineShow={true}
-    hintText="Address" />
+    hintText="Address"
+    floatingLabelText="Address" />
 )
 
 const renderFields = ({ fields }) =>

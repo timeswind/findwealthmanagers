@@ -36,7 +36,6 @@ class EditListInfoForm extends Component {
     })
     this.props.initialValues.categories = formattedCategories
     this.setState({selectCategories: formattedCategories})
-    console.log(this.props.initialValues.categories)
     this.props.dispatch(change('editListInfo', 'categories', formattedCategories))
   }
 

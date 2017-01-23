@@ -34,19 +34,17 @@ class CategorySelector extends Component {
     this.setState({categories: initialCategories})
   }
 
-  selectCategory = (event, index, value) => {
+  categoryOnSelect = (event, index, value) => {
     this.chipData = this.state.categories;
-    if (this.chipData.length !== 3) {
-      const chipExist = this.chipData.map((chip) => chip.code).indexOf(index + 1);
-      if (chipExist) {
-        const newCategory = categoryTypes[index]
-        const newCategories = this.state.categories.concat([newCategory])
-        this.setState({
-          categories: newCategories
-        })
-        if(this.props.onSelect) {
-          this.props.onSelect(newCategories);
-        }
+    const chipExistence = this.chipData.map((chip) => chip.code).indexOf(value);
+    if (chipExistence === -1) {
+      const newCategory = categoryTypes[index]
+      const newCategories = this.state.categories.concat([newCategory])
+      this.setState({
+        categories: newCategories
+      })
+      if(this.props.onSelect) {
+        this.props.onSelect(newCategories);
       }
     }
   }
@@ -56,7 +54,7 @@ class CategorySelector extends Component {
     const categoryIndexToDelete = this.state.categories.map((category) => category.code).indexOf(code);
     newState.categories.splice(categoryIndexToDelete, 1);
     const newCategories = newState.categories
-    if(this.props.onSelect) {
+    if (this.props.onSelect) {
       this.props.onSelect(newCategories);
     }
   }
@@ -83,13 +81,12 @@ class CategorySelector extends Component {
             </div>
           </div>
         ) : null }
-        { this.state.categories.length === 3 ? <span style={{fontSize: "12px", color: "rgb(68, 138, 255)"}}>Reached max number of categories</span> : (
-          <SelectField
-            onChange={this.selectCategory}
-            floatingLabelText="Choose category (multiple)">
-            {categoryMenuItems}
-          </SelectField>
-        )}
+        <SelectField
+          style={{top: -16}}
+          onChange={this.categoryOnSelect}
+          floatingLabelText="Choose category (multiple)">
+          {categoryMenuItems}
+        </SelectField>
       </div>
     )
   }

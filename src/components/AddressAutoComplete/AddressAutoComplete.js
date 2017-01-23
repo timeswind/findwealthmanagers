@@ -74,14 +74,14 @@ class AddressAutoComplete extends Component {
 
   render() {
     const {addressInput, addressPredictions} = this.state
-    const { style, wrapperClass, onKeyDown, underlineShow, hintText, openOnFocus, fullWidth } = this.props
+    const { style, wrapperClass, onKeyDown, underlineShow, hintText, floatingLabelText, openOnFocus, fullWidth } = this.props
     return (
       <div className={wrapperClass} style={style}>
         <AutoComplete
           onKeyDown={onKeyDown}
           underlineShow={underlineShow}
           hintText={hintText}
-          floatingLabelText={hintText}
+          floatingLabelText={floatingLabelText}
           openOnFocus={openOnFocus}
           fullWidth={fullWidth}
           filter={AutoComplete.noFilter}
@@ -99,6 +99,7 @@ class AddressAutoComplete extends Component {
 
 AddressAutoComplete.defaultProps = {
   hintText: 'Address',
+  floatingLabelText: null,
   openOnFocus: true,
   fullWidth: true,
 }
