@@ -20,7 +20,6 @@ import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 import Snackbar from 'material-ui/Snackbar';
 import AutoComplete from 'material-ui/AutoComplete';
-
 import './Clients.css'
 
 class Clients extends Component {

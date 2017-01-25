@@ -11,7 +11,8 @@ import {
   DELETE_CLIENT_SUCCESS,
   DELETE_CLIENT_FAILURE,
   CREATE_CLIENT_SUCCESS,
-  CREATE_CLIENT_FAILURE
+  CREATE_CLIENT_FAILURE,
+  GET_CLIENTBOOK_APPOINTMENT_SUCCESS
 } from '../constants'
 
 import axios from 'axios'
@@ -20,19 +21,19 @@ export function fetchClientsList() {
   let url = '/api/protect/clients';
   return function (dispatch) {
     return axios.get(url)
-      .then(function (response) {
-        if (response.data.success) {
-          dispatch({
-            type: FETCH_CLIENTS_SUCCESS,
-            clients: response.data.clients
-          })
-        } else {
-          dispatch({
-            type: FETCH_CLIENTS_FAILURE,
-            clients: response.error || ""
-          })
-        }
-      })
+    .then(function (response) {
+      if (response.data.success) {
+        dispatch({
+          type: FETCH_CLIENTS_SUCCESS,
+          clients: response.data.clients
+        })
+      } else {
+        dispatch({
+          type: FETCH_CLIENTS_FAILURE,
+          clients: response.error || ""
+        })
+      }
+    })
   }
 }
 
@@ -40,18 +41,18 @@ export function createNewClient(newClient) {
   let url = '/api/protect/clients';
   return function (dispatch) {
     return axios.post(url, newClient)
-      .then(function (response) {
-        if (response.data.success) {
-          dispatch({
-            type: CREATE_CLIENT_SUCCESS,
-            client: response.data.client
-          })
-        } else {
-          dispatch({
-            type: CREATE_CLIENT_FAILURE
-          })
-        }
-      })
+    .then(function (response) {
+      if (response.data.success) {
+        dispatch({
+          type: CREATE_CLIENT_SUCCESS,
+          client: response.data.client
+        })
+      } else {
+        dispatch({
+          type: CREATE_CLIENT_FAILURE
+        })
+      }
+    })
   }
 }
 
@@ -59,18 +60,18 @@ export function updateClient(updatedClient) {
   let url = '/api/protect/clients';
   return function (dispatch) {
     return axios.put(url, updatedClient)
-      .then(function (response) {
-        if (response.data.success) {
-          dispatch({
-            type: UPDATE_CLIENT_SUCCESS,
-            client: response.data.client
-          })
-        } else {
-          dispatch({
-            type: UPDATE_CLIENT_FAILURE
-          })
-        }
-      })
+    .then(function (response) {
+      if (response.data.success) {
+        dispatch({
+          type: UPDATE_CLIENT_SUCCESS,
+          client: response.data.client
+        })
+      } else {
+        dispatch({
+          type: UPDATE_CLIENT_FAILURE
+        })
+      }
+    })
   }
 }
 
@@ -78,18 +79,34 @@ export function deleteClient(id) {
   let url = '/api/protect/clients?id=' + id;
   return function (dispatch) {
     return axios.delete(url)
-      .then(function (response) {
-        if (response.data.success) {
-          dispatch({
-            type: DELETE_CLIENT_SUCCESS,
-            id: id
-          })
-        } else {
-          dispatch({
-            type: DELETE_CLIENT_FAILURE
-          })
-        }
-      })
+    .then(function (response) {
+      if (response.data.success) {
+        dispatch({
+          type: DELETE_CLIENT_SUCCESS,
+          id: id
+        })
+      } else {
+        dispatch({
+          type: DELETE_CLIENT_FAILURE
+        })
+      }
+    })
+  }
+}
+
+export function getClientbookClientAppointment(client_id) {
+  let url = '/api/protect/clientbook/appointments?id=' + client_id;
+  return function (dispatch) {
+    return axios.get(url)
+    .then(function (response) {
+      if (response.data.success) {
+        dispatch({
+          type: GET_CLIENTBOOK_APPOINTMENT_SUCCESS,
+          appointments: response.data.appointments,
+          client_id: client_id
+        })
+      }
+    })
   }
 }
 
@@ -100,9 +117,12 @@ export function setClientbookClients(clients) {
   }
 }
 export function setClientbookSelectedClient(selectedClient) {
-  return {
-    type: SET_CLIENTBOOK_SELECTED_CLIENT,
-    selectedClient
+  return function (dispatch) {
+    dispatch({
+      type: SET_CLIENTBOOK_SELECTED_CLIENT,
+      selectedClient
+    })
+    return dispatch(getClientbookClientAppointment(selectedClient._id))
   }
 }
 export function setClientbookAddClientButtonStatus(status) {

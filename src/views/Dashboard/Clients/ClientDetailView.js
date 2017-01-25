@@ -8,6 +8,7 @@ import IconButton from 'material-ui/IconButton';
 import { connect } from 'react-redux';
 import AddressAutoComplete from '../../../components/AddressAutoComplete/AddressAutoComplete';
 import CategorySelector from '../../../components/CategorySelector/CategorySelector';
+import ClientbookAppointments from '../../../components/ClientbookAppointments/ClientbookAppointments';
 
 const renderCategoriesSelector = field => (
   <CategorySelector
@@ -75,11 +76,11 @@ const renderFields = ({ fields, fieldsValue }) => {
 
 class ClientDetailView extends Component {
   shouldComponentUpdate(nextProps) {
-    return (nextProps.id !== this.props.id || nextProps.dirty !== this.props.dirty)
+    return (nextProps.id !== this.props.id || nextProps.dirty !== this.props.dirty || nextProps.appointments !== this.props.appointments)
   }
 
   render() {
-    const { id, style, fields, dirty, reset, handleSubmit, onDelete } = this.props
+    const { id, appointments, style, fields, dirty, reset, handleSubmit, onDelete } = this.props
 
     return (
       <form className="flex-column" style={style} onSubmit={handleSubmit}>
@@ -163,6 +164,7 @@ class ClientDetailView extends Component {
               hintText="Note"
               floatingLabelText="Note"
               />
+            <ClientbookAppointments appointments={appointments}/>
           </div>
         </div>
         <div className="flex-row" style={{marginTop: 16}}>
@@ -207,9 +209,11 @@ ClientDetailView = connect(
   state => {
     const fields = selector(state, 'fields')
     const id = selector(state, '_id')
+    const appointments = selector(state, 'appointments')
     return {
       fields,
-      id
+      id,
+      appointments
     }
   },
   dispatch => {

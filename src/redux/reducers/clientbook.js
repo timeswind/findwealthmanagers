@@ -11,8 +11,11 @@ import {
   DELETE_CLIENT_SUCCESS,
   DELETE_CLIENT_FAILURE,
   CREATE_CLIENT_SUCCESS,
-  CREATE_CLIENT_FAILURE
+  CREATE_CLIENT_FAILURE,
+  GET_CLIENTBOOK_APPOINTMENT_SUCCESS
 } from '../constants'
+
+import { IndexToTime } from '../../core/TimeToIndex';
 
 const initialState = {
   addClientButtonOpen: false,
@@ -119,6 +122,28 @@ export default function update(state = initialState, action) {
       }),
       selectedClient: selectedClient
     })
+  }
+  if (action.type === GET_CLIENTBOOK_APPOINTMENT_SUCCESS) {
+    if (state.selectedClient && state.selectedClient._id === action.client_id) {
+      var newSelectedClient = state.selectedClient
+      var modifedAppointments = action.appointments
+      if (action.appointments.length > 0) {
+        modifedAppointments =  modifedAppointments.map((appointment) => {
+          var obj = {}
+          obj["date"] = appointment.date
+          obj["note"] = appointment.note || ""
+          obj["start"] = IndexToTime(appointment.start, appointment.date)
+          obj["end"] = IndexToTime(appointment.end, appointment.date)
+          return obj
+        })
+      }
+      newSelectedClient['appointments'] = modifedAppointments
+      return Object.assign({}, state, {
+        selectedClient: newSelectedClient
+      })
+    } else {
+      return state
+    }
   }
   if (action.type === FETCH_CLIENTS_FAILURE || action.type === CREATE_CLIENT_FAILURE || action.type === DELETE_CLIENT_FAILURE || action.type === UPDATE_CLIENT_FAILURE) {
     return Object.assign({}, state, {
