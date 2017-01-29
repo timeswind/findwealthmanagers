@@ -7,7 +7,7 @@ import MainFooter from '../../components/MainFooter/MainFooter';
 import FontIcon from 'material-ui/FontIcon';
 import IconButton from 'material-ui/IconButton';
 import FlatButton from 'material-ui/FlatButton';
-import TopWealthManagerCard from '../../components/TopWealthManagerCard/TopWealthManagerCard';
+// import TopWealthManagerCard from '../../components/TopWealthManagerCard/TopWealthManagerCard';
 import axios from 'axios';
 import * as AuthActions from '../../redux/actions/auth';
 import * as ViewActions from '../../redux/actions/view';
@@ -234,25 +234,27 @@ class Home extends Component {
                 </div>
               </div>
             </div>
-            <div style={{backgroundColor: "#fafafa"}}>
-              <div className="xl-wrapper flex-column">
-                <p className="home-headline raleway overline">Financial Professionals</p>
-                <div className="flex-row home-top-managers raleway">
-                  { this.state.topManagers.map((manager)=>{
-                    return (
-                      <div className="flex-column home-top-manager" key={manager._id} onTouchTap={()=>{
-                          this.routerPush('/p/' + manager._id)
-                        }}>
-                        <TopWealthManagerCard
-                          manager={manager}
-                          />
-                      </div>
-                    )
-                  })
-                }
+            { /*
+              <div style={{backgroundColor: "#fafafa"}}>
+                <div className="xl-wrapper flex-column">
+                  <p className="home-headline raleway overline">Financial Professionals</p>
+                  <div className="flex-row home-top-managers raleway">
+                    { this.state.topManagers.map((manager)=>{
+                      return (
+                        <div className="flex-column home-top-manager" key={manager._id} onTouchTap={()=>{
+                            this.routerPush('/p/' + manager._id)
+                          }}>
+                          <TopWealthManagerCard
+                            manager={manager}
+                            />
+                        </div>
+                      )
+                    })
+                  }
+                </div>
               </div>
             </div>
-          </div>
+            */}
           <div className="flex-column flex-center" style={{backgroundColor: "#f6f6f6", padding: "32px 16px", textAlign: "center"}}>
             <p className="raleway" style={{fontSize: "32px", fontWeight: "600"}}>Are You A Wealth Manager?</p>
             <p className="raleway" style={{maxWidth: '600px', margin: "0 0 32px 0"}}>

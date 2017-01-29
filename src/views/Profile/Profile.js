@@ -126,30 +126,32 @@ class Profile extends Component {
   }
 
   updateCalendarData(calendar) {
-    const {actions} = this.props
-    var daySchedules = [null, null, null, null, null, null, null]
-    calendar.available.forEach((available) => {
-      if (available) {
-        if (daySchedules[available['day'] - 1] === null) {
-          daySchedules[available['day'] - 1] = []
-        }
-        available['fromTime'] = IndexToTime(available['from'])
-        available['toTime'] = IndexToTime(available['to'])
-        if (available.exception) {
-          let dateString = this.getDateByDay(available.day - 1).toString()
-          if (dateString && dateString !== "") {
-            available[dateString] = {}
-            available[dateString]['from'] = available['exception'][dateString]['from']
-            available[dateString]['to'] = available['exception'][dateString]['to']
-            available[dateString]['fromTime'] = IndexToTime(available['exception'][dateString]['from'])
-            available[dateString]['toTime'] = IndexToTime(available['exception'][dateString]['to'])
+    if (calendar && calendar.available && calendar.available.length > 0) {
+      const {actions} = this.props
+      var daySchedules = [null, null, null, null, null, null, null]
+      calendar.available.forEach((available) => {
+        if (available) {
+          if (daySchedules[available['day'] - 1] === null) {
+            daySchedules[available['day'] - 1] = []
           }
+          available['fromTime'] = IndexToTime(available['from'])
+          available['toTime'] = IndexToTime(available['to'])
+          if (available.exception) {
+            let dateString = this.getDateByDay(available.day - 1).toString()
+            if (dateString && dateString !== "") {
+              available[dateString] = {}
+              available[dateString]['from'] = available['exception'][dateString]['from']
+              available[dateString]['to'] = available['exception'][dateString]['to']
+              available[dateString]['fromTime'] = IndexToTime(available['exception'][dateString]['from'])
+              available[dateString]['toTime'] = IndexToTime(available['exception'][dateString]['to'])
+            }
+          }
+          daySchedules[available['day'] - 1].push(available)
         }
-        daySchedules[available['day'] - 1].push(available)
-      }
-    })
-    actions.setListCalendar(calendar)
-    actions.setListCalendarSchedule('week', daySchedules)
+      })
+      actions.setListCalendar(calendar)
+      actions.setListCalendarSchedule('week', daySchedules)
+    }
   }
 
   getAppointmentsWithAdvisor(advisor_id) {
@@ -329,6 +331,7 @@ componentWillUnmount() {
 
 render() {
   const {listInfo, tab, previousAppointment, calendarView, schedules, appointmentModalOpen} = this.props.list
+  const showExperience = ('experience' in listInfo) && listInfo.experience.length > 0
   const hasImage = listInfo && listInfo.profileImage && listInfo.profileImage.key
   const isPublic = !listInfo.advisor;
   return (
@@ -481,18 +484,20 @@ render() {
                             </div>
                           </div>
                         ) }
-                        <div className="p-tab-wrapper">
-                          <h2>Experience</h2>
-                          { (listInfo.experience) && listInfo.experience.map((experience, index) => {
-                            return (
-                              <div key={index}
-                                style={{margin: "16px 0 0 0", paddingTop: "16px", borderTop: "1px solid #ddd"}}>
-                                <span style={{fontWeight: 600, fontSize: "18px"}}>{experience.title}</span>
-                                <p className="default-paragraph">{experience.text}</p>
-                              </div>
-                            )
-                          })}
-                        </div>
+                        { showExperience && (
+                          <div className="p-tab-wrapper">
+                            <h2>Experience</h2>
+                            {listInfo.experience.map((experience, index) => {
+                              return (
+                                <div key={index}
+                                  style={{margin: "16px 0 0 0", paddingTop: "16px", borderTop: "1px solid #ddd"}}>
+                                  <span style={{fontWeight: 600, fontSize: "18px"}}>{experience.title}</span>
+                                  <p className="default-paragraph">{experience.text}</p>
+                                </div>
+                              )
+                            })}
+                          </div>
+                        ) }
                       </div>
                       <div className="p-brief-right">
                         { (listInfo.minimums && listInfo.minimums.length > 0) && (
