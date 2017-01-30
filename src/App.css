@@ -400,24 +400,26 @@
   border: 1px solid rgba(0, 0, 0, .09);
 }
 
-.component-pagination li {
-  cursor: pointer;
+.component-pagination a {
   font-family: "Roboto", sans-serif;
   font-size: 14px;
   text-align: center;
   line-height: 24px;
-  /* min-width: 40px; */
   padding: 8px 16px;
+  cursor: pointer;
+}
+
+.component-pagination li {
   display: inline;
 }
 
-.component-pagination li.active {
+.component-pagination li.active a {
   background: #304966;
   color: #fff;
   border-radius: 3px;
 }
 
-.component-pagination li:hover {
+.component-pagination li a:hover {
   background: #eee;
   color: #000;
   border-radius: 3px;

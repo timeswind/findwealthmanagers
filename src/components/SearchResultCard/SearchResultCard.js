@@ -22,6 +22,7 @@ class SearchResultCard extends Component {
 
   render() {
     const {list} = this.props
+    const showDetail = 'advisor' in list
     return (
         <div key={list._id} className="light-card flex-column" style={{cursor: "pointer"}} onTouchTap={(e) => {
           this.goToListDetail(e, list._id)
@@ -57,7 +58,7 @@ class SearchResultCard extends Component {
               <div className="s-r-aoi" style={{borderBottom: "1px solid #ddd"}}>
                 <div>Area of focus</div>
                 <div className="flex-wrap flex-row flex-center">
-                  { list.specialties && (
+                  { (list.specialties && showDetail) && (
                       <p className="default-paragraph">
                         {list.specialties}
                       </p>
@@ -72,7 +73,7 @@ class SearchResultCard extends Component {
               <div data-brief>
                 <div data-brief
                      className={"s-r-brief " + (this.state.briefExpend ? 's-r-brief-expend' : 's-r-brief-collapsed')}>
-                  {list.brief}
+                  {showDetail && list.brief}
                 </div>
                 <div data-brief className="s-r-brief-show-more">{this.state.briefExpend ? 'Hide' : 'Show more'}</div>
               </div>

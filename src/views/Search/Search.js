@@ -111,10 +111,10 @@ class Search extends Component {
                                    nextLabel={">"}
                                    breakLabel={<span>...</span>}
                                    breakClassName={"break-me"}
-                                   pageNum={pageNum}
+                                   pageCount={pageNum}
                                    marginPagesDisplayed={2}
                                    pageRangeDisplayed={5}
-                                   clickCallback={this.handlePageClick}
+                                   onPageChange={this.handlePageClick}
                                    containerClassName={"component-pagination"}
                                    subContainerClassName={"pagination"}
                                    activeClassName={"active"}/>
