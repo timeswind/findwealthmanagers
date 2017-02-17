@@ -87,7 +87,7 @@ class ClientDetailView extends Component {
         { dirty && (
           <div className="flex-row" style={{marginBottom: 8}}>
             <FlatButton
-              label="Update Client"
+              label="Update Client Information"
               backgroundColor="rgb(48, 73, 102)"
               hoverColor="rgba(48, 73, 102, 0.8)"
               style={{color: '#fff', marginRight: 8}}
@@ -107,8 +107,8 @@ class ClientDetailView extends Component {
             <Field
               name="name"
               component={TextField}
-              hintText="Agent Name"
-              floatingLabelText="Agent Name"
+              hintText="Client Name"
+              floatingLabelText="Client Name"
               />
             <Field
               name="email"
@@ -171,7 +171,7 @@ class ClientDetailView extends Component {
           { dirty && (
             <div className="flex-row" style={{marginBottom: 8}}>
               <FlatButton
-                label="Update Client"
+                label="Update Client Information"
                 backgroundColor="rgb(48, 73, 102)"
                 hoverColor="rgba(48, 73, 102, 0.8)"
                 style={{color: '#fff', marginRight: 8}}

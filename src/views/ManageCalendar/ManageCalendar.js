@@ -28,7 +28,7 @@ class ManageCalendar extends Component {
       currentWeek: this.currentWeekIn(date, year, month_index),
       newEventDialogOpen: false,
       eventDetailDialogOpen: false,
-      detailEvent: null,
+      detailEvent: {},
       calendarId: "",
       daySchedules: [null, null, null, null, null, null, null]
     }
@@ -137,6 +137,7 @@ class ManageCalendar extends Component {
         if (daySchedules[available['day'] - 1] === null) {
           daySchedules[available['day'] - 1] = []
         }
+        available['type'] = 'freetime'
         available['fromTime'] = IndexToTime(available['from'])
         available['toTime'] = IndexToTime(available['to'])
         daySchedules[available['day'] - 1].push(available)
@@ -427,7 +428,7 @@ class ManageCalendar extends Component {
           open={this.state.eventDetailDialogOpen}
           onRequestClose={this.handleEventDetailDialogClose}
           >
-          {!!this.state.detailEvent && (
+          {Object.keys(this.state.detailEvent).length > 0 && (
             <div>
               {
                 this.state.detailEvent.type === 'freetime' && (
