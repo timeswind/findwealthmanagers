@@ -124,7 +124,7 @@ class Home extends Component {
                               }}
                               />
                             { agentbook && (
-                              <MenuItem primaryText="Agent Book"
+                              <MenuItem primaryText="Baseshop"
                                 onClick={()=>{
                                   this.routerPush('/dashboard/agents')
                                   this.handleRequestClose()

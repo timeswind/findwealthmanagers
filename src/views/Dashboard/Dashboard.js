@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import FlatButton from 'material-ui/FlatButton';
-import FontIcon from 'material-ui/FontIcon';
 import Chip from 'material-ui/Chip';
 import Divider from 'material-ui/Divider';
 import CircularProgress from 'material-ui/CircularProgress';
@@ -8,16 +7,15 @@ import axios from 'axios';
 import {connect} from 'react-redux';
 import {push} from 'react-router-redux';
 import categoryTypes from '../../assets/categories';
-import {ListItem} from 'material-ui/List';
-import Subheader from 'material-ui/Subheader';
 import EditListInfoFrom from '../../forms/EditListInfoForm/EditListInfoForm';
 import {IndexToTime} from '../../core/TimeToIndex';
-import moment from 'moment';
 import _ from 'lodash';
 import * as AuthActions from '../../redux/actions/auth';
 import * as DashboardActions from '../../redux/actions/dashboard';
 import {bindActionCreators} from 'redux';
 
+import FunctionSection from './components/FunctionSection';
+import CalendarSection from './components/CalendarSection';
 import './Dashboard.css'
 
 class DashboardView extends Component {
@@ -125,55 +123,15 @@ class DashboardView extends Component {
   }
 
   render() {
-    const {listed, emailVerified, verifyEmailStatus} = this.props.auth
+    const {listed, emailVerified, verifyEmailStatus, role} = this.props.auth
     const {userInfo, listInfo, appointments, editListInfo} = this.props.dashboard
-    const { agentbook } =  this.props.functions
+    const { agentbook, sharelist } =  this.props.functions
     return (
       <div className="view-body flex-column">
         <div style={{padding: "16px 8px 64px 8px"}}>
           <div style={{width: '100%', maxWidth: "1080px", margin: '0 auto'}}>
-            { this.props.auth.role !== 1 ? (
-              <div className="panel-top-entries">
-                <div className="panel-top-entry">
-                  <div className="flex-row flex-center default-padding raleway light-shadow"
-                    onClick={() => {
-                      this.props.dispatch(push('/dashboard/clients'))
-                    }}>
-                    <FontIcon className="material-icons">book</FontIcon>
-                    <span style={{marginLeft: "16px"}}>Client Book</span>
-                    <FontIcon className="material-icons"
-                      style={{marginLeft: "auto"}}>keyboard_arrow_right</FontIcon>
-                  </div>
-                </div>
-                <div className="panel-top-entry">
-                  <div className="flex-row flex-center default-padding raleway light-shadow"
-                    onClick={() => {
-                      this.props.dispatch(push('/dashboard/feedback'))
-                    }}>
-                    <FontIcon className="material-icons">assessment</FontIcon>
-                    <span style={{marginLeft: "16px"}}>Customer Feedback</span>
-                    <FontIcon className="material-icons"
-                      style={{marginLeft: "auto"}}>keyboard_arrow_right</FontIcon>
-                  </div>
-                </div>
-                {
-                  agentbook && (
-                    <div className="panel-top-entry">
-                      <div className="flex-row flex-center default-padding raleway light-shadow"
-                        onClick={() => {
-                          this.props.dispatch(push('/dashboard/agents'))
-                        }}>
-                        <FontIcon className="material-icons">book</FontIcon>
-                        <span style={{marginLeft: "16px"}}>Agent Book</span>
-                        <FontIcon className="material-icons"
-                          style={{marginLeft: "auto"}}>keyboard_arrow_right</FontIcon>
-                      </div>
-                    </div>
-                  )
-                }
-              </div>
-            ) : null }
 
+            <FunctionSection role={role} agentbook={agentbook} sharelist={sharelist}/>
             { emailVerified === false ? (
               <div className="flex-row flex-center default-padding raleway" style={{
                   marginBottom: "16px",
@@ -203,318 +161,235 @@ class DashboardView extends Component {
             ) : null }
             <div className="dashboard-body-wrapper">
               <div className="dashboard-right-panels-wrapper">
-                { this.props.auth.role !== 1 && (
-                  <div className="flex-column light-shadow" style={{marginBottom: 8}}>
-                    <div className="flex-row flex-center">
-                      <div className="flex-column default-padding raleway"
-                        style={{fontSize: "22px", fontWeight: '600'}}>
-                        Calendar
-                      </div>
-                      <FlatButton
-                        label="manage"
-                        labelStyle={{color: "rgb(66, 133, 244)"}}
-                        onClick={() => {
-                          this.props.dispatch(push('/dashboard/calendar'))
-                        }}
-                        />
-                    </div>
-                    <Divider />
-                    <div style={{padding: 0}}>
-                      <Subheader>Today's Plan</Subheader>
-                      <Divider />
-                      { appointments.map((appointment, index) => {
-                        return (
-                          <div
-                            key={appointment._id}>
-                            { appointment.date === 'today' ? (
-                              <ListItem
-                                primaryText={
-                                  <div className="flex-row">
-                                    <span>{moment(appointment.start).format('h:mm a') + " - " + moment(appointment.end).format('h:mm a')}</span>
-                                    <span style={{
-                                        marginLeft: "auto",
-                                        color: "#ff9800"
-                                      }}>{appointment.client}</span>
-                                    </div>
-                                  }
-                                  secondaryText={
-                                    appointment.note !== "" ? (
-                                      <p>
-                                        {appointment.note}
-                                      </p>
-                                    ) : null
-                                  }
-                                  />
-                              ) : (
-                                <div>
-                                  { index === 0 ? (
-                                    <ListItem
-                                      primaryText="No appointment"
-                                      />
-                                  ) : null}
-                                  { index > 0 && appointments[index].day === appointments[index - 1].day ? null : (
-                                    <div>
-                                      <Divider />
-                                      <Subheader>{moment(appointment.date).format('MMM DD')}</Subheader>
-                                      <Divider />
-                                    </div>
-                                  ) }
-                                  <ListItem
-                                    primaryText={
-                                      <div className="flex-column">
-                                        <div className="flex-row">
-                                          <span>{moment(appointment.start).format('h:mm a') + " - " + moment(appointment.end).format('h:mm a')}</span>
-                                          <span style={{
-                                              marginLeft: "auto",
-                                              color: "#ff9800"
-                                            }}>{appointment.client}</span>
-                                          </div>
-                                        </div>
-                                      }
-                                      secondaryText={
-                                        appointment.note !== "" ? (
-                                          <p>
-                                            {appointment.note}
-                                          </p>
-                                        ) : null
-                                      }
-                                      />
-                                  </div>
-                                ) }
-                              </div>
-                            )
-                          }) }
-                        </div>
-                      </div>
-                    ) }
-
-                    <div className="light-shadow">
-                      <div className="flex-column default-padding raleway" style={{fontSize: "22px", fontWeight: '600'}}>
-                        Message
-                      </div>
-                    </div>
-                  </div>
-                  <div className="dashboard-left-panels-wrapper">
-                    <div className="flex-column light-shadow" style={{marginBottom: 8}}>
-                      <div className="panel-header">
-                        Account info
-                      </div>
-                      <Divider />
-                      <div className="panel-body">
-                        <div className="flex-row">
-                          <div className="flex-column">
-                            <span className="field-title">
-                              FirstName
-                            </span>
-                            <span className="field-content">
-                              {userInfo.firstName}
-                            </span>
-                          </div>
-                          <div className="flex-column" style={{marginLeft: "32px"}}>
-                            <span className="field-title">
-                              LastName
-                            </span>
-                            <span className="field-content">
-                              {userInfo.lastName}
-                            </span>
-                          </div>
-                        </div>
-                        <div className="flex-column" style={{marginTop: "16px"}}>
-                          <span className="field-title">
-                            Email
-                          </span>
-                          <span className="field-content">
-                            {userInfo.email}
-                          </span>
-                        </div>
-                        { this.props.auth.role === 2 ? (
-                          <div className="flex-column" style={{marginTop: "16px"}}>
-                            <span className="field-title">
-                              Affiliation
-                            </span>
-                            <span className="field-content">
-                              {userInfo.affiliation}
-                            </span>
-                          </div>
-                        ) : null}
-                      </div>
-                    </div>
-                    {
-                      this.props.auth.role !== 1 ? (
-                        <div className="flex-column">
-
-                          <div className="flex-column light-shadow">
-                            <div className="flex-column">
-                              { !listed ? (
-                                <div className="flex-column" style={{padding: 16}}>
-                                  <div style={{marginBottom: "16px", fontSize: "22px", fontWeight: '600'}}
-                                    className="raleway">
-                                    List Information
-                                  </div>
-                                  <FlatButton
-                                    label="GET LISTED NOW"
-                                    labelStyle={{color: "#FFF"}}
-                                    primary
-                                    rippleColor="#B2DFDB"
-                                    backgroundColor="#00BFA5"
-                                    hoverColor="#26A69A"
-                                    onClick={() => {
-                                      this.props.dispatch(push('/getlisted'))
-                                    }}/>
-                                  </div>
-                                ) : (
-                                  <div>
-                                    { editListInfo ? (
-                                      <div className="flex-column">
-                                        <div className="flex-row flex-center  default-padding">
-                                          <div style={{fontSize: "22px", fontWeight: '600'}} className="raleway">
-                                            List Information
-                                          </div>
-                                        </div>
-                                        <Divider />
-                                        <div className="default-padding">
-                                          <EditListInfoFrom handleCancle={this.handleEditListFormCancel}
-                                            initialValues={listInfo}
-                                            onSubmit={this.handleEditListFormSubmit}></EditListInfoFrom>
-                                        </div>
-                                      </div>
-                                    ) : (
-                                      <div className="flex-column">
-                                        <div className="flex-row flex-center  default-padding">
-                                          <div style={{fontSize: "22px", fontWeight: '600'}} className="raleway">
-                                            List Information
-                                          </div>
-                                          <div>
-                                            <FlatButton
-                                              label="Edit"
-                                              labelStyle={{color: "#4285f4"}}
-                                              backgroundColor="transparent"
-                                              onClick={() => {
-                                                this.props.actions.startEditListInfo()
-                                              }}
-                                              />
-                                            <FlatButton
-                                              label="Preview"
-                                              labelStyle={{color: "#fff"}}
-                                              rippleColor="#B2DFDB"
-                                              backgroundColor="#00BFA5"
-                                              hoverColor="#26A69A"
-                                              onClick={() => {
-                                                this.props.dispatch(push('/p/' + listInfo._id))
-                                              }}
-                                              />
-                                          </div>
-
-                                        </div>
-                                        <Divider />
-                                        <div className="default-padding">
-                                          <div className="flex-column" style={{marginBottom: 8}}>
-                                            <span className="field-title">
-                                              Name
-                                            </span>
-                                            <span className="field-content">{listInfo.name}</span>
-                                          </div>
-                                          <div className="flex-column">
-
-                                            <span className="field-title">
-                                              Phone Numbers
-                                            </span>
-                                            { (listInfo.phones && listInfo.phones.length > 0) && (
-                                              listInfo.phones.map((phone) => {
-                                                return <span key={phone} className="field-content">{phone}</span>
-                                              })
-                                            )}
-                                          </div>
-                                          <div className="flex-column" style={{marginTop: 8}}>
-                                            <span className="field-title">
-                                              Categories
-                                            </span>
-                                            <div className="flex-row">
-                                              { listInfo.modifiedCategories ? listInfo.modifiedCategories.map((category) => {
-                                                return (
-                                                  <Chip key={category.code} style={{margin: "4px 8px 4px 0"}}>
-                                                    {category.name}
-                                                  </Chip>
-                                                )
-                                              }) : null}
-                                            </div>
-                                          </div>
-
-                                          <div className="flex-column" style={{marginTop: 8}}>
-                                            <span className="field-title">
-                                              Addresses
-                                            </span>
-                                            { (listInfo.addresses && listInfo.addresses.length > 0) && (
-                                              listInfo.addresses.map((address, index) => {
-                                                return <span key={index}
-                                                  className="field-content">{address.formattedAddress}</span>
-                                              })
-                                            )}
-                                          </div>
-                                          <div className="flex-column" style={{marginTop: "16px"}}>
-                                            <span className="field-title">
-                                              Brief
-                                            </span>
-                                            <p style={{lineHeight: 1.8}}>
-                                              {listInfo.brief}
-                                            </p>
-                                          </div>
-                                          <div className="flex-column" style={{marginTop: "16px"}}>
-                                            <span className="field-title">
-                                              Experience
-                                            </span>
-                                            { listInfo.experience ? listInfo.experience.map((experience, index) => {
-                                              return (
-                                                <div key={index} style={{
-                                                    margin: "8px 0 0 0",
-                                                    border: "1px solid #ddd",
-                                                    padding: "16px"
-                                                  }}>
-                                                  <span style={{
-                                                      fontWeight: 600,
-                                                      fontSize: "20px"
-                                                    }}>{experience.title}</span>
-                                                    <p style={{
-                                                        margin: "8px 0 0 0",
-                                                        fontSize: "14px",
-                                                        lineHeight: 1.8
-                                                      }}>{experience.text}</p>
-                                                    </div>
-                                                  )
-                                                }) : null}
-                                              </div>
-                                            </div>
-                                          </div>
-                                        ) }
-                                      </div>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-                            ) : null
-                          }
-                        </div>
-                      </div>
-                    </div>
+                <CalendarSection role={role} appointments={appointments} />
+                <div className="light-shadow">
+                  <div className="flex-column default-padding raleway" style={{fontSize: "22px", fontWeight: '600'}}>
+                    Message
                   </div>
                 </div>
-              );
-            }
-          }
+              </div>
+              <div className="dashboard-left-panels-wrapper">
+                <div className="flex-column light-shadow" style={{marginBottom: 8}}>
+                  <div className="panel-header">
+                    Account info
+                  </div>
+                  <Divider />
+                  <div className="panel-body">
+                    <div className="flex-row">
+                      <div className="flex-column">
+                        <span className="field-title">
+                          FirstName
+                        </span>
+                        <span className="field-content">
+                          {userInfo.firstName}
+                        </span>
+                      </div>
+                      <div className="flex-column" style={{marginLeft: "32px"}}>
+                        <span className="field-title">
+                          LastName
+                        </span>
+                        <span className="field-content">
+                          {userInfo.lastName}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex-column" style={{marginTop: "16px"}}>
+                      <span className="field-title">
+                        Email
+                      </span>
+                      <span className="field-content">
+                        {userInfo.email}
+                      </span>
+                    </div>
+                    { this.props.auth.role === 2 ? (
+                      <div className="flex-column" style={{marginTop: "16px"}}>
+                        <span className="field-title">
+                          Affiliation
+                        </span>
+                        <span className="field-content">
+                          {userInfo.affiliation}
+                        </span>
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
+                {
+                  this.props.auth.role !== 1 ? (
+                    <div className="flex-column">
 
-          const mapStatesToProps = (states) => {
-            return {
-              auth: states.auth,
-              dashboard: states.dashboard,
-              functions: states.functions
-            };
-          }
+                      <div className="flex-column light-shadow">
+                        <div className="flex-column">
+                          { !listed ? (
+                            <div className="flex-column" style={{padding: 16}}>
+                              <div style={{marginBottom: "16px", fontSize: "22px", fontWeight: '600'}}
+                                className="raleway">
+                                List Information
+                              </div>
+                              <FlatButton
+                                label="GET LISTED NOW"
+                                labelStyle={{color: "#FFF"}}
+                                primary
+                                rippleColor="#B2DFDB"
+                                backgroundColor="#00BFA5"
+                                hoverColor="#26A69A"
+                                onClick={() => {
+                                  this.props.dispatch(push('/getlisted'))
+                                }}/>
+                              </div>
+                            ) : (
+                              <div>
+                                { editListInfo ? (
+                                  <div className="flex-column">
+                                    <div className="flex-row flex-center  default-padding">
+                                      <div style={{fontSize: "22px", fontWeight: '600'}} className="raleway">
+                                        List Information
+                                      </div>
+                                    </div>
+                                    <Divider/>
+                                    <div className="default-padding">
+                                      <EditListInfoFrom
+                                        handleCancle={this.handleEditListFormCancel}
+                                        initialValues={listInfo}
+                                        onSubmit={this.handleEditListFormSubmit}/>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className="flex-column">
+                                    <div className="flex-row flex-center  default-padding">
+                                      <div style={{fontSize: "22px", fontWeight: '600'}} className="raleway">
+                                        List Information
+                                      </div>
+                                      <div>
+                                        <FlatButton
+                                          label="Edit"
+                                          labelStyle={{color: "#4285f4"}}
+                                          backgroundColor="transparent"
+                                          onClick={() => {
+                                            this.props.actions.startEditListInfo()
+                                          }}
+                                          />
+                                        <FlatButton
+                                          label="Preview"
+                                          labelStyle={{color: "#fff"}}
+                                          rippleColor="#B2DFDB"
+                                          backgroundColor="#00BFA5"
+                                          hoverColor="#26A69A"
+                                          onClick={() => {
+                                            this.props.dispatch(push('/p/' + listInfo._id))
+                                          }}
+                                          />
+                                      </div>
+                                    </div>
+                                    <Divider/>
+                                    <div className="default-padding">
+                                      <div className="flex-column" style={{marginBottom: 8}}>
+                                        <span className="field-title">
+                                          Name
+                                        </span>
+                                        <span className="field-content">{listInfo.name}</span>
+                                      </div>
+                                      <div className="flex-column">
+                                        <span className="field-title">
+                                          Phone Numbers
+                                        </span>
+                                        { (listInfo.phones && listInfo.phones.length > 0) && (
+                                          listInfo.phones.map((phone) => {
+                                            return <span key={phone} className="field-content">{phone}</span>
+                                          })
+                                        )}
+                                      </div>
+                                      <div className="flex-column" style={{marginTop: 8}}>
+                                        <span className="field-title">
+                                          Categories
+                                        </span>
+                                        <div className="flex-row">
+                                          { listInfo.modifiedCategories ? listInfo.modifiedCategories.map((category) => {
+                                            return (
+                                              <Chip key={category.code} style={{margin: "4px 8px 4px 0"}}>
+                                                {category.name}
+                                              </Chip>
+                                            )
+                                          }) : null}
+                                        </div>
+                                      </div>
 
-          const mapDispatchToProps = (dispatch) => {
-            return {
-              dispatch,
-              actions: bindActionCreators(Object.assign({}, AuthActions, DashboardActions), dispatch)
-            };
-          }
+                                      <div className="flex-column" style={{marginTop: 8}}>
+                                        <span className="field-title">
+                                          Addresses
+                                        </span>
+                                        { (listInfo.addresses && listInfo.addresses.length > 0) && (
+                                          listInfo.addresses.map((address, index) => {
+                                            return <span key={index} className="field-content">{address.formattedAddress}</span>
+                                          })
+                                        )}
+                                      </div>
+                                      <div className="flex-column" style={{marginTop: "16px"}}>
+                                        <span className="field-title">
+                                          Brief
+                                        </span>
+                                        <p style={{lineHeight: 1.8}}>
+                                          {listInfo.brief}
+                                        </p>
+                                      </div>
+                                      <div className="flex-column" style={{marginTop: "16px"}}>
+                                        <span className="field-title">
+                                          Experience
+                                        </span>
+                                        { listInfo.experience ? listInfo.experience.map((experience, index) => {
+                                          return (
+                                            <div key={index} style={{
+                                                margin: "8px 0 0 0",
+                                                border: "1px solid #ddd",
+                                                padding: "16px"
+                                              }}>
+                                              <span style={{
+                                                  fontWeight: 600,
+                                                  fontSize: "20px"
+                                                }}>{experience.title}
+                                              </span>
+                                              <p style={{
+                                                  margin: "8px 0 0 0",
+                                                  fontSize: "14px",
+                                                  lineHeight: 1.8
+                                                }}>{experience.text}
+                                              </p>
+                                            </div>
+                                          )
+                                        }
+                                      ) : null}
+                                    </div>
+                                  </div>
+                                </div>
+                              ) }
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ) : null
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
 
-          export default connect(mapStatesToProps, mapDispatchToProps)(DashboardView);
+const mapStatesToProps = (states) => {
+  return {
+    auth: states.auth,
+    dashboard: states.dashboard,
+    functions: states.functions
+  };
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    dispatch,
+    actions: bindActionCreators(Object.assign({}, AuthActions, DashboardActions), dispatch)
+  };
+}
+
+export default connect(mapStatesToProps, mapDispatchToProps)(DashboardView);

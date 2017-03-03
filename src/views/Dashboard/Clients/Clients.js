@@ -176,9 +176,9 @@ class Clients extends Component {
     }
   }
 
-  handleEditClientFormOnSubmit = (newClientDate) => {
+  handleEditClientFormOnSubmit = (newClientData) => {
     const { actions } = this.props
-    actions.updateClient(newClientDate).then(() => {
+    actions.updateClient(newClientData).then(() => {
       this.setState({snackbarShow: true, snackbarText: 'Update client success!'})
     })
   }

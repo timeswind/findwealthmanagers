@@ -12,6 +12,14 @@ import {
   DELETE_CLIENT_FAILURE,
   CREATE_CLIENT_SUCCESS,
   CREATE_CLIENT_FAILURE,
+  FETCH_SHARELIST_CLIENTS_SUCCESS,
+  FETCH_SHARELIST_CLIENTS_FAILURE,
+  UPDATE_SHARELIST_CLIENT_SUCCESS,
+  UPDATE_SHARELIST_CLIENT_FAILURE,
+  DELETE_SHARELIST_CLIENT_SUCCESS,
+  DELETE_SHARELIST_CLIENT_FAILURE,
+  CREATE_SHARELIST_CLIENT_SUCCESS,
+  CREATE_SHARELIST_CLIENT_FAILURE,
   GET_CLIENTBOOK_APPOINTMENT_SUCCESS
 } from '../constants'
 
@@ -23,6 +31,9 @@ const initialState = {
   clients:[],
   clientSearchDataSource: [],
   selectedClient:{},
+  sharelistclients:[],
+  sharelistclientSearchDataSource: [],
+  selectedSharelistClient: {},
   newAppointment: {
     date: null,
     start: null,

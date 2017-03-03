@@ -29,16 +29,13 @@ class ClientbookAppointments extends Component {
       var upcomingAppointments = []
       var passedAppointments = []
       let today = new Date()
-      console.log(today.getTime())
       appointments.forEach((appointment) => {
-        console.log(new Date(appointment.start).getTime())
         if (today.getTime() > new Date(appointment.start).getTime()) {
           passedAppointments.push(appointment)
         } else {
           upcomingAppointments.push(appointment)
         }
       })
-      console.log(upcomingAppointments)
       this.setState({upcomingAppointments, passedAppointments})
     } else {
       this.setState({upcomingAppointments: [], passedAppointments: []})

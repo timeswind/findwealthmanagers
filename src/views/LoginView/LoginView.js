@@ -74,6 +74,9 @@ class LoginView extends Component {
           if (json.permissions.indexOf('agentbook') > -1) {
             actions.enableAgentBook()
           }
+          if (json.permissions.indexOf('agentbook') > -1) {
+            actions.enableSharelist()
+          }
         }
         Raven.setUserContext({
           name: json.name,

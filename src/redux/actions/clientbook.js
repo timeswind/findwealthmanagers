@@ -12,10 +12,76 @@ import {
   DELETE_CLIENT_FAILURE,
   CREATE_CLIENT_SUCCESS,
   CREATE_CLIENT_FAILURE,
+  FETCH_SHARELIST_CLIENTS_SUCCESS,
+  FETCH_SHARELIST_CLIENTS_FAILURE,
+  UPDATE_SHARELIST_CLIENT_SUCCESS,
+  UPDATE_SHARELIST_CLIENT_FAILURE,
+  DELETE_SHARELIST_CLIENT_SUCCESS,
+  DELETE_SHARELIST_CLIENT_FAILURE,
+  CREATE_SHARELIST_CLIENT_SUCCESS,
+  CREATE_SHARELIST_CLIENT_FAILURE,
   GET_CLIENTBOOK_APPOINTMENT_SUCCESS
 } from '../constants'
 
 import axios from 'axios'
+
+export function fetchSharelistClientList() {
+  let url = '/api/protect/sharelist/sharelistclients';
+  return function (dispatch) {
+    return axios.get(url)
+    .then(function (response) {
+      if (response.data.success) {
+        dispatch({
+          type: FETCH_SHARELIST_CLIENTS_SUCCESS,
+          sharelistClients: response.data.clients
+        })
+      } else {
+        dispatch({
+          type: FETCH_SHARELIST_CLIENTS_FAILURE,
+          sharelistClients: response.error || ""
+        })
+      }
+    })
+  }
+}
+
+export function createNewSharelistClient(newClient) {
+  let url = '/api/protect/sharelist/sharelistclients';
+  return function (dispatch) {
+    return axios.post(url, newClient)
+    .then(function (response) {
+      if (response.data.success) {
+        dispatch({
+          type: CREATE_SHARELIST_CLIENT_SUCCESS,
+          sharelistClients: response.data.client
+        })
+      } else {
+        dispatch({
+          type: CREATE_SHARELIST_CLIENT_FAILURE
+        })
+      }
+    })
+  }
+}
+
+export function updateSharelistClient(updatedClient) {
+  let url = '/api/protect/sharelist/sharelistclients';
+  return function (dispatch) {
+    return axios.put(url, updatedClient)
+    .then(function (response) {
+      if (response.data.success) {
+        dispatch({
+          type: UPDATE_SHARELIST_CLIENT_SUCCESS,
+          sharelistClients: response.data.client
+        })
+      } else {
+        dispatch({
+          type: UPDATE_SHARELIST_CLIENT_FAILURE
+        })
+      }
+    })
+  }
+}
 
 export function fetchClientsList() {
   let url = '/api/protect/clients';

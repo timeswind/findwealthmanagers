@@ -575,7 +575,7 @@ class GetListed extends Component {
                 <div style={contentStyle}>
                   {finished ? (
                     <Card>
-                      <CardTitle title="Congradualation!"/>
+                      <CardTitle title="Congratulations!"/>
                       <div className="default-padding">
                         <p>You have successfuly create a basic listing profile</p>
                         <p>To reach more customer, you could:</p>

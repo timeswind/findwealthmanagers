@@ -16,7 +16,6 @@ export const IndexToTime = function (index, appointment_date) {
     if (appointment_date) {
       date = new Date(appointment_date)
     }
-    console.log(date)
     var hour = parseInt(index / 60, 10)
     var minutes = index % 60
     date.setHours(hour)

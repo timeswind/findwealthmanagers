@@ -80,7 +80,7 @@ class ClientDetailView extends Component {
   }
 
   render() {
-    const { id, appointments, style, fields, dirty, reset, handleSubmit, onDelete } = this.props
+    const { id, appointments, style, fields, dirty, reset, handleSubmit, onDelete, initialValues } = this.props
 
     return (
       <form className="flex-column" style={style} onSubmit={handleSubmit}>
@@ -129,10 +129,42 @@ class ClientDetailView extends Component {
               <RadioButton value="2" label="Female"
                 style={{width: 80, marginRight: 16}}/>
             </Field>
-            <Field name="married"
-              component={Checkbox}
-              label="Married"
-              style={{marginBottom: 24, marginTop: 16}}/>
+            <div style={{border: '1px solid #ddd', padding: '0 16px', margin: '16px 0'}}>
+              <div className="flex-row flex-baseline" style={{marginTop: 16}}>
+                <span style={{marginRight: 8, fontSize: 18, fontWeight: 'Bold', fontFamily: 'raleway'}}>Profile</span>
+                <span style={{fontSize: 18, fontWeight: 'Bold', fontFamily: 'raleway', backgroundColor: '#FF9800', color: '#fff', padding: 4, borderRadius: 3}}>{initialValues.profile && 'Rating: ' + Object.keys(initialValues.profile).filter(function(key) { return initialValues.profile[key] === true}).length}</span>
+              </div>
+              <div className="flex-row">
+                <div style={{marginRight: 16}}>
+                  <Field name="profile.married"
+                    component={Checkbox}
+                    label="Married"
+                    style={{marginBottom: 24, marginTop: 16}}/>
+                  <Field name="profile.income"
+                    component={Checkbox}
+                    label="Income"
+                    style={{marginBottom: 24, marginTop: 16}}/>
+                  <Field name="profile.homeowner"
+                    component={Checkbox}
+                    label="Homeowner"
+                    style={{marginBottom: 24, marginTop: 16}}/>
+                </div>
+                <div>
+                  <Field name="profile.ambitious"
+                    component={Checkbox}
+                    label="Ambitious"
+                    style={{marginBottom: 24, marginTop: 16}}/>
+                  <Field name="profile.dissatisfied"
+                    component={Checkbox}
+                    label="Dissatisfied"
+                    style={{marginBottom: 24, marginTop: 16}}/>
+                  <Field name="profile.coachable"
+                    component={Checkbox}
+                    label="Coachable"
+                    style={{marginBottom: 24, marginTop: 16}}/>
+                </div>
+              </div>
+            </div>
             <Field
               name="age"
               component={TextField}

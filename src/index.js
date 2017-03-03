@@ -119,6 +119,9 @@ if (localStore.session.get("token") && localStore.session.get("email") && localS
     if (permissions.indexOf('agentbook') > -1) {
       store.dispatch({ type: 'ENABLE_AGENTBOOK' })
     }
+    if (permissions.indexOf('sharelist') > -1) {
+      store.dispatch({ type: 'ENABLE_SHARELIST' })
+    }
   }
   store.dispatch({
     type: "SET_LOGIN_STATE",
@@ -139,6 +142,18 @@ if (localStore.session.get("token") && localStore.session.get("email") && localS
 
 function requirePermissionAGENTBOOK (nextState, replace, done) {
   if (store.getState().auth.isLogin && store.getState().functions.agentbook) {
+    done()
+  } else {
+    replace({
+      pathname: '/login',
+      state: { nextPathname: nextState.location.pathname }
+    })
+    done()
+  }
+}
+
+function requirePermissionSHARELIST (nextState, replace, done) {
+  if (store.getState().auth.isLogin && store.getState().functions.sharelist) {
     done()
   } else {
     replace({
@@ -277,6 +292,12 @@ const MUI = () => (
             <Route path="agents" onEnter={requirePermissionAGENTBOOK} getComponent={function(location, cb){
                 require.ensure([], (require) => {
                   cb(null, require('./views/Dashboard/Agents/Agents').default)
+                }, 'dashboard')
+              }}>
+            </Route>
+            <Route path="sharelist" onEnter={requirePermissionSHARELIST} getComponent={function(location, cb){
+                require.ensure([], (require) => {
+                  cb(null, require('./views/Dashboard/Sharelist/Sharelist').default)
                 }, 'dashboard')
               }}>
             </Route>

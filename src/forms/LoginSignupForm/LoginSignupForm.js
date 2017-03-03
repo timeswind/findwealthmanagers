@@ -74,6 +74,9 @@ class LoginSignupForm extends Component {
           if (json.permissions.indexOf('agentbook') > -1) {
             actions.enableAgentBook()
           }
+          if (json.permissions.indexOf('sharelist') > -1) {
+            actions.enableSharelist()
+          }
         }
         if (json.role !== 1) {
           actions.hideLoginModel();

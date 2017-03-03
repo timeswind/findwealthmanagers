@@ -84,7 +84,7 @@ class App extends Component {
                   />
               )}
               {agentbook && (
-                <MenuItem primaryText="Agent Book"
+                <MenuItem primaryText="Baseshop"
                   onClick={()=>{
                     dispatch(push('/dashboard/agents'))
                     actions.setViewDrawerStatus(false)
