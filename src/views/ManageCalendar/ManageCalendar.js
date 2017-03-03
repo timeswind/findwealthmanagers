@@ -6,9 +6,10 @@ import MenuItem from 'material-ui/MenuItem';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import AddAvailableTimeForm from '../../forms/AddAvailableTimeForm/AddAvailableTimeForm';
+import CalendarEditFreetime from './CalendarEditFreetime';
 import './ManageCalendar.css';
 import moment from 'moment';
-import { IndexToTime } from '../../core/TimeToIndex';
+import { IndexToTime, TimeToIndex } from '../../core/TimeToIndex';
 
 
 const weekdaysName = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -38,7 +39,6 @@ class ManageCalendar extends Component {
     this.getCurrentMonthCalendar()
   }
 
-
   navigateWeekPrivious () {
     let currentMonth = this.state.month
     let currentWeek = this.state.currentWeek
@@ -60,7 +60,6 @@ class ManageCalendar extends Component {
     let currentWeek = this.currentWeekIn(currentDate, currentYear, currentMonth - 1)
     this.updateCalendar( currentYear, currentMonth, weeksCount, currentWeek)
   }
-
 
   navigateWeekNext () {
     let currentMonth = this.state.month
@@ -180,9 +179,9 @@ class ManageCalendar extends Component {
 
   handleAddAvailableTimeFormSubmit = (values) => {
     console.log(values)
-    if (!values.from) {
+    if (!('from' in values)) {
       window.alert('missing the from time')
-    } else if (!values.to) {
+    } else if (!('to' in values)) {
       window.alert('missing the from time')
     } else if (values.to < values.from) {
       window.alert('end time is earlier then from time')
@@ -214,6 +213,22 @@ class ManageCalendar extends Component {
     var self = this
     let data = 'type=event&calendar_id=' + calendar_id + '&event_id=' + event_id
     axios.delete('/api/protect/calendar?' + data)
+    .then(function(response) {
+      if (response.data.success && response.data.calendar) {
+        self.setState({ eventDetailDialogOpen: false })
+        self.updateCalendarData(response.data.calendar)
+      }
+    }).catch(function(ex) {
+      console.log('failed', ex)
+    })
+  }
+
+  updateDayScheduleEvent = (calendar_id, event_id, startTime, endTime) => {
+    let startTimeInNumber = TimeToIndex(startTime)
+    let endTimeInNumber = TimeToIndex(endTime)
+    var self = this
+    let data = 'type=event&calendar_id=' + calendar_id + '&event_id=' + event_id + '&start=' + startTimeInNumber + '&end=' + endTimeInNumber
+    axios.put('/api/protect/calendar?' + data)
     .then(function(response) {
       if (response.data.success && response.data.calendar) {
         self.setState({ eventDetailDialogOpen: false })
@@ -309,6 +324,10 @@ class ManageCalendar extends Component {
       )
     }
     return dayScheduleBlock
+  }
+
+  foo(){
+    console.log("i was called");
   }
 
   render() {
@@ -432,12 +451,9 @@ class ManageCalendar extends Component {
             <div>
               {
                 this.state.detailEvent.type === 'freetime' && (
-                  <FlatButton label="Delete"
-                    secondary={true}
-                    onTouchTap={()=>{
-                      this.deleteDayScheduleEvent(this.state.calendarId, this.state.detailEvent._id)
-                    }}
-                    />
+                  <div>
+                    <CalendarEditFreetime start={this.state.detailEvent.fromTime} end={this.state.detailEvent.toTime} ondelete={() => this.deleteDayScheduleEvent(this.state.calendarId, this.state.detailEvent._id)} onupdate={(startTime, endTime) => this.updateDayScheduleEvent(this.state.calendarId, this.state.detailEvent._id, startTime, endTime)}/>
+                  </div>
                 )
               }
               {
