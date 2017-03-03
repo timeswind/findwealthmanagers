@@ -9,7 +9,7 @@ import AddAvailableTimeForm from '../../forms/AddAvailableTimeForm/AddAvailableT
 import CalendarEditFreetime from './CalendarEditFreetime';
 import './ManageCalendar.css';
 import moment from 'moment';
-import { IndexToTime, TimeToIndex } from '../../core/TimeToIndex';
+import { IndexToTime } from '../../core/TimeToIndex';
 
 
 const weekdaysName = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -224,10 +224,8 @@ class ManageCalendar extends Component {
   }
 
   updateDayScheduleEvent = (calendar_id, event_id, startTime, endTime) => {
-    let startTimeInNumber = TimeToIndex(startTime)
-    let endTimeInNumber = TimeToIndex(endTime)
     var self = this
-    let data = 'type=event&calendar_id=' + calendar_id + '&event_id=' + event_id + '&start=' + startTimeInNumber + '&end=' + endTimeInNumber
+    let data = 'type=event&calendar_id=' + calendar_id + '&event_id=' + event_id + '&start=' + startTime + '&end=' + endTime
     axios.put('/api/protect/calendar?' + data)
     .then(function(response) {
       if (response.data.success && response.data.calendar) {

@@ -1,4 +1,5 @@
 export const TimeToIndex = function (time) {
+  console.log(time)
   // @params
   // time - Date
   time = new Date(time);

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import FlatButton from 'material-ui/FlatButton';
 import TimePicker from 'material-ui/TimePicker';
+import { TimeToIndex } from '../../core/TimeToIndex';
 
 class CalendarEditFreetime extends Component {
   state = {
@@ -21,11 +22,25 @@ class CalendarEditFreetime extends Component {
   }
 
   handleChangeTimePickerStart = (event, date) => {
-    this.setState({changed: true, startTime: date});
+    let startTimeInNumber = TimeToIndex(date)
+    var endTimeInNumber
+    if (this.state.endTime === null) {
+      endTimeInNumber = TimeToIndex(this.props.end)
+    } else {
+      endTimeInNumber = this.state.endTime
+    }
+    this.setState({changed: true, startTime: startTimeInNumber, endTime: endTimeInNumber});
   };
 
   handleChangeTimePickerEnd = (event, date) => {
-    this.setState({changed: true, endTime: date});
+    var startTimeInNumber
+    let endTimeInNumber = TimeToIndex(date)
+    if (this.state.startTime === null) {
+      startTimeInNumber = TimeToIndex(this.props.start)
+    } else {
+      startTimeInNumber = this.state.startTime
+    }
+    this.setState({changed: true, startTime: startTimeInNumber, endTime: endTimeInNumber});
   };
 
   render () {
