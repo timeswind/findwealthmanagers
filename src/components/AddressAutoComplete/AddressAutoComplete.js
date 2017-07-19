@@ -22,7 +22,7 @@ class AddressAutoComplete extends Component {
   selectAddress = (chosenAddress) => {
     var self = this
     this.geocoder.geocode({'address': chosenAddress}, function (results, status) {
-      if (status === window.google.maps.GeocoderStatus.OK) {
+      if (window.google !== 'undefined' && status === window.google.maps.GeocoderStatus.OK) {
         let longitude = results[0].geometry.location.lng()
         let latitude = results[0].geometry.location.lat()
         let loc = [longitude, latitude] //getjson format [ lng, lat ]
@@ -68,8 +68,10 @@ class AddressAutoComplete extends Component {
   }
 
   initGoolePlaceAutocomplete() {
-    this.AddressAutoCompleteService = new window.google.maps.places.AutocompleteService();
-    this.geocoder = new window.google.maps.Geocoder();
+    if (window.google) {
+      this.AddressAutoCompleteService = new window.google.maps.places.AutocompleteService();
+      this.geocoder = new window.google.maps.Geocoder();
+    }
   }
 
   render() {

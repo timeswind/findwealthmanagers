@@ -41,7 +41,7 @@ class DashboardFunctionSection extends Component {
                 <div className="panel-top-entry">
                   <div className="flex-row flex-center default-padding raleway light-shadow"
                     onClick={() => {
-                      dispatch(push('/dashboard/agents'))
+                      dispatch(push('/dashboard/sharelist'))
                     }}>
                     <FontIcon className="material-icons">book</FontIcon>
                     <span style={{marginLeft: "16px"}}>Sharelist</span>

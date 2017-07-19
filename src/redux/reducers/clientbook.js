@@ -20,19 +20,23 @@ import {
   DELETE_SHARELIST_CLIENT_FAILURE,
   CREATE_SHARELIST_CLIENT_SUCCESS,
   CREATE_SHARELIST_CLIENT_FAILURE,
-  GET_CLIENTBOOK_APPOINTMENT_SUCCESS
+  GET_CLIENTBOOK_APPOINTMENT_SUCCESS,
+  SET_CLIENTBOOK_SHARELIST_CLIENTS,
+  SET_CLIENTBOOK_SHARELIST_SELECTED_CLIENT,
+  SET_CLIENTBOOK_SHARELIST_ADDCLIENTBUTTON_STATUS
 } from '../constants'
 
 import { IndexToTime } from '../../core/TimeToIndex';
 
 const initialState = {
   addClientButtonOpen: false,
+  sharelistAddClientButtonOpen: false,
   addAppointmentModalOpen: false,
   clients:[],
   clientSearchDataSource: [],
   selectedClient:{},
-  sharelistclients:[],
-  sharelistclientSearchDataSource: [],
+  sharelistClients:[],
+  sharelistClientSearchDataSource: [],
   selectedSharelistClient: {},
   newAppointment: {
     date: null,
@@ -161,5 +165,111 @@ export default function update(state = initialState, action) {
       error: 'fail to request resources'
     })
   }
+
+  if (action.type === FETCH_SHARELIST_CLIENTS_FAILURE) {
+    return Object.assign({}, state, {
+      error: 'FETCH_SHARELIST_CLIENTS_FAILURE'
+    })
+  }
+
+  if (action.type === UPDATE_SHARELIST_CLIENT_FAILURE) {
+    return Object.assign({}, state, {
+      error: 'UPDATE_SHARELIST_CLIENT_FAILURE'
+    })
+  }
+  if (action.type === DELETE_SHARELIST_CLIENT_FAILURE) {
+    return Object.assign({}, state, {
+      error: 'DELETE_SHARELIST_CLIENT_FAILURE'
+    })
+  }
+  if (action.type === CREATE_SHARELIST_CLIENT_FAILURE) {
+    return Object.assign({}, state, {
+      error: 'CREATE_SHARELIST_CLIENT_FAILURE'
+    })
+  }
+
+  //
+
+  var newSharelistClientsList = []
+  if(action.type === SET_CLIENTBOOK_SHARELIST_CLIENTS || action.type === FETCH_SHARELIST_CLIENTS_SUCCESS) {
+    return Object.assign({}, state, {
+      sharelistClients: action.clients,
+      sharelistClientSearchDataSource: action.clients.map((client) => {
+        var obj = {}
+        obj.searchtext = client.name.toLowerCase() + (client.email || '') + (client.phone || '')
+        obj.name = client.name
+        obj.id = client._id
+        return obj
+      }),
+    })
+  }
+  if(action.type === SET_CLIENTBOOK_SHARELIST_SELECTED_CLIENT) {
+    return Object.assign({}, state, {
+      selectedSharelistClient: action.selectedSharelistClient
+    })
+  }
+  if(action.type === SET_CLIENTBOOK_SHARELIST_ADDCLIENTBUTTON_STATUS) {
+    return Object.assign({}, state, {
+      sharelistAddClientButtonOpen: action.status
+    })
+  }
+  if(action.type === CREATE_SHARELIST_CLIENT_SUCCESS) {
+    newSharelistClientsList = state.clients
+    newSharelistClientsList.push(action.client)
+    return Object.assign({}, state, {
+      sharelistClients: newClientsList,
+      sharelistClientSearchDataSource: newSharelistClientsList.map((client) => {
+        var obj = {}
+        obj.searchtext = client.name.toLowerCase() + (client.email || '') + (client.phone || '')
+        obj.name = client.name
+        obj.id = client._id
+        return obj
+      }),
+      selectedSharelistClient: action.client
+    })
+  }
+  if(action.type === UPDATE_SHARELIST_CLIENT_SUCCESS) {
+    newSharelistClientsList = state.clients.map((client) => {
+      if (client._id === action.client._id) {
+        return action.client
+      } else {
+        return client
+      }
+    })
+    return Object.assign({}, state, {
+      sharelistClients: newClientsList,
+      sharelistClientSearchDataSource: newSharelistClientsList.map((client) => {
+        var obj = {}
+        obj.searchtext = client.name.toLowerCase() + (client.email || '') + (client.phone || '')
+        obj.name = client.name
+        obj.id = client._id
+        return obj
+      }),
+      selectedSharelistClient: action.client
+    })
+  }
+  if(action.type === DELETE_SHARELIST_CLIENT_SUCCESS) {
+    newSharelistClientsList = state.clients.filter((client) => {
+      return client._id !== action.id
+    })
+    var selectedSharelistClient = {}
+
+    if (newSharelistClientsList.length > 0) {
+      selectedSharelistClient = newSharelistClientsList[0]
+    }
+
+    return Object.assign({}, state, {
+      sharelistClients: newClientsList,
+      sharelistClientSearchDataSource: newSharelistClientsList.map((client) => {
+        var obj = {}
+        obj.searchtext = client.name.toLowerCase() + (client.email || '') + (client.phone || '')
+        obj.name = client.name
+        obj.id = client._id
+        return obj
+      }),
+      selectedSharelistClient: selectedSharelistClient
+    })
+  }
+
   return state
 }

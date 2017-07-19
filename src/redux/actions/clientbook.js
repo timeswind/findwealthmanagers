@@ -20,7 +20,10 @@ import {
   DELETE_SHARELIST_CLIENT_FAILURE,
   CREATE_SHARELIST_CLIENT_SUCCESS,
   CREATE_SHARELIST_CLIENT_FAILURE,
-  GET_CLIENTBOOK_APPOINTMENT_SUCCESS
+  GET_CLIENTBOOK_APPOINTMENT_SUCCESS,
+  SET_CLIENTBOOK_SHARELIST_CLIENTS,
+  SET_CLIENTBOOK_SHARELIST_SELECTED_CLIENT,
+  SET_CLIENTBOOK_SHARELIST_ADDCLIENTBUTTON_STATUS
 } from '../constants'
 
 import axios from 'axios'
@@ -77,6 +80,25 @@ export function updateSharelistClient(updatedClient) {
       } else {
         dispatch({
           type: UPDATE_SHARELIST_CLIENT_FAILURE
+        })
+      }
+    })
+  }
+}
+
+export function deleteSharelistClient(id) {
+  let url = '/api/protect/sharelist/sharelistclients?id=' + id;
+  return function (dispatch) {
+    return axios.delete(url)
+    .then(function (response) {
+      if (response.data.success) {
+        dispatch({
+          type: DELETE_SHARELIST_CLIENT_SUCCESS,
+          id: id
+        })
+      } else {
+        dispatch({
+          type: DELETE_SHARELIST_CLIENT_FAILURE
         })
       }
     })
@@ -182,6 +204,7 @@ export function setClientbookClients(clients) {
     clients
   }
 }
+
 export function setClientbookSelectedClient(selectedClient) {
   return function (dispatch) {
     dispatch({
@@ -191,6 +214,7 @@ export function setClientbookSelectedClient(selectedClient) {
     return dispatch(getClientbookClientAppointment(selectedClient._id))
   }
 }
+
 export function setClientbookAddClientButtonStatus(status) {
   return {
     type: SET_CLIENTBOOK_ADDCLIENTBUTTON_STATUS,
@@ -207,5 +231,28 @@ export function setClientbookNewAppointment(newAppointment) {
   return {
     type: SET_CLIENTBOOK_NEWAPPOINTMENT,
     newAppointment
+  }
+}
+
+//
+export function setClientbookSharelistClients(clients) {
+  return {
+    type: SET_CLIENTBOOK_SHARELIST_CLIENTS,
+    clients
+  }
+}
+
+export function setClientbookSelectedSharelistClient(selectedSharelistClient) {
+  return function (dispatch) {
+    dispatch({
+      type: SET_CLIENTBOOK_SHARELIST_SELECTED_CLIENT,
+      selectedSharelistClient
+    })
+  }
+}
+export function setClientbookAddSharelistClientButtonStatus(status) {
+  return {
+    type: SET_CLIENTBOOK_SHARELIST_ADDCLIENTBUTTON_STATUS,
+    status
   }
 }

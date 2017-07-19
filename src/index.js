@@ -283,6 +283,12 @@ const MUI = () => (
                 }, 'dashboard')
               }}>
             </Route>
+            <Route path="sharelist" onEnter={requireAuthAdvisor} getComponent={function(location, cb){
+                require.ensure([], (require) => {
+                  cb(null, require('./views/Dashboard/Sharelist/Sharelist').default)
+                }, 'dashboard')
+              }}>
+            </Route>
             <Route path="clients" onEnter={requireAuthAdvisor} getComponent={function(location, cb){
                 require.ensure([], (require) => {
                   cb(null, require('./views/Dashboard/Clients/Clients').default)
