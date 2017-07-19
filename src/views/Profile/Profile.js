@@ -10,6 +10,7 @@ import {gray400} from 'material-ui/styles/colors';
 import {IndexToTime} from '../../core/TimeToIndex';
 import {List, ListItem} from 'material-ui/List';
 import Subheader from 'material-ui/Subheader';
+import MapBox from '../../components/MapBox/MapBox';
 import moment from 'moment';
 import * as AuthActions from '../../redux/actions/auth';
 import * as ListActions from '../../redux/actions/list';
@@ -363,9 +364,16 @@ render() {
               {(listInfo.addresses && listInfo.addresses.length > 0) && (
                 listInfo.addresses.map((address, index) => {
                   return (
-                    <div key={index} className="flex-row flex-center" style={{marginBottom: "8px"}}>
-                      <FontIcon className="material-icons profile-info-icon">location_on</FontIcon>
-                      <span>{ address.formattedAddress ? address.formattedAddress : address.streetAddress}</span>
+                    <div key={index} className="flex-column">
+                      <div className="flex-row flex-center" style={{marginBottom: "8px"}}>
+                        <FontIcon className="material-icons profile-info-icon">location_on</FontIcon>
+                        <span>{ address.formattedAddress ? address.formattedAddress : address.streetAddress}</span>
+                      </div>
+                      <div style={{background: "#fff", paddingBottom: 16}}>
+                        <div className="p-mapbox-wrapper">
+                          <MapBox height="150px" markerPosition={{lat: address.loc[1], lng: address.loc[0]}} zoom={14}></MapBox>
+                        </div>
+                      </div>
                     </div>
                   )
                 })

@@ -288,7 +288,8 @@
     padding: 0 16px;
     margin: 0 auto;
     display: flex;
-    flex-direction: row
+    flex-direction: row;
+    align-items: flex-start;
   }
   .p-h-info {
     margin-left: 32px
@@ -323,7 +324,8 @@
     padding: 0 16px;
     margin: 0 auto;
     display: flex;
-    flex-direction: row
+    flex-direction: row;
+    align-items: flex-start;
   }
   .p-h-info {
     margin-left: 32px
@@ -349,4 +351,17 @@
     flex: 30;
     margin-left: 8px
   }
+}
+
+.p-mapbox-wrapper {
+  padding: 16px;
+  background: #fff;
+  border-bottom: 1px solid #ddd;
+  max-width: 600px;
+  margin: 0 auto;
+  background-color: #fff;
+  vertical-align: top;
+  border-radius: 4px;
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.08);
+  box-sizing: border-box;
 }
