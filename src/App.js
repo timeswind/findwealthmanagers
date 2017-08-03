@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Helmet from "react-helmet";
 import Dialog from 'material-ui/Dialog';
 import Drawer from 'material-ui/Drawer';
+import MessageBox from './components/MessageBox/MessageBox';
 import MenuItem from 'material-ui/MenuItem';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux'
@@ -41,6 +42,7 @@ class App extends Component {
         )}
         {showNavBar && (<Navbar path={pathname}></Navbar>)}
         {children}
+        <MessageBox></MessageBox>
         <Dialog
           title="Login"
           modal={false}

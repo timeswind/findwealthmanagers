@@ -36,7 +36,7 @@
   padding: 16px 0;
   background: #fff;
   border-bottom: 1px solid #ddd;
-  max-width: 600px;
+  max-width: 60%;
   margin: 0 auto
 }
 
@@ -44,7 +44,8 @@
   padding: 8px 16px 8px 16px;
   border-radius: 3px;
   background: #ddd;
-  margin: 8px 8px 8px 0;
+  margin: 8px 8px 0 0;
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.08)
 }
 
 .p-tabs-outter-wrapper {
@@ -357,7 +358,7 @@
   padding: 16px;
   background: #fff;
   border-bottom: 1px solid #ddd;
-  max-width: 600px;
+  max-width: 800px;
   margin: 0 auto;
   background-color: #fff;
   vertical-align: top;

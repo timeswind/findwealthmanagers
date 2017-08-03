@@ -64,7 +64,7 @@ class Search extends Component {
           })
         }
         return (
-            result
+          result
         )
       })
       actions.setSearchResults(results, true)
@@ -92,40 +92,44 @@ class Search extends Component {
   render() {
     const {results, found, pageNum } = this.props.search
     return (
-        <div className="search">
-          <div className="g-background" style={{padding: "77px 0"}}>
-            <div style={{maxWidth: "860px", margin: '32px auto 0 auto'}}>
-              <SearchCard onSearch={this.search}></SearchCard>
-              {(found === true) && (
-                  <div className="flex-column">
-                    {results.map((list) => {
-                      return (<SearchResultCard list={list} key={list._id}
-                                                onSelect={this.goToListDetail}></SearchResultCard>)
-                    })
+      <div className="search">
+        <div className="g-background" style={{padding: "77px 0"}}>
+          <div style={{maxWidth: "860px", margin: '32px auto 0 auto'}}>
+            <SearchCard onSearch={this.search}></SearchCard>
+            {(found === true) && (
+              <div className="flex-column">
+                {
+                  results.map(
+                    (list) => {
+                      return (
+                        <SearchResultCard list={list} key={list._id} onSelect={this.goToListDetail}></SearchResultCard>
+                      )
                     }
-                  </div>
-              )}
-              { !!pageNum && (
-                  <div className="component-pagination-wrapper">
-                    <ReactPaginate previousLabel={"<"}
-                                   nextLabel={">"}
-                                   breakLabel={<span>...</span>}
-                                   breakClassName={"break-me"}
-                                   pageCount={pageNum}
-                                   marginPagesDisplayed={2}
-                                   pageRangeDisplayed={5}
-                                   onPageChange={this.handlePageClick}
-                                   containerClassName={"component-pagination"}
-                                   subContainerClassName={"pagination"}
-                                   activeClassName={"active"}/>
-                  </div>
+                  )
+                }
+              </div>
+            )}
+            { !!pageNum && (
+              <div className="component-pagination-wrapper">
+                <ReactPaginate previousLabel={"<"}
+                  nextLabel={">"}
+                  breakLabel={<span>...</span>}
+                  breakClassName={"break-me"}
+                  pageCount={pageNum}
+                  marginPagesDisplayed={2}
+                  pageRangeDisplayed={5}
+                  onPageChange={this.handlePageClick}
+                  containerClassName={"component-pagination"}
+                  subContainerClassName={"pagination"}
+                  activeClassName={"active"}/>
+              </div>
 
-              )}
+            )}
 
-            </div>
           </div>
-          <MainFooter></MainFooter>
         </div>
+        <MainFooter></MainFooter>
+      </div>
     );
   }
 }

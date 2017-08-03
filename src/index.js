@@ -12,12 +12,11 @@ import IndexRoute from 'react-router/lib/IndexRoute';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import thunk from 'redux-thunk';
+import registerServiceWorker from './registerServiceWorker';
 // import { getDashBoardData } from './redux/actions/dashboard';
 
 import Raven from 'raven-js';
-if (process.env.NODE_ENV === 'production') {
-  Raven.config('https://428f8ff22ea44869a1b6410cf83d7905@sentry.io/101570').install();
-}
+
 // import { IntlProvider } from 'react-intl';
 // global.Intl = require('intl');
 import injectTapEventPlugin from 'react-tap-event-plugin';
@@ -39,6 +38,10 @@ import agentbookReducer from './redux/reducers/agentbook';
 import './index.css';
 
 import axios from 'axios'
+
+if (process.env.NODE_ENV === 'production') {
+  Raven.config('https://428f8ff22ea44869a1b6410cf83d7905@sentry.io/101570').install();
+}
 
 const muiTheme = getMuiTheme({
   palette: {
@@ -348,7 +351,5 @@ const MUI = () => (
 );
 
 injectTapEventPlugin();
-ReactDOM.render(
-  <MUI />,
-  document.getElementById('root')
-);
+ReactDOM.render(<MUI />, document.getElementById('root'));
+registerServiceWorker();

@@ -12,6 +12,12 @@ class SearchResultCard extends Component {
     this.setState({briefExpend: !this.state.briefExpend})
   }
 
+  formatPhoneNumber(s) {
+    var s2 = (""+s).replace(/\D/g, '');
+    var m = s2.match(/^(\d{3})(\d{3})(\d{4})$/);
+    return (!m) ? null : "(" + m[1] + ") " + m[2] + "-" + m[3];
+  }
+
   goToListDetail(e, id) {
     if (e.target.dataset && e.target.dataset.brief) {
       this.toggleBrief()
@@ -24,7 +30,7 @@ class SearchResultCard extends Component {
     const {list} = this.props
     const showDetail = 'advisor' in list
     return (
-        <div key={list._id} className="light-card flex-column" style={{cursor: "pointer"}} onTouchTap={(e) => {
+        <div style={this.props.style} key={list._id} className="light-card flex-column" onTouchTap={(e) => {
           this.goToListDetail(e, list._id)
         }}>
           <div className="r-flex-row">
@@ -47,7 +53,7 @@ class SearchResultCard extends Component {
                     list.phones.map((phone) => {
                       return (
                           <div key={phone} className="s-r-phone">
-                            {phone}
+                            {this.formatPhoneNumber(phone)}
                           </div>
                       )
                     })
@@ -58,10 +64,10 @@ class SearchResultCard extends Component {
               <div className="s-r-aoi" style={{borderBottom: "1px solid #ddd"}}>
                 <div>Area of focus</div>
                 <div className="flex-wrap flex-row flex-center">
-                  { (list.specialties && showDetail) && (
-                      <p className="default-paragraph">
-                        {list.specialties}
-                      </p>
+                  { (list.specialties) && (
+                        list.specialties.split(',').map((category, index) => {
+                          return (<div className="s-category-label" key={index}>{category}</div>)
+                        })
                   ) }
                   { list.categories &&
                   list.categories.map((category) => {
