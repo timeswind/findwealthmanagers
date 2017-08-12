@@ -34,7 +34,8 @@ import dashboardReducers from './redux/reducers/dashboard';
 import clientbookReducers from './redux/reducers/clientbook';
 import functionsReducer from './redux/reducers/functions';
 import agentbookReducer from './redux/reducers/agentbook';
-
+import messageReducer from './redux/reducers/message';
+import startChatService, {chatServiceMiddleware} from './core/chatService';
 import './index.css';
 
 import axios from 'axios'
@@ -51,7 +52,6 @@ const muiTheme = getMuiTheme({
 });
 
 const reactRouterMiddleware = routerMiddleware(browserHistory)
-
 const store = createStore(
   combineReducers({
     form: formReducer,
@@ -64,14 +64,17 @@ const store = createStore(
     dashboard: dashboardReducers,
     clientbook: clientbookReducers,
     agentbook: agentbookReducer,
-    functions: functionsReducer
+    functions: functionsReducer,
+    message: messageReducer
   }),
   compose(
     applyMiddleware(thunk),
+    applyMiddleware(chatServiceMiddleware),
     applyMiddleware(reactRouterMiddleware),
     window.devToolsExtension ? window.devToolsExtension() : f => f
   )
 )
+startChatService(store);
 const history = syncHistoryWithStore(browserHistory, store)
 
 axios.interceptors.request.use(function (config) {

@@ -15,6 +15,7 @@ import moment from 'moment';
 import * as AuthActions from '../../redux/actions/auth';
 import * as ListActions from '../../redux/actions/list';
 import * as ViewActions from '../../redux/actions/view';
+import * as MessageActions from '../../redux/actions/message';
 import {bindActionCreators} from 'redux';
 import categories from '../../assets/categories'
 import {TimeToIndex} from '../../core/TimeToIndex';
@@ -62,6 +63,15 @@ class Profile extends Component {
             json.listInfo.certifications = modifiedCertifications
           }
           actions.setListInfo(json.listInfo)
+
+          if ('advisor' in json.listInfo && json.listInfo.advisor !== null) {
+            const user = {
+              name: json.listInfo.name,
+              userid: json.listInfo.advisor
+            }
+            console.log(user)
+            actions.chooseChatObject(user)
+          }
         }
         if (json.calendar) {
           actions.setListCalendar(json.calendar)
@@ -334,7 +344,13 @@ handleMakeAppointmentClick() {
 
 handleSendMessageClick() {
   const {actions} = this.props
+  const {listInfo} = this.props.list
+  const user = {
+    name: listInfo.name,
+    userid: listInfo.advisor
+  }
   actions.setViewMessageboxStatus(true)
+  actions.chooseChatObject(user)
 }
 
 componentWillUnmount() {
@@ -346,7 +362,7 @@ render() {
   const {listInfo, tab, previousAppointment, calendarView, schedules, appointmentModalOpen} = this.props.list
   const showExperience = ('experience' in listInfo) && listInfo.experience.length > 0
   const hasImage = listInfo && listInfo.profileImage && listInfo.profileImage.key
-  const isPublic = !listInfo.advisor;
+  const isUnregisted = !listInfo.advisor;
   return (
     <div className="view-body flex-column g-background">
       <Helmet title={listInfo.name || ''} />
@@ -404,7 +420,7 @@ render() {
               <div className="p-header-makeappointment">
                 {tab !== 'calendar' && (
                   <div>
-                    {isPublic ? null : (
+                    {isUnregisted ? null : (
                       <FlatButton
                         label="make appointmnet"
                         labelStyle={{color: "#FFF"}}
@@ -421,16 +437,18 @@ render() {
                 }
               </div>
               <div className="p-header-makeappointment">
-                <FlatButton
-                  label="Send Message"
-                  labelStyle={{color: "#FFF"}}
-                  primary
-                  rippleColor="#B2DFDB"
-                  backgroundColor="rgb(48, 73, 102)"
-                  hoverColor="rgba(48, 73, 102, 0.8)"
-                  onTouchTap={() => {
-                    this.handleSendMessageClick()
-                  }}/>
+                {!isUnregisted && (
+                  <FlatButton
+                    label="Send Message"
+                    labelStyle={{color: "#FFF"}}
+                    primary
+                    rippleColor="#B2DFDB"
+                    backgroundColor="rgb(48, 73, 102)"
+                    hoverColor="rgba(48, 73, 102, 0.8)"
+                    onTouchTap={() => {
+                      this.handleSendMessageClick()
+                    }}/>
+                  )}
                 </div>
               </div>
             </div>
@@ -567,7 +585,7 @@ render() {
                         </div>
                       </div>
                     </Tab>
-                    {!isPublic && (
+                    {!isUnregisted && (
                       <Tab label="Calendar" value="calendar" style={{backgroundColor: "#fff", color: "#333"}}>
                         <div className="flex-row flex-baseline" style={{margin: '8px 8px 0 8px'}}>
                           <div className="light-shadow default-margin-right">
@@ -703,13 +721,14 @@ render() {
   const mapStatesToProps = (states) => {
     return {
       auth: states.auth,
-      list: states.list
+      list: states.list,
+      haveCurrentTalkUser: states.message.currentTalkUser.userid !== ''
     };
   }
 
   const mapDispatchToProps = (dispatch) => {
     return {
-      actions: bindActionCreators(Object.assign({}, AuthActions, ListActions, ViewActions), dispatch)
+      actions: bindActionCreators(Object.assign({}, AuthActions, ListActions, ViewActions, MessageActions), dispatch)
     };
   }
 

@@ -27,6 +27,35 @@
   bottom: -444px;
 }
 
+#message_box .info_input {
+  margin-top: 32px;
+}
+
+#message_box .start_chat {
+  margin-top: 16px;
+}
+
+#message_box .content {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  height: calc(100% - 103px);
+  overflow: scroll;
+}
+
+#message_box .message_textfield {
+  align-self: center;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 6px 2px 17px #aaa;
+  z-index: 9999;
+  background: #fff;
+}
+
 #message_box .box_header {
   background-color: #304966;
   color: #fff;
